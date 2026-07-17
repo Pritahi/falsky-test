@@ -30,10 +30,11 @@ _pool = None
 def _get_pool():
     global _pool
     if _pool is None and DATABASE_URL:
-        _pool = psycopg2.pool.SimpleConnectionPool(
-            minconn=1, maxconn=10, dsn=DATABASE_URL
+        _pool = psycopg2.pool.ThreadedConnectionPool(
+            minconn=1, maxconn=5, dsn=DATABASE_URL,
+            connect_timeout=10, options="-c statement_timeout=30000"
         )
-        logger.info("Created PostgreSQL connection pool")
+        logger.info("Created PostgreSQL connection pool (threaded, serverless-safe)")
     return _pool
 
 

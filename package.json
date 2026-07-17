@@ -1,0 +1,8 @@
+{
+  "name": "poly-core",
+  "version": "2.1.0",
+  "private": true,
+  "scripts": {
+    "vercel-build": "echo 'Python build handled by @vercel/python'"
+  }
+}
