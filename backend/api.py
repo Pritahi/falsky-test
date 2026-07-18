@@ -28,7 +28,9 @@ except ImportError:
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
@@ -66,6 +68,18 @@ app = FastAPI(
 
 # ===================== MIDDLEWARE =====================
 
+# Security headers middleware
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        return response
+
+app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -752,6 +766,18 @@ def delete_test(test_name: str, repo_name: str = Query(...)):
         raise HTTPException(status_code=500, detail=f"Error deleting test: {str(e)}")
 
 
+def _badge_svg(score: float, label: str = "poly trust") -> str:
+    if score >= 90: color = "#22c55e"
+    elif score >= 70: color = "#eab308"
+    elif score >= 50: color = "#f97316"
+    else: color = "#ef4444"
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="220" height="30">'
+            f'<rect width="220" height="30" rx="6" fill="#0f0f11"/>'
+            f'<rect x="110" width="110" height="30" rx="6" fill="{color}"/>'
+            f'<text x="10" y="20" fill="#a1a1aa" font-family="system-ui,sans-serif" font-size="11" font-weight="600">{label}</text>'
+            f'<text x="120" y="20" fill="#fff" font-family="system-ui,sans-serif" font-size="11" font-weight="700">{int(score)}%</text></svg>')
+
+
 @app.get("/badge/{repo_name}")
 def trust_badge(repo_name: str):
     try:
@@ -760,22 +786,14 @@ def trust_badge(repo_name: str):
                 c.execute("SELECT id FROM repositories WHERE name=%s", (repo_name,))
                 row = _to_dict(c)
                 if not row:
-                    raise HTTPException(status_code=404, detail="Repository not found")
+                    return HTMLResponse(content=_badge_svg(100, "no data"), media_type="image/svg+xml")
                 c.execute("SELECT AVG(trust_score) as avg_trust FROM test_results WHERE repo_id=%s", (row["id"],))
                 row = _to_dict(c)
-        score = (row or {}).get("avg_trust") or 100
-        score = round(score, 0)
-        if score >= 90: color = "#22c55e"
-        elif score >= 70: color = "#eab308"
-        elif score >= 50: color = "#f97316"
-        else: color = "#ef4444"
-        svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="220" height="30"><rect width="220" height="30" rx="6" fill="#0f0f11"/><rect x="110" width="110" height="30" rx="6" fill="{color}"/><text x="10" y="20" fill="#a1a1aa" font-family="system-ui,sans-serif" font-size="11" font-weight="600">poly trust</text><text x="120" y="20" fill="#fff" font-family="system-ui,sans-serif" font-size="11" font-weight="700">{int(score)}%</text></svg>'
-        return HTMLResponse(content=svg, media_type="image/svg+xml")
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Trust badge error for {repo_name}: {e}")
-        raise HTTPException(status_code=500, detail=f"Error generating badge: {str(e)}")
+        score = round((row or {}).get("avg_trust") or 100, 0)
+        return HTMLResponse(content=_badge_svg(score), media_type="image/svg+xml")
+    except Exception:
+        # DB not configured or any error — return safe default badge
+        return HTMLResponse(content=_badge_svg(100, "no data"), media_type="image/svg+xml")
 
 
 # ===================== PAGE ROUTES =====================
@@ -809,6 +827,23 @@ def serve_admin():
 @app.get("/landing/", response_class=HTMLResponse)
 def serve_landing():
     return RedirectResponse(url="/")
+
+
+# ===================== FAVICON & 404 =====================
+
+@app.get("/favicon.ico")
+def favicon():
+    """Inline SVG favicon — no file needed."""
+    svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'
+           '<rect width="32" height="32" rx="8" fill="#8b5cf6"/>'
+           '<text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" '
+           'fill="#fff" font-family="system-ui" font-weight="800" font-size="18">P</text></svg>')
+    return HTMLResponse(content=svg, media_type="image/svg+xml")
+
+
+@app.get("/robots.txt")
+def robots():
+    return HTMLResponse(content="User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /admin/", media_type="text/plain")
 
 
 if __name__ == "__main__":
