@@ -1090,6 +1090,9 @@ def process_test_run(xml_content: str, repo_name: str, run_id: str = None,
     parsed["run_id"] = run_id
     parsed["avg_trust_score"] = round(avg_trust, 1)
     parsed["timestamp"] = timestamp
+    # Aggregate flaky stats for action/PR consumers
+    parsed["total"] = parsed.get("total", test_count)
+    parsed["flaky_count"] = sum(1 for t in parsed["tests"] if t.get("trust_score", 100) < 50)
     return parsed
 
 
@@ -1097,7 +1100,7 @@ def process_test_run(xml_content: str, repo_name: str, run_id: str = None,
 # Dashboard Data
 # ─────────────────────────────────────────────
 
-def get_dashboard_data(repo_name: str) -> dict:
+def get_dashboard_data(repo_name: str, quarantine_threshold: float = 50) -> dict:
     """Get aggregated data for the dashboard."""
     ensure_initialized()
 
@@ -1142,6 +1145,20 @@ def get_dashboard_data(repo_name: str) -> dict:
                     )
                     ft["recent_results"] = _to_dicts(c)[::-1]
 
+                # All tests with their trust scores (for the action / PR report)
+                c.execute(
+                    "SELECT test_name as name, AVG(trust_score) as trust_score, "
+                    "flaky_category as flaky_category, "
+                    "AVG(CASE WHEN status='passed' THEN 1.0 ELSE 0.0 END) as pass_rate "
+                    "FROM test_results WHERE repo_id=%s "
+                    "GROUP BY test_name, flaky_category ORDER BY trust_score ASC",
+                    (repo_id,)
+                )
+                all_tests = _to_dicts(c)
+                for t in all_tests:
+                    t["trust_score"] = round(float(t.get("trust_score") or 100), 1)
+                    t["recent_trend"] = "stable"
+
                 c.execute(
                     "SELECT run_id, branch, commit_sha, total_tests, passed, failed, "
                     "avg_trust_score, timestamp FROM ci_runs WHERE repo_id=%s "
@@ -1162,15 +1179,35 @@ def get_dashboard_data(repo_name: str) -> dict:
                     (repo_id,)
                 )
                 distribution = {r["bucket"]: r["count"] for r in _to_dicts(c)}
+
+                # Quarantined tests (trust below threshold)
+                c.execute(
+                    "SELECT COUNT(*) as cnt FROM ("
+                    "SELECT test_name, AVG(trust_score) as trust_score "
+                    "FROM test_results WHERE repo_id=%s GROUP BY test_name "
+                    "HAVING AVG(trust_score) < %s) sub",
+                    (repo_id, quarantine_threshold)
+                )
+                quarantined_count = _to_dict(c)["cnt"]
         except Exception:
             logger.error("Failed to get dashboard data for repo=%s", repo_name, exc_info=True)
             raise
+
+    avg_trust = round(float(stats.get("avg_trust") or 100), 1)
+    flaky_count = sum(1 for t in all_tests if t["trust_score"] < quarantine_threshold)
+    total_tests = int(stats.get("total") or 0)
 
     return {
         "stats": stats,
         "flaky_tests": flaky_tests,
         "recent_runs": recent_runs,
         "trust_distribution": distribution,
+        # Action/PR-report compatible fields
+        "avg_trust": avg_trust,
+        "flaky_count": flaky_count,
+        "total_tests": total_tests,
+        "tests": all_tests,
+        "quarantined_count": quarantined_count,
     }
 
 

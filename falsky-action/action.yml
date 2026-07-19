@@ -1,0 +1,62 @@
+name: 'Falsky — AI Flaky Test Detector'
+description: 'Analyzes JUnit XML test results and posts a trust score report as a PR comment. Powered by Falsky Trust Engine.'
+
+branding:
+  icon: 'check-circle'
+  color: 'purple'
+
+inputs:
+  junit-xml-path:
+    description: 'Path to JUnit XML test result file (supports glob patterns)'
+    required: true
+    default: 'test-results/*.xml'
+
+  api-url:
+    description: 'Falsky API base URL'
+    required: true
+    default: 'https://falsky-test.vercel.app'
+
+  api-key:
+    description: 'Falsky API key for authentication'
+    required: true
+
+  repo-name:
+    description: 'Repository name (auto-detected from GitHub context if not provided)'
+    required: false
+
+  fail-on-flaky:
+    description: 'Fail the action if flaky tests are detected'
+    required: false
+    default: 'false'
+
+  flaky-threshold:
+    description: 'Trust score threshold below which tests are considered flaky (0-100)'
+    required: false
+    default: '50'
+
+  comment-on-pr:
+    description: 'Post trust report as PR comment'
+    required: false
+    default: 'true'
+
+  upload-artifact:
+    description: 'Upload trust report as GitHub artifact'
+    required: false
+    default: 'false'
+
+outputs:
+  trust-score:
+    description: 'Average trust score across all tests'
+
+  flaky-count:
+    description: 'Number of flaky tests detected'
+
+  total-tests:
+    description: 'Total number of tests analyzed'
+
+  report-url:
+    description: 'URL to the full Falsky dashboard report'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

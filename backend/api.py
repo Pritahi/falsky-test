@@ -634,6 +634,8 @@ def create_run(data: RunInput):
             tc = ET.SubElement(testsuite, "testcase", **attrs)
             if t.get("status") == "failed":
                 ET.SubElement(tc, "failure", message=t.get("error_message", "Test failed"))
+            elif t.get("status") == "error":
+                ET.SubElement(tc, "error", message=t.get("error_message", "Test errored"))
             elif t.get("status") == "skipped":
                 ET.SubElement(tc, "skipped")
         xml_str = ET.tostring(testsuites, encoding="unicode")
@@ -646,9 +648,9 @@ def create_run(data: RunInput):
 
 
 @app.get("/api/dashboard")
-def dashboard(repo_name: str = Query(...)):
+def dashboard(repo_name: str = Query(...), threshold: float = Query(50)):
     try:
-        result = get_dashboard_data(repo_name)
+        result = get_dashboard_data(repo_name, quarantine_threshold=threshold)
         logger.info(f"Dashboard fetched: {repo_name}")
         return result
     except Exception as e:
