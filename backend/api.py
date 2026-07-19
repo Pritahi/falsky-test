@@ -305,8 +305,11 @@ def admin_login(data: AdminLogin, request: Request, response: Response):
         
         # Clean expired sessions
         from datetime import datetime, timezone, timedelta
-        now = datetime.now(timezone.utc).isoformat()
-        delete("admin_sessions", {"expires_at__lt": now})  # Note: Supabase SDK filter
+        try:
+            now = datetime.now(timezone.utc).isoformat()
+            get_client().table("admin_sessions").delete().lt("expires_at", now).execute()
+        except Exception:
+            pass  # Non-critical
         
         # Store new session
         insert("admin_sessions", {
@@ -321,8 +324,8 @@ def admin_login(data: AdminLogin, request: Request, response: Response):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Login error: {e}")
-        raise HTTPException(status_code=500, detail="Internal error")
+        logger.error(f"Login error: {type(e).__name__}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Internal error: {type(e).__name__}")
 
 
 @app.post("/api/admin/logout")
