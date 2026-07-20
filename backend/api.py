@@ -682,10 +682,42 @@ def create_run(data: RunInput):
 @app.get("/api/dashboard")
 def dashboard(repo_name: str = Query(...)):
     try:
-        return get_dashboard_data(repo_name)
+        # Get repo
+        repos = _supabase_rest("repositories", filters={"name": repo_name}, columns="id,name")
+        if not repos or len(repos) == 0:
+            return {"repo": repo_name, "tests": [], "total": 0}
+        repo_id = repos[0]["id"]
+        # Get test results
+        tests = _supabase_rest("test_results", filters={"repo_id": str(repo_id)}, columns="test_name,status,trust_score,flaky_category,duration,run_id")
+        if not tests:
+            return {"repo": repo_name, "tests": [], "total": 0}
+        # Aggregate by test name
+        from collections import defaultdict
+        agg = defaultdict(lambda: {"scores": [], "passes": 0, "total": 0, "category": None, "durations": []})
+        for t in tests:
+            name = t.get("test_name", "unknown")
+            agg[name]["scores"].append(t.get("trust_score", 100))
+            agg[name]["total"] += 1
+            if t.get("status") == "passed":
+                agg[name]["passes"] += 1
+            if t.get("flaky_category"):
+                agg[name]["category"] = t["flaky_category"]
+            if t.get("duration"):
+                agg[name]["durations"].append(t["duration"])
+        result = []
+        for name, d in agg.items():
+            result.append({
+                "test_name": name,
+                "trust_score": round(sum(d["scores"]) / len(d["scores"]), 1),
+                "pass_rate": round(d["passes"] / d["total"], 3) if d["total"] > 0 else 0,
+                "runs": d["total"],
+                "flaky_category": d["category"],
+                "avg_duration": round(sum(d["durations"]) / len(d["durations"]), 1) if d["durations"] else 0,
+            })
+        return {"repo": repo_name, "tests": result, "total": len(result)}
     except Exception as e:
         logger.error(f"Dashboard error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        return {"repo": repo_name, "tests": [], "total": 0}
 
 
 @app.get("/api/tests")
@@ -746,11 +778,11 @@ def list_runs(repo_name: str = Query(...), limit: int = Query(20, le=100)):
 @app.get("/api/repos")
 def list_repos():
     try:
-        repos = select("repositories", "*")
-        return {"repos": repos}
+        repos = _supabase_rest("repositories", columns="id,name,created_at")
+        return {"repos": repos or []}
     except Exception as e:
         logger.error(f"List repos error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        return {"repos": []}
 
 
 @app.post("/api/alerts/config", dependencies=[Depends(verify_api_key)])
