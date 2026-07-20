@@ -567,6 +567,8 @@ def user_login(data: UserLogin, request: Request, response: Response):
             raise HTTPException(status_code=401, detail="Invalid email or password")
         if not user.get("is_active", True):
             raise HTTPException(status_code=403, detail="Account is disabled")
+        if not user.get("password_hash"):
+            raise HTTPException(status_code=401, detail="Account has no password set. Please register again.")
         if not bcrypt.checkpw(data.password.encode(), user["password_hash"].encode()):
             raise HTTPException(status_code=401, detail="Invalid email or password")
         token = secrets.token_hex(32)
