@@ -493,6 +493,101 @@ def admin_stats(request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ===================== USER AUTH =====================
+
+class UserRegister(BaseModel):
+    name: str
+    email: str
+    password: str
+    github_username: Optional[str] = None
+    signup_source: Optional[str] = None
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+_user_sessions = {}  # token -> {user_id, email, name}
+
+@app.post("/api/user/register")
+def user_register(data: UserRegister, request: Request, response: Response):
+    try:
+        client = get_client()
+        # Check if email exists
+        existing = select_one("users", "id", {"email": data.email})
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        # Hash password
+        pw_hash = bcrypt.hashpw(data.password.encode(), bcrypt.gensalt()).decode()
+        # Generate API key
+        api_key = "fky_" + secrets.token_hex(20)
+        # Insert user
+        user = insert("users", {
+            "name": data.name,
+            "email": data.email,
+            "password_hash": pw_hash,
+            "github_username": data.github_username,
+            "api_key": api_key,
+            "plan": "free",
+            "is_active": True,
+            "signup_source": data.signup_source or "direct",
+        })
+        if not user:
+            raise HTTPException(status_code=500, detail="Failed to create user")
+        # Create session
+        token = secrets.token_hex(32)
+        _user_sessions[token] = {"user_id": user["id"], "email": data.email, "name": data.name}
+        response.set_cookie(key="falsky_user_token", value=token, httponly=True, secure=True, samesite="lax", max_age=86400 * 30)
+        return {"status": "ok", "name": data.name, "email": data.email, "api_key": api_key}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"User register error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/user/login")
+def user_login(data: UserLogin, request: Request, response: Response):
+    try:
+        client = get_client()
+        user = select_one("users", "id, name, email, password_hash, api_key, is_active", {"email": data.email})
+        if not user:
+            raise HTTPException(status_code=401, detail="Invalid email or password")
+        if not user.get("is_active", True):
+            raise HTTPException(status_code=403, detail="Account is disabled")
+        if not bcrypt.checkpw(data.password.encode(), user["password_hash"].encode()):
+            raise HTTPException(status_code=401, detail="Invalid email or password")
+        token = secrets.token_hex(32)
+        _user_sessions[token] = {"user_id": user["id"], "email": user["email"], "name": user.get("name", "")}
+        response.set_cookie(key="falsky_user_token", value=token, httponly=True, secure=True, samesite="lax", max_age=86400 * 30)
+        return {"status": "ok", "name": user.get("name", ""), "email": user["email"], "api_key": user.get("api_key", "")}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"User login error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/user/me")
+def user_me(request: Request):
+    token = request.cookies.get("falsky_user_token")
+    if not token or token not in _user_sessions:
+        raise HTTPException(status_code=401, detail="Not logged in")
+    session = _user_sessions[token]
+    user = select_one("users", "id, name, email, api_key, plan, is_active", {"id": session["user_id"]})
+    if not user or not user.get("is_active", True):
+        raise HTTPException(status_code=401, detail="Account not found")
+    return {"name": user.get("name", ""), "email": user["email"], "api_key": user.get("api_key", ""), "plan": user.get("plan", "free")}
+
+@app.post("/api/user/logout")
+def user_logout(request: Request, response: Response):
+    token = request.cookies.get("falsky_user_token")
+    if token and token in _user_sessions:
+        del _user_sessions[token]
+    response.delete_cookie("falsky_user_token")
+    return {"status": "ok"}
+
+@app.get("/login", response_class=HTMLResponse)
+def serve_login():
+    return _serve_html(os.path.join("dashboard", "auth.html"), "Falsky — Sign In")
+
 # ===================== EXISTING API ROUTES =====================
 
 @app.post("/api/junit", dependencies=[Depends(verify_api_key)])

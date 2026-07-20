@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Falsky — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<style>
+:root{
+  --ink:#0C1517;--ink2:#0F1B1E;--ink3:#0A1315;--ink4:#122024;
+  --line:#1E3237;--line2:#2C464B;
+  --paper:#F2E8D5;--red:#FF4B2E;--amber:#FFB020;--green:#3DDC84;
+  --text:#D7E4E2;--muted:#8AA0A2;--dim:#5E767A;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--disp:'Anton',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+::selection{background:var(--amber);color:#171310}
+body{
+  font-family:var(--sans);color:var(--text);background:var(--ink);min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  background-image:
+    radial-gradient(1100px 560px at 88% -8%,rgba(61,220,132,.05),transparent 60%),
+    radial-gradient(900px 520px at -8% 40%,rgba(255,75,46,.045),transparent 55%),
+    linear-gradient(rgba(120,160,165,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(120,160,165,.045) 1px,transparent 1px);
+  background-size:auto,auto,46px 46px,46px 46px;
+  background-attachment:fixed;-webkit-font-smoothing:antialiased;
+}
+.grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2"/></filter><rect width="140" height="140" filter="url(%23n)"/></svg>');}
+
+.auth-wrap{position:relative;z-index:1;width:100%;max-width:440px;padding:20px}
+
+/* Logo */
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-size:1.4rem;letter-spacing:.08em;color:var(--paper);margin-bottom:32px;justify-content:center}
+.logo em{font-style:normal;color:var(--red)}
+
+/* Card */
+.card{background:var(--ink2);border:1px solid var(--line2);box-shadow:10px 10px 0 rgba(0,0,0,.5);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:repeating-linear-gradient(-45deg,var(--amber) 0 10px,#171310 10px 20px)}
+.card-head{padding:28px 32px 0;text-align:center}
+.card-head h1{font-family:var(--disp);font-weight:400;font-size:1.8rem;letter-spacing:.03em;color:var(--paper);text-transform:uppercase;margin-bottom:6px}
+.card-head p{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--dim)}
+
+.card-body{padding:28px 32px 32px}
+
+/* Tabs */
+.tabs{display:flex;border:1px solid var(--line2);margin-bottom:24px}
+.tab{flex:1;padding:10px;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);cursor:pointer;transition:all .18s;border:none;background:none}
+.tab:first-child{border-right:1px solid var(--line2)}
+.tab:hover{color:var(--paper);background:var(--ink4)}
+.tab.active{background:var(--amber);color:#171310;font-weight:600}
+
+/* Form */
+.form{display:none}
+.form.active{display:block}
+.field{margin-bottom:16px}
+.field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--dim);margin-bottom:6px;text-transform:uppercase}
+.field input{width:100%;padding:12px 14px;background:var(--ink3);border:1px solid var(--line2);color:var(--text);font-family:var(--mono);font-size:13px;letter-spacing:.04em;outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--amber)}
+.field input::placeholder{color:var(--dim)}
+
+/* Button */
+.submit-btn{width:100%;padding:14px;background:var(--amber);color:#171310;border:none;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:all .18s;box-shadow:4px 4px 0 var(--red);margin-top:8px}
+.submit-btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--red)}
+.submit-btn:active{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--red)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:4px 4px 0 var(--red)}
+
+/* Error */
+.error-msg{display:none;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--red);text-align:center;margin-top:12px;padding:8px;border:1px solid rgba(255,75,46,.3);background:rgba(255,75,46,.06)}
+.error-msg.show{display:block}
+
+/* Success */
+.success-msg{display:none;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--green);text-align:center;margin-top:12px;padding:8px;border:1px solid rgba(61,220,132,.3);background:rgba(61,220,132,.06)}
+.success-msg.show{display:block}
+
+/* API Key display */
+.apikey-box{display:none;margin-top:20px;padding:16px;background:var(--ink3);border:1px solid var(--line2)}
+.apikey-box.show{display:block}
+.apikey-box .label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--dim);margin-bottom:8px;text-transform:uppercase}
+.apikey-box .key{font-family:var(--mono);font-size:13px;color:var(--green);word-break:break-all;padding:10px;background:var(--ink);border:1px solid var(--line);cursor:pointer;transition:all .2s;user-select:all}
+.apikey-box .key:hover{border-color:var(--green)}
+.apikey-box .hint{font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:8px;letter-spacing:.1em}
+.apikey-box .actions{display:flex;gap:8px;margin-top:12px}
+.apikey-box .actions a{flex:1;text-align:center;padding:10px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-decoration:none;transition:all .18s;border:1px solid var(--line2);color:var(--muted)}
+.apikey-box .actions a:hover{border-color:var(--amber);color:var(--amber)}
+.apikey-box .actions a.primary{background:var(--amber);color:#171310;border-color:var(--amber);font-weight:600}
+.apikey-box .actions a.primary:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--red)}
+
+/* Footer */
+.footer{margin-top:24px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim)}
+.footer a{color:var(--amber);text-decoration:none}
+.footer a:hover{text-decoration:underline}
+
+/* Responsive */
+@media(max-width:480px){
+  .auth-wrap{padding:12px}
+  .card-head,.card-body{padding-left:20px;padding-right:20px}
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<div class="auth-wrap">
+  <div class="logo">
+    <svg width="34" height="16" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
+    FALS<em>KY</em>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <h1 id="formTitle">Sign In</h1>
+      <p id="formSub">Access your trust layer</p>
+    </div>
+    <div class="card-body">
+      <div class="tabs">
+        <div class="tab active" data-tab="login" onclick="switchTab('login')">SIGN IN</div>
+        <div class="tab" data-tab="signup" onclick="switchTab('signup')">CREATE ACCOUNT</div>
+      </div>
+
+      <!-- Login Form -->
+      <form class="form active" id="loginForm" onsubmit="doLogin(event)">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="loginEmail" placeholder="you@company.dev" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="loginPass" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="submit-btn" id="loginBtn">Sign In →</button>
+        <div class="error-msg" id="loginError"></div>
+        <div class="success-msg" id="loginSuccess"></div>
+      </form>
+
+      <!-- Signup Form -->
+      <form class="form" id="signupForm" onsubmit="doSignup(event)">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="signupName" placeholder="Jane Doe" required>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="signupEmail" placeholder="you@company.dev" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="signupPass" placeholder="Min 8 characters" required minlength="8" autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label>GitHub Username <span style="color:var(--dim)">(optional)</span></label>
+          <input type="text" id="signupGithub" placeholder="@handle">
+        </div>
+        <button type="submit" class="submit-btn" id="signupBtn">Create Account →</button>
+        <div class="error-msg" id="signupError"></div>
+        <div class="success-msg" id="signupSuccess"></div>
+      </form>
+
+      <!-- API Key Display (after login) -->
+      <div class="apikey-box" id="apikeyBox">
+        <div class="label">Your API Key</div>
+        <div class="key" id="apikeyValue" onclick="copyKey()">—</div>
+        <div class="hint">Click to copy · Keep this secret</div>
+        <div class="actions">
+          <a href="/dashboard/" class="primary">Open Dashboard →</a>
+          <a href="#" onclick="doLogout();return false">Sign Out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="/">← Back to home</a> · Falsky Trust Layer v3.0
+  </div>
+</div>
+
+<script>
+const API = '';
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.getElementById('loginForm').classList.toggle('active', tab === 'login');
+  document.getElementById('signupForm').classList.toggle('active', tab === 'signup');
+  document.getElementById('formTitle').textContent = tab === 'login' ? 'Sign In' : 'Create Account';
+  document.getElementById('formSub').textContent = tab === 'login' ? 'Access your trust layer' : 'Start detecting flaky tests';
+  // Clear messages
+  ['loginError','signupError','loginSuccess','signupSuccess'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('show'); el.textContent = '';
+  });
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
+}
+
+function showSuccess(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
+}
+
+async function doLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'SIGNING IN…';
+  document.getElementById('loginError').classList.remove('show');
+
+  try {
+    const res = await fetch(API + '/api/user/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        email: document.getElementById('loginEmail').value,
+        password: document.getElementById('loginPass').value
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showError('loginError', data.detail || 'Invalid credentials');
+      btn.disabled = false; btn.textContent = 'Sign In →';
+      return;
+    }
+    // Show API key
+    document.getElementById('loginForm').classList.remove('active');
+    document.getElementById('apikeyValue').textContent = data.api_key || 'No API key found';
+    document.getElementById('apikeyBox').classList.add('show');
+    document.getElementById('formTitle').textContent = 'Welcome Back';
+    document.getElementById('formSub').textContent = data.name || data.email;
+    document.querySelector('.tabs').style.display = 'none';
+  } catch(err) {
+    showError('loginError', 'Connection failed — try again');
+  }
+  btn.disabled = false; btn.textContent = 'Sign In →';
+}
+
+async function doSignup(e) {
+  e.preventDefault();
+  const btn = document.getElementById('signupBtn');
+  btn.disabled = true; btn.textContent = 'CREATING ACCOUNT…';
+  document.getElementById('signupError').classList.remove('show');
+
+  try {
+    const res = await fetch(API + '/api/user/register', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        name: document.getElementById('signupName').value,
+        email: document.getElementById('signupEmail').value,
+        password: document.getElementById('signupPass').value,
+        github_username: document.getElementById('signupGithub').value || null,
+        signup_source: 'landing_page'
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showError('signupError', data.detail || 'Registration failed');
+      btn.disabled = false; btn.textContent = 'Create Account →';
+      return;
+    }
+    // Show success + API key
+    document.getElementById('signupForm').classList.remove('active');
+    document.getElementById('apikeyValue').textContent = data.api_key;
+    document.getElementById('apikeyBox').classList.add('show');
+    document.getElementById('formTitle').textContent = 'Account Created';
+    document.getElementById('formSub').textContent = 'Welcome to Falsky';
+    document.querySelector('.tabs').style.display = 'none';
+    showSuccess('signupSuccess', 'Account created! Copy your API key below.');
+  } catch(err) {
+    showError('signupError', 'Connection failed — try again');
+  }
+  btn.disabled = false; btn.textContent = 'Create Account →';
+}
+
+function copyKey() {
+  const key = document.getElementById('apikeyValue').textContent;
+  navigator.clipboard.writeText(key).then(() => {
+    const el = document.getElementById('apikeyValue');
+    el.style.borderColor = 'var(--green)';
+    setTimeout(() => el.style.borderColor = '', 1200);
+  });
+}
+
+async function doLogout() {
+  await fetch(API + '/api/user/logout', {method: 'POST'});
+  location.reload();
+}
+
+// Auto-login check
+(async () => {
+  try {
+    const res = await fetch(API + '/api/user/me');
+    if (res.ok) {
+      const data = await res.json();
+      document.getElementById('loginForm').classList.remove('active');
+      document.getElementById('apikeyValue').textContent = data.api_key || 'No API key';
+      document.getElementById('apikeyBox').classList.add('show');
+      document.getElementById('formTitle').textContent = 'Welcome Back';
+      document.getElementById('formSub').textContent = data.name || data.email;
+      document.querySelector('.tabs').style.display = 'none';
+    }
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>
