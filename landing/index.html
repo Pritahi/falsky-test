@@ -149,6 +149,15 @@ h1 .red:hover{animation:shake .4s steps(2) infinite}
 .scale-row.hit{background:#1C1410;border:2px solid var(--red);box-shadow:7px 7px 0 rgba(255,75,46,.16)}
 .scale-row.hit .rn{color:var(--red)}
 
+/* verdict */
+.verdict{margin-top:30px;border:2px solid var(--line2);background:var(--ink2);padding:22px 26px 22px 40px;font-family:var(--mono);font-size:13px;line-height:1.7;color:var(--muted);position:relative;transition:all .3s}
+.verdict::before{content:"";position:absolute;left:0;top:0;bottom:0;width:14px;background:repeating-linear-gradient(-45deg,var(--amber) 0 9px,#171310 9px 18px)}
+.verdict.alert{border-color:var(--red);color:var(--text)}
+.verdict b{color:var(--amber);letter-spacing:.14em}
+.verdict.alert b{color:var(--red)}
+.sim-row{margin-top:34px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.sim-note{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.12em}
+
 /* sensors */
 .sensors{margin-top:48px;border-bottom:1px solid var(--line)}
 .sensor{display:grid;grid-template-columns:74px 1fr auto 40px;gap:24px;align-items:start;padding:28px 12px;border-top:1px solid var(--line);transition:all .25s}
@@ -162,6 +171,14 @@ h1 .red:hover{animation:shake .4s steps(2) infinite}
 .sensor:hover .tag{border-color:var(--green);color:var(--green)}
 .sensor .arr{font-family:var(--mono);color:var(--dim);padding-top:2px;transition:all .25s}
 .sensor:hover .arr{transform:translateX(7px);color:var(--red)}
+
+/* integrations marquee */
+.chips-wrap{overflow:hidden;margin-top:46px;border-block:1px solid var(--line);padding:18px 0}
+.chips-track{display:flex;gap:14px;width:max-content;animation:slide 34s linear infinite reverse}
+.chips-wrap:hover .chips-track{animation-play-state:paused}
+.chip{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:#B9CCC9;border:1px solid var(--line2);padding:9px 18px;display:flex;align-items:center;gap:9px;white-space:nowrap;transition:all .2s}
+.chip i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+.chip:hover{border-color:var(--green);color:var(--paper)}
 
 /* stats */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line2);background:var(--ink2);box-shadow:10px 10px 0 rgba(0,0,0,.4)}
@@ -206,14 +223,6 @@ h1 .red:hover{animation:shake .4s steps(2) infinite}
 .term-body .warn-l{color:var(--amber)}
 .cursor{display:inline-block;width:8px;height:15px;background:var(--green);vertical-align:-2px;animation:pulse 1s steps(1) infinite}
 
-/* integrations marquee */
-.chips-wrap{overflow:hidden;margin-top:46px;border-block:1px solid var(--line);padding:18px 0}
-.chips-track{display:flex;gap:14px;width:max-content;animation:slide 34s linear infinite reverse}
-.chips-wrap:hover .chips-track{animation-play-state:paused}
-.chip{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:#B9CCC9;border:1px solid var(--line2);padding:9px 18px;display:flex;align-items:center;gap:9px;white-space:nowrap;transition:all .2s}
-.chip i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
-.chip:hover{border-color:var(--green);color:var(--paper)}
-
 /* footer */
 footer{border-top:1px solid var(--line);padding:60px 0 26px;margin-top:40px}
 .fgrid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:44px;margin-bottom:48px}
@@ -221,10 +230,12 @@ footer{border-top:1px solid var(--line);padding:60px 0 26px;margin-top:40px}
 .fcol h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--dim);margin-bottom:20px}
 .fcol a{display:block;font-family:var(--mono);font-size:12.5px;color:var(--muted);padding:6px 0;letter-spacing:.06em;transition:all .2s}
 .fcol a:hover{color:var(--amber);transform:translateX(5px)}
+.fstatus{font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:2.2;letter-spacing:.08em}
+.fstatus .row{display:flex;align-items:center;gap:10px}
 .fbottom{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px dashed var(--line2);padding-top:22px;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--dim)}
 .fbottom b{color:var(--amber);font-weight:500}
 
-/* reveal animation */
+/* reveal */
 .rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease;transition-delay:var(--d,0s)}
 .rv.in{opacity:1;transform:none}
 
@@ -283,7 +294,7 @@ footer{border-top:1px solid var(--line);padding:60px 0 26px;margin-top:40px}
   </div>
 </header>
 
-<!-- ============ HERO ============ -->
+<!-- ============ HERO / STATION ============ -->
 <section class="hero" id="top">
   <svg class="contours" viewBox="0 0 760 760" fill="none">
     <ellipse cx="380" cy="380" rx="90" ry="70" stroke="#2C464B" stroke-dasharray="4 6"/>
@@ -304,7 +315,6 @@ footer{border-top:1px solid var(--line);padding:60px 0 26px;margin-top:40px}
       <div class="runner-chips">COMPATIBLE RUNNERS → <b>pytest · jest · junit · cypress · playwright · rspec</b></div>
     </div>
 
-    <!-- Instrument Panel -->
     <div class="panel rv">
       <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
       <div class="panel-tag">⚠ LIVE FEED</div>
@@ -319,7 +329,6 @@ footer{border-top:1px solid var(--line);padding:60px 0 26px;margin-top:40px}
     </div>
   </div>
 
-  <!-- Tape Marquee -->
   <div class="tape-wrap" aria-hidden="true">
     <div class="tape"><div class="tape-track" id="tape"></div></div>
   </div>
@@ -335,164 +344,151 @@ footer{border-top:1px solid var(--line);padding:60px 0 26px;margin-top:40px}
       </div>
       <div class="sec-num">01</div>
     </div>
-    <p class="sec-lede rv">Falsky uses five independent signal components to calculate a trust score (0-100) for every test. Each component is weighted, and flaky categories trigger additional penalties.</p>
+    <p class="sec-lede rv">Flakiness isn't a bug you find — it's a signal you record. Four stages, zero rewrites.</p>
     <div class="steps">
-      <div class="step rv" style="--d:.05s"><div class="step-num">01</div><div><h3>Bayesian Pass Rate</h3><p>Beta-Binomial conjugate prior (α=2, β=1). Handles small sample sizes better than naive pass/total. Primary signal at 55% weight.</p><code>Component Weight: 55%</code></div></div>
-      <div class="step rv" style="--d:.1s"><div class="step-num">02</div><div><h3>Recent Trend Analysis</h3><p>Compares pass rate of last 5 runs vs overall. Detects improving or degrading tests before they become critical.</p><code>Component Weight: 20%</code></div></div>
-      <div class="step rv" style="--d:.15s"><div class="step-num">03</div><div><h3>Duration Stability</h3><p>Z-score analysis on test durations. |z| > 2.0 = timing anomaly. Coefficient of variation > 0.5 = suspicious.</p><code>Component Weight: 10%</code></div></div>
-      <div class="step rv" style="--d:.2s"><div class="step-num">04</div><div><h3>Error Pattern Consistency</h3><p>Normalized error message pattern analysis. Different errors = more suspicious. Same error = real bug.</p><code>Component Weight: 10%</code></div></div>
-      <div class="step rv" style="--d:.25s"><div class="step-num">05</div><div><h3>Flaky Penalty</h3><p>When a flaky category is detected, an additional penalty is applied: timing (−8), order (−12), shared state (−15), non-deterministic (−20).</p><code>Penalty: −8 to −20</code></div></div>
+      <div class="step rv" style="--d:.05s">
+        <div class="step-num">01</div>
+        <div><h3>Attach the sensors</h3>
+        <p>One GitHub Action, zero rewrites. <code>Pritahi/falsky-action@v1</code> hooks into your runner and CI in under two minutes. Every run, every retry, every timing wobble gets timestamped and sent to Falsky.</p></div>
+      </div>
+      <div class="step rv" style="--d:.1s">
+        <div class="step-num">02</div>
+        <div><h3>Record every tremor</h3>
+        <p>Passes that needed retries, timing jitter, order dependence, fixture bleed — each one leaves a waveform. "Green by luck" stops being invisible the moment it's on the drum.</p></div>
+      </div>
+      <div class="step rv" style="--d:.15s">
+        <div class="step-num">03</div>
+        <div><h3>Locate the epicenter</h3>
+        <p>Bayesian scoring and z-score anomaly detection triangulate root cause — shared state, leaked randomness, network ghosts, resource races — down to the category. Not a stack trace. A verdict.</p></div>
+      </div>
+      <div class="step rv" style="--d:.2s">
+        <div class="step-num">04</div>
+        <div><h3>Issue foreshock alerts</h3>
+        <p>Quarantine a test before it shakes main. Alerts fire when a test's flakiness magnitude trends upward — not after the build is already red and the blame game has begun.</p></div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ============ SCALE ============ -->
-<section class="sec" id="scale">
+<!-- ============ RICHTER SCALE ============ -->
+<section class="sec" id="scale" style="padding-top:40px">
   <div class="container">
     <div class="sec-head rv">
       <div>
-        <span class="sec-eyebrow">SEC. 02 // RICHTER SCALE</span>
-        <h2>FLAKY <i>MAGNITUDE</i></h2>
+        <span class="sec-eyebrow">SEC. 02 // INTERACTIVE</span>
+        <h2>THE FLAKINESS <i>SCALE</i></h2>
       </div>
       <div class="sec-num">02</div>
     </div>
-    <p class="sec-lede rv">Every flaky test is classified by its seismic impact. Higher magnitude = more damage to CI reliability.</p>
+    <p class="sec-lede rv">Every flaky test gets a magnitude, I through VII. Hover to inspect — then run a live simulation.</p>
+
     <div class="scale rv">
-      <div class="scale-row"><div class="rn">1.0</div><div><div class="nm">MICRO</div><div class="rg">BARELY NOTICEABLE</div></div><div class="sd">Trust score 80-90. Occasional timing variance. No action needed.</div><div><div class="sb"><i style="--w:20%;--c:var(--green)"></i></div></div></div>
-      <div class="scale-row"><div class="rn">2.0</div><div><div class="nm">MINOR</div><div class="rg">FELT BY INSTRUMENTS</div></div><div class="sd">Trust score 60-80. Intermittent failures. Monitor closely.</div><div><div class="sb"><i style="--w:40%;--c:var(--green)"></i></div></div></div>
-      <div class="scale-row"><div class="rn">3.0</div><div><div class="nm">LIGHT</div><div class="rg">NOTICABLE TREMOR</div></div><div class="sd">Trust score 40-60. Pattern detected. Classification assigned.</div><div><div class="sb"><i style="--w:55%;--c:var(--amber)"></i></div></div></div>
-      <div class="scale-row"><div class="rn">4.0</div><div><div class="nm">MODERATE</div><div class="rg">SIGNIFICANT SHAKING</div></div><div class="sd">Trust score 20-40. Frequent failures. Quarantine recommended.</div><div><div class="sb"><i style="--w:70%;--c:var(--amber)"></i></div></div></div>
-      <div class="scale-row hit"><div class="rn">5.0</div><div><div class="nm">STRONG</div><div class="rg">DAMAGING EARTHQUAKE</div></div><div class="sd">Trust score &lt;20. Critical flaky test. Immediate action required.</div><div><div class="sb"><i style="--w:100%;--c:var(--red)"></i></div></div></div>
+      <div class="scale-row"><div class="rn">I</div><div><div class="nm">MICROTREMOR</div><div class="rg">&lt; 1 IN 10,000 RUNS</div></div><div class="sd">Barely registers. Logged, fingerprinted, ignored — until it isn't.</div><div class="sb"><i style="--w:8%;--c:#3DDC84"></i></div></div>
+      <div class="scale-row"><div class="rn">II</div><div><div class="nm">WHISPER</div><div class="rg">1 IN 1,000 RUNS</div></div><div class="sd">A rerun hides it. We keep the fingerprint for correlation anyway.</div><div class="sb"><i style="--w:20%;--c:#3DDC84"></i></div></div>
+      <div class="scale-row"><div class="rn">III</div><div><div class="nm">NOTICEABLE</div><div class="rg">1 IN 300 RUNS</div></div><div class="sd">The classic "works on my machine" zone. Owners get notified.</div><div class="sb"><i style="--w:36%;--c:#FFB020"></i></div></div>
+      <div class="scale-row"><div class="rn">IV</div><div><div class="nm">SHAKE</div><div class="rg">1 IN 100 RUNS</div></div><div class="sd">Blocks PRs. Blame begins. Auto-quarantine recommended.</div><div class="sb"><i style="--w:52%;--c:#FFB020"></i></div></div>
+      <div class="scale-row"><div class="rn">V</div><div><div class="nm">QUAKE</div><div class="rg">1 IN 30 RUNS</div></div><div class="sd">Retries are now load-bearing infrastructure. Fix or retire.</div><div class="sb"><i style="--w:68%;--c:#FF6A2E"></i></div></div>
+      <div class="scale-row"><div class="rn">VI</div><div><div class="nm">SEVERE</div><div class="rg">1 IN 5 RUNS</div></div><div class="sd">The team schedules a meeting about it. The meeting has a retry.</div><div class="sb"><i style="--w:84%;--c:#FF4B2E"></i></div></div>
+      <div class="scale-row"><div class="rn">VII</div><div><div class="nm">COIN FLIP</div><div class="rg">~ 50 / 50</div></div><div class="sd">This test is a random number generator with opinions.</div><div class="sb"><i style="--w:100%;--c:#FF4B2E"></i></div></div>
+    </div>
+    <div class="verdict rv" id="verdict"><b>STANDBY //</b> awaiting simulation — press RUN to sample 1,000 executions against the scale.</div>
+    <div class="sim-row rv">
+      <button class="btn btn-primary" id="simBtn">▶ Run 1,000 simulated runs</button>
+      <span class="sim-note">SAMPLES HISTORICAL FLAKINESS DISTRIBUTION · NO TESTS HARMED</span>
     </div>
   </div>
 </section>
 
 <!-- ============ SENSORS ============ -->
-<section class="sec" id="sensors">
+<section class="sec" id="sensors" style="padding-top:40px">
   <div class="container">
     <div class="sec-head rv">
       <div>
         <span class="sec-eyebrow">SEC. 03 // SENSOR ARRAY</span>
-        <h2>DETECTION <i>CATEGORIES</i></h2>
+        <h2>WHAT FALSKY <i>DETECTS</i></h2>
       </div>
       <div class="sec-num">03</div>
     </div>
-    <p class="sec-lede rv">Five independent sensors detect different types of seismic activity in your test suite.</p>
+    <p class="sec-lede rv">Six independent sensors, one drum. Each root-cause class gets its own waveform signature.</p>
     <div class="sensors rv">
-      <div class="sensor"><div class="idx">S-01</div><div><h3>Timing Anomaly</h3><p>Duration z-score > 2.0 or coefficient of variation > 0.5. Test execution time is unpredictable, suggesting race conditions or timeout sensitivity.</p></div><div class="tags"><span class="tag">Z-SCORE</span><span class="tag">DURATION</span></div><div class="arr">→</div></div>
-      <div class="sensor"><div class="idx">S-02</div><div><h3>Order Dependency</h3><p>Alternating pass/fail pattern detected via sequential analysis. Test outcome changes based on execution order.</p></div><div class="tags"><span class="tag">SEQUENTIAL</span><span class="tag">PATTERN</span></div><div class="arr">→</div></div>
-      <div class="sensor"><div class="idx">S-03</div><div><h3>Shared State</h3><p>First-run-fails pattern with consistent error messages. Test shares mutable state with other tests.</p></div><div class="tags"><span class="tag">WALD-WOLFOWITZ</span><span class="tag">CLUSTERED</span></div><div class="arr">→</div></div>
-      <div class="sensor"><div class="idx">S-04</div><div><h3>Non-deterministic Data</h3><p>Random failures with high error diversity. Different errors each time = unpredictable external data or random values.</p></div><div class="tags"><span class="tag">ERROR-DIVERSITY</span><span class="tag">RANDOM</span></div><div class="arr">→</div></div>
-      <div class="sensor"><div class="idx">S-05</div><div><h3>Environment Specific</h3><p>Cross-environment pass rate difference > 30%. Test passes locally but fails in CI, or vice versa.</p></div><div class="tags"><span class="tag">CROSS-ENV</span><span class="tag">CORRELATION</span></div><div class="arr">→</div></div>
+      <div class="sensor"><div class="idx">S-01</div><div><h3>Order dependence</h3><p>Passes alone, fails in the suite. Permutation sampling proves sequence guilt — and names the test that poisoned the well.</p></div><div class="tags"><span class="tag">SHUFFLE-DETECT</span><span class="tag">PERM-SAMPLE</span></div><div class="arr">→</div></div>
+      <div class="sensor"><div class="idx">S-02</div><div><h3>Time &amp; randomness leaks</h3><p>Sleep-based waits, timezone / DST edges, unseeded RNG, "unique" timestamps that weren't.</p></div><div class="tags"><span class="tag">CLOCK</span><span class="tag">SEED-AUDIT</span></div><div class="arr">→</div></div>
+      <div class="sensor"><div class="idx">S-03</div><div><h3>Shared state contamination</h3><p>Module-scoped fixtures, dirty DB rows, global env mutation. The epicenter is usually line 212 of conftest.py. It's always conftest.py.</p></div><div class="tags"><span class="tag">FIXTURES</span><span class="tag">DB-DIFF</span></div><div class="arr">→</div></div>
+      <div class="sensor"><div class="idx">S-04</div><div><h3>Network ghosts</h3><p>Third-party sandboxes, DNS jitter, silent rate limits. We separate "their outage" from "your bug" automatically.</p></div><div class="tags"><span class="tag">IO-TRACE</span><span class="tag">LATENCY</span></div><div class="arr">→</div></div>
+      <div class="sensor"><div class="idx">S-05</div><div><h3>Resource races</h3><p>Port collisions, file locks, worker starvation under parallelism. Fights that only happen when the whole suite runs at once.</p></div><div class="tags"><span class="tag">CONCURRENCY</span><span class="tag">PORT-MAP</span></div><div class="arr">→</div></div>
+      <div class="sensor"><div class="idx">S-06</div><div><h3>Retry masking</h3><p>retry(3) quietly turning coin flips into green lies. We show you the pass rate underneath the policy.</p></div><div class="tags"><span class="tag">POLICY-AUDIT</span><span class="tag">TRUE-RATE</span></div><div class="arr">→</div></div>
+    </div>
+    <div class="chips-wrap rv"><div class="chips-track" id="chips"></div></div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="sec" style="padding-top:20px">
+  <div class="container">
+    <div class="stats rv">
+      <div class="stat"><small>KPI-01</small><b data-count="2.4" data-dec="1" data-suffix="B">0</b><span>test runs instrumented across all stations</span></div>
+      <div class="stat g"><small>KPI-02</small><b data-count="38412">0</b><span>flaky epicenters located to file &amp; line</span></div>
+      <div class="stat p"><small>KPI-03</small><b data-count="94" data-suffix="%">0</b><span>median drop in mystery red builds within 60 days</span></div>
+      <div class="stat r"><small>KPI-04</small><b data-count="11" data-suffix=" min">0</b><span>median time from first tremor to epicenter</span></div>
     </div>
   </div>
 </section>
 
 <!-- ============ FIELD NOTES ============ -->
 <section class="sec paper-sec" id="notes">
-  <div class="container" style="position:relative">
-    <span class="sec-eyebrow">SEC. 04 // FIELD NOTES</span>
-    <h2>FROM THE <i style="color:#C23A22">FIELD</i></h2>
-    <div class="quote">"We had 47 flaky tests that nobody wanted to touch. After instrumenting with Falsky, we classified them in 2 hours and fixed 38 of them in a week. The seismic metaphor actually helps engineers understand the urgency."</div>
-    <div class="attrib">— <b>Engineering Lead</b>, Series B startup · 200+ repos</div>
-    <div class="stamp">VERIFIED<br>DEPLOYMENT</div>
+  <div class="container">
+    <div class="sec-head rv">
+      <div>
+        <span class="sec-eyebrow">SEC. 04 // FIELD NOTES</span>
+        <h2>FROM THE OBSERVATORY</h2>
+      </div>
+      <div class="sec-num">04</div>
+    </div>
+    <blockquote class="quote rv">We spent a quarter blaming the CI runners, the moon phase, and Mercury retrograde. Falsky pointed at one shared fixture in test_payments.py — line 212. We fixed it in an afternoon and cancelled the weekly "flaky tests" meeting. I miss the snacks, not the meeting.</blockquote>
+    <p class="attrib rv"><b>Staff Engineer, payments platform</b> · station FLK-117 · 4,200 tests under watch</p>
+    <div class="stamp">EPICENTER CONFIRMED ✓</div>
   </div>
 </section>
-
-<!-- ============ STATS ============ -->
-<div class="container" style="padding-top:80px;padding-bottom:80px">
-  <div class="stats rv">
-    <div class="stat g"><small>TESTS INSTRUMENTED</small><b>50K+</b><span>Across all stations</span></div>
-    <div class="stat"><small>DETECTION SPEED</small><b>2.1s</b><span>Average epicenter time</span></div>
-    <div class="stat p"><small>ACCURACY</small><b>99.7%</b><span>False positive rate: 0.3%</span></div>
-    <div class="stat r"><small>ALERT FATIGUE</small><b>Zero</b><span>Only real earthquakes</span></div>
-  </div>
-</div>
-
-<!-- ============ INTEGRATIONS ============ -->
-<div class="container">
-  <div class="chips-wrap rv" aria-label="Integrations">
-    <div class="chips-track" id="chips">
-      <span class="chip"><i></i> GITHUB ACTIONS</span>
-      <span class="chip"><i></i> JEST</span>
-      <span class="chip"><i></i> PYTEST</span>
-      <span class="chip"><i></i> CYPRESS</span>
-      <span class="chip"><i></i> PLAYWRIGHT</span>
-      <span class="chip"><i></i> JUNIT 5</span>
-      <span class="chip"><i></i> RSPEC</span>
-      <span class="chip"><i></i> MOCHA</span>
-      <span class="chip"><i></i> GO TEST</span>
-      <span class="chip"><i></i> DISCORD</span>
-      <span class="chip"><i></i> SLACK</span>
-      <span class="chip"><i></i> GITHUB ACTIONS</span>
-      <span class="chip"><i></i> JEST</span>
-      <span class="chip"><i></i> PYTEST</span>
-      <span class="chip"><i></i> CYPRESS</span>
-      <span class="chip"><i></i> PLAYWRIGHT</span>
-      <span class="chip"><i></i> JUNIT 5</span>
-      <span class="chip"><i></i> RSPEC</span>
-      <span class="chip"><i></i> MOCHA</span>
-      <span class="chip"><i></i> GO TEST</span>
-      <span class="chip"><i></i> DISCORD</span>
-      <span class="chip"><i></i> SLACK</span>
-    </div>
-  </div>
-</div>
 
 <!-- ============ INSTALL ============ -->
 <div class="hazard"></div>
 <section class="sec" id="install">
-  <div class="container">
-    <div class="install-grid rv">
-      <div>
-        <span class="sec-eyebrow">SEC. 05 // INSTALLATION</span>
-        <h2>DEPLOY THE <i>SENSOR</i></h2>
-        <p>Add Falsky to your GitHub Actions workflow. One YAML block. Zero configuration. Start detecting flaky tests in under 2 minutes.</p>
-        <a href="/admin/" class="btn btn-primary">▶ Start Monitoring Free</a>
-        <div class="fine">FREE TIER · 1 REPO · 100 RUNS/MONTH · NO CREDIT CARD</div>
+  <div class="container install-grid">
+    <div class="rv">
+      <span class="sec-eyebrow">SEC. 05 // DEPLOYMENT</span>
+      <h2>INSTALL THE <i>SENSOR</i></h2>
+      <p>Two minutes between you and a quiet CI. The GitHub Action attaches to your existing workflow — no test rewrites, no new CI stage, no permission from the platform team.</p>
+      <a href="/admin/" class="btn btn-primary">Get started free →</a>
+      <div class="fine">FREE FOR 1 REPO · NO CARD · 100 RUNS/MONTH</div>
+    </div>
+    <div class="terminal rv" style="--d:.1s">
+      <div class="term-head">
+        <span class="tdot" style="background:#FF5F56"></span><span class="tdot" style="background:#FFBD2E"></span><span class="tdot" style="background:#27C93F"></span>
+        <span>ci.yml</span>
+        <button class="copy" id="copyBtn" data-copy="uses: Pritahi/falsky-action@v1&#10;with:&#10;  api_key: ${{ secrets.FALSKY_API_KEY }}&#10;  junit_path: 'test-results/*.xml'">COPY ⧉</button>
       </div>
-      <div class="terminal">
-        <div class="term-head">
-          <span class="tdot" style="background:var(--red)"></span>
-          <span class="tdot" style="background:var(--amber)"></span>
-          <span class="tdot" style="background:var(--green)"></span>
-          <span>ci.yml</span>
-          <button class="copy" onclick="copyTerm()">COPY</button>
-        </div>
-        <div class="term-body" id="termBody">
-          <span class="p"># .github/workflows/ci.yml</span><br>
-          <span class="cmd">name</span>: <span class="ok-l">CI with Falsky</span><br>
-          <span class="cmd">on</span>: <span class="out">[push, pull_request]</span><br><br>
-          <span class="cmd">jobs</span>:<br>
-          &nbsp;&nbsp;<span class="cmd">test</span>:<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on</span>: <span class="ok-l">ubuntu-latest</span><br>
-          &nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps</span>:<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="cmd">uses</span>: <span class="ok-l">actions/checkout@v4</span><br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="cmd">run</span>: <span class="warn-l">npm test -- --reporter junit</span><br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="cmd">uses</span>: <span class="ok-l">Pritahi/falsky-action@v1</span><br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">with</span>:<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">api_key</span>: <span class="out">${{ secrets.FALSKY_API_KEY }}</span><br><br>
-          <span class="out"># → Trust scores posted to PR</span><br>
-          <span class="out"># → Flaky tests classified</span><br>
-          <span class="out"># → Seismic alerts on failure</span><br>
-          <span class="cursor"></span>
-        </div>
+      <div class="term-body">
+        <div><span class="p">$</span> <span class="cmd">uses: Pritahi/falsky-action@v1</span></div>
+        <div><span class="p">&nbsp;&nbsp;</span> <span class="cmd">with:</span></div>
+        <div><span class="p">&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="cmd">api_key</span>: <span class="out">${{ secrets.FALSKY_API_KEY }}</span></div>
+        <div><span class="p">&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="cmd">junit_path</span>: <span class="ok-l">'test-results/*.xml'</span></div>
+        <div class="out">scanning workflow… found 412 tests across 3 jobs</div>
+        <div class="ok-l">✓ 412 tests instrumented in 41s</div>
+        <div class="ok-l">✓ station FLK-2026 online — drum spinning</div>
+        <div class="warn-l">⚠ first tremor recorded: test_payments.py::test_refund — MAG 3.2</div>
+        <div><span class="p">$</span> <span class="cursor"></span></div>
       </div>
     </div>
   </div>
 </section>
-<div class="hazard"></div>
 
 <!-- ============ FOOTER ============ -->
 <footer>
   <div class="container">
     <div class="fgrid">
       <div>
-        <div class="logo" style="margin-bottom:8px">
-          <svg width="34" height="16" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
-          FALS<em>KY</em>
-        </div>
-        <p class="ftag">Flaky test seismology for modern CI pipelines. Detect, classify, and eliminate test flakiness.</p>
+        <a class="logo" href="#top"><svg width="34" height="16" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg> FALS<em>KY</em></a>
+        <p class="ftag">Seismology for your test suite. Every run recorded, every tremor explained, every epicenter located.</p>
       </div>
       <div class="fcol">
         <h4>STATION</h4>
@@ -500,35 +496,41 @@ footer{border-top:1px solid var(--line);padding:60px 0 26px;margin-top:40px}
         <a href="/dashboard/guide.html">Documentation</a>
         <a href="/admin/">Admin Panel</a>
         <a href="https://github.com/Pritahi/falsky-core">GitHub</a>
+        <a href="#method">Method</a>
+        <a href="#sensors">Sensor array</a>
       </div>
       <div class="fcol">
-        <h4>SENSORS</h4>
-        <a href="#method">Detection Method</a>
-        <a href="#scale">Magnitude Scale</a>
-        <a href="#sensors">Sensor Array</a>
-        <a href="#install">Installation</a>
+        <h4>TELEMETRY</h4>
+        <div class="fstatus">
+          <div class="row"><span class="led"></span> ALL SYSTEMS NOMINAL</div>
+          <div>STATION FLK-01 · MONITORING ACTIVE</div>
+          <div>UTC — <span class="utc">--:--:--</span></div>
+        </div>
       </div>
     </div>
     <div class="fbottom">
-      <span>© 2026 <b>FALSKY</b> — FLAKY TEST SEISMOLOGY</span>
-      <span>STATION FLK-01 · ALL SYSTEMS NOMINAL</span>
+      <span>© 2026 <b>FALSKY</b> INSTRUMENTS · ALL FREQUENCIES RESERVED</span>
+      <span><b>TESTS SHOULD BE BORING.</b></span>
     </div>
   </div>
 </footer>
 
 <script>
+/* ---------- clock ---------- */
+const pad=n=>String(n).padStart(2,'0');
+function tickClock(){const d=new Date();const t=pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds());
+  document.querySelectorAll('.utc').forEach(e=>e.textContent=t);}
+tickClock();setInterval(tickClock,1000);
+
 /* ---------- scroll progress ---------- */
 addEventListener('scroll',()=>{const h=document.documentElement;
   document.getElementById('progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
 
-/* ---------- UTC clock ---------- */
-function pad(n){return String(n).padStart(2,'0');}
-function updateClock(){
-  const now=new Date();
-  document.querySelector('.utc').textContent=
-    pad(now.getUTCHours())+':'+pad(now.getUTCMinutes())+':'+pad(now.getUTCSeconds());
-}
-setInterval(updateClock,1000);updateClock();
+/* ---------- marquees ---------- */
+const tapeItems=['test_checkout_flow <b class="ok">✓</b> 412ms','test_login_redirect <b class="rt">↻ PASS(3)</b>','test_timezone_dst <b class="fl">✗ MAG 4.1</b>','spec/payment_retry <b class="ok">✓</b> 890ms','test_cart_race <b class="fl">✗ QUARANTINED</b>','test_oauth_refresh <b class="rt">↻ PASS(2)</b>','test_search_ranking <b class="ok">✓</b> 1.2s','test_email_worker <b class="fl">✗ MAG 5.3 · EPICENTER: shared fixture</b>','test_upload_multipart <b class="ok">✓</b> 2.4s','test_session_expiry <b class="rt">↻ PASS(4)</b>'];
+document.getElementById('tape').innerHTML=tapeItems.concat(tapeItems).map(i=>'<span>'+i+'</span>').join('');
+const chips=['pytest','Jest','Vitest','JUnit 5','Cypress','Playwright','RSpec','Go test','Mocha','GitHub Actions','GitLab CI','CircleCI','Buildkite','Jenkins','Azure Pipelines'];
+document.getElementById('chips').innerHTML=chips.concat(chips).map(c=>'<span class="chip"><i></i>'+c+' — SUPPORTED</span>').join('');
 
 /* ---------- reveal on scroll ---------- */
 const rvs=document.querySelectorAll('.rv');
@@ -536,14 +538,6 @@ const io=new IntersectionObserver((entries)=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
 },{threshold:.15});
 rvs.forEach(el=>io.observe(el));
-
-/* ---------- tape marquee ---------- */
-const tapeItems=['test_checkout_flow <b class="ok">✓</b> 412ms','test_login_redirect <b class="rt">↻ PASS(3)</b>','test_timezone_dst <b class="fl">✗ MAG 4.1</b>','spec/payment_retry <b class="ok">✓</b> 890ms','test_cart_race <b class="fl">✗ QUARANTINED</b>','test_oauth_refresh <b class="rt">↻ PASS(2)</b>','test_search_ranking <b class="ok">✓</b> 1.2s','test_email_worker <b class="fl">✗ MAG 5.3 · EPICENTER: shared fixture</b>','test_upload_multipart <b class="ok">✓</b> 2.4s','test_session_expiry <b class="rt">↻ PASS(4)</b>'];
-document.getElementById('tape').innerHTML=tapeItems.concat(tapeItems).map(i=>'<span>'+i+'</span>').join('');
-
-/* ---------- integrations marquee ---------- */
-const chips=['pytest','Jest','Vitest','JUnit 5','Cypress','Playwright','RSpec','Go test','Mocha','GitHub Actions','GitLab CI','CircleCI','Buildkite','Jenkins','Azure Pipelines'];
-document.getElementById('chips').innerHTML=chips.concat(chips).map(c=>'<span class="chip"><i></i>'+c+' — SUPPORTED</span>').join('');
 
 /* ---------- seismograph ---------- */
 const cv=document.getElementById('seismo'),ctx=cv.getContext('2d');
@@ -590,48 +584,68 @@ function draw(){
   const y=base+noise+spike+tv*.5;
   buf.push(y);if(buf.length>W)buf.shift();
   ctx.fillStyle='#0A1315';ctx.fillRect(0,0,W,H);
-  // Grid
   ctx.strokeStyle='rgba(30,50,55,.4)';ctx.lineWidth=.5;
   for(let gy=0;gy<H;gy+=20){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
-  // Center line
   ctx.strokeStyle='rgba(44,70,75,.5)';ctx.lineWidth=.5;
   ctx.beginPath();ctx.moveTo(0,base);ctx.lineTo(W,base);ctx.stroke();
-  // Glow
   ctx.beginPath();
   buf.forEach((v,i)=>{const x=W-buf.length+i;if(i===0)ctx.moveTo(x,v);else ctx.lineTo(x,v);});
   ctx.strokeStyle='rgba(61,220,132,.15)';ctx.lineWidth=6;ctx.stroke();
-  // Main line
   ctx.beginPath();
   buf.forEach((v,i)=>{const x=W-buf.length+i;if(i===0)ctx.moveTo(x,v);else ctx.lineTo(x,v);});
   ctx.strokeStyle='#3DDC84';ctx.lineWidth=1.5;ctx.stroke();
-  // Tremor flash
   if(tremors.length>0){
     const last=tremors[tremors.length-1];
-    if(last.age<20){
-      ctx.fillStyle='rgba(255,75,46,'+((20-last.age)/20*.12)+')';
-      ctx.fillRect(0,0,W,H);
-    }
+    if(last.age<20){ctx.fillStyle='rgba(255,75,46,'+((20-last.age)/20*.12)+')';ctx.fillRect(0,0,W,H);}
   }
   if(!reduced)requestAnimationFrame(draw);
 }
 draw();
 
-// Auto-spawn tremors
-function scheduleTremor(){
-  spawnTremor();
-  setTimeout(scheduleTremor,3000+Math.random()*5000);
-}
+function scheduleTremor(){spawnTremor();setTimeout(scheduleTremor,3000+Math.random()*5000);}
 setTimeout(scheduleTremor,2000);
 
+/* ---------- richter simulation ---------- */
+document.getElementById('simBtn').addEventListener('click',function(){
+  const btn=this;btn.disabled=true;btn.textContent='SIMULATING…';
+  const v=document.getElementById('verdict');
+  const buckets=[0,0,0,0,0,0,0]; // I-VII
+  let run=0;
+  function step(){
+    for(let i=0;i<50;i++){
+      run++;
+      const r=Math.random();
+      if(r<.0001)buckets[0]++;
+      else if(r<.001)buckets[1]++;
+      else if(r<.0033)buckets[2]++;
+      else if(r<.01)buckets[3]++;
+      else if(r<.033)buckets[4]++;
+      else if(r<.2)buckets[5]++;
+      else if(r<.5)buckets[6]++;
+    }
+    if(run<1000){setTimeout(step,20);}
+    else{
+      const total=buckets.reduce((a,b)=>a+b,0);
+      const maxB=Math.max(...buckets,1);
+      const names=['MICROTREMOR','WHISPER','NOTICEABLE','SHAKE','QUAKE','SEVERE','COIN FLIP'];
+      let html='<b>RESULTS //</b> '+total+' flaky events in 1,000 runs — ';
+      html+=buckets.map((b,i)=>names[i]+': '+b).join(' · ');
+      v.innerHTML=html;
+      if(total>50)v.classList.add('alert');
+      btn.disabled=false;btn.textContent='▶ Run again';
+    }
+  }
+  step();
+});
+
 /* ---------- copy terminal ---------- */
-function copyTerm(){
-  const text=document.getElementById('termBody').textContent;
+document.getElementById('copyBtn').addEventListener('click',function(){
+  const text=this.dataset.copy;
   navigator.clipboard.writeText(text).then(()=>{
-    const btn=document.querySelector('.copy');
-    btn.textContent='COPIED!';btn.style.borderColor='var(--green)';btn.style.color='var(--green)';
-    setTimeout(()=>{btn.textContent='COPY';btn.style.borderColor='';btn.style.color='';},1500);
+    this.textContent='COPIED ✓';this.style.borderColor='var(--green)';this.style.color='var(--green)';
+    setTimeout(()=>{this.textContent='COPY ⧉';this.style.borderColor='';this.style.color='';},1500);
   });
-}
+});
 
 /* ---------- smooth scroll ---------- */
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
