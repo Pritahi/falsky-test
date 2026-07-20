@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Falsky — Repository</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<link rel="stylesheet" href="/dashboard/design-system.css">
+<style>
+.trust-gauge{width:140px;height:140px;position:relative;margin:0 auto 12px}
+.trust-gauge svg{width:100%;height:100%}
+.trust-gauge .score{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:2.4rem;color:var(--paper)}
+.trust-gauge .label{position:absolute;bottom:-4px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+@media(max-width:900px){.chart-row{grid-template-columns:1fr}}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-bar .input{max-width:240px}
+.filter-bar select{padding:8px 10px;background:var(--ink3);border:1px solid var(--line2);color:var(--text);font-family:var(--mono);font-size:11px;border-radius:var(--radius);outline:none}
+.issue-list{list-style:none}
+.issue-list li{padding:10px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px}
+.issue-list li:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="app">
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <a href="/dashboard/" class="logo">
+    <svg width="28" height="13" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
+    FALS<em>KY</em>
+  </a>
+  <nav>
+    <a href="/dashboard/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="/dashboard/repos.html" class="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      <span>Repositories</span>
+    </a>
+    <a href="/dashboard/settings.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span>Settings</span>
+    </a>
+  </nav>
+  <div class="user-section">
+    <div class="user-info" id="userInfo">
+      <img id="userAvatar" src="" alt="">
+      <div>
+        <div class="name" id="userName">Loading…</div>
+        <div class="email" id="userEmail"></div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title" id="repoName">Repository</h1>
+      <p class="page-sub" id="repoSub">Loading…</p>
+    </div>
+    <a href="/dashboard/" class="btn btn-ghost btn-sm">← Back</a>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="label">Total Tests</div>
+      <div class="value" id="statTotal">—</div>
+    </div>
+    <div class="stat-card green">
+      <div class="label">Stable</div>
+      <div class="value" id="statStable">—</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="label">Flaky</div>
+      <div class="value" id="statFlaky">—</div>
+    </div>
+    <div class="stat-card red">
+      <div class="label">Failed</div>
+      <div class="value" id="statFailed">—</div>
+    </div>
+  </div>
+
+  <!-- Trust Gauge + Charts -->
+  <div class="chart-row">
+    <div class="card" style="text-align:center">
+      <span class="card-title">Overall Trust Score</span>
+      <div class="trust-gauge" id="trustGauge">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--line2)" stroke-width="8"/>
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--green)" stroke-width="8" stroke-dasharray="327" stroke-dashoffset="327" stroke-linecap="round" transform="rotate(-90 60 60)" id="gaugeArc"/>
+        </svg>
+        <div class="score" id="gaugeScore">—</div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="card-title">Trust Distribution</span>
+      <div style="display:flex;align-items:end;gap:4px;height:120px;margin-top:16px" id="trustDist"></div>
+      <div style="display:flex;gap:4px;margin-top:4px" id="trustLabels"></div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('flaky')">Flaky Tests</button>
+    <button class="tab-btn" onclick="showTab('all')">All Tests</button>
+    <button class="tab-btn" onclick="showTab('issues')">Top Issues</button>
+  </div>
+
+  <!-- Flaky Tests Tab -->
+  <div class="tab-content active" id="tab-flaky">
+    <div class="filter-bar">
+      <input class="input" placeholder="Search tests…" id="searchFlaky" oninput="filterTests()">
+      <select id="filterCat" onchange="filterTests()">
+        <option value="">All Categories</option>
+        <option value="timing">⏱️ Timing</option>
+        <option value="order_dependency">🔗 Order</option>
+        <option value="shared_state">🤝 Shared State</option>
+        <option value="non_deterministic_data">🎲 Random</option>
+        <option value="environment_specific">🌐 Environment</option>
+      </select>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Test Name</th>
+              <th>Trust Score</th>
+              <th>Category</th>
+              <th>Pass Rate</th>
+              <th>Runs</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="flakyTable">
+            <tr><td colspan="6" style="text-align:center;color:var(--dim);padding:32px"><div class="spinner"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Tests Tab -->
+  <div class="tab-content" id="tab-all">
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Test Name</th>
+              <th>Trust Score</th>
+              <th>Status</th>
+              <th>Pass Rate</th>
+              <th>Avg Duration</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="allTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Issues Tab -->
+  <div class="tab-content" id="tab-issues">
+    <div class="chart-row">
+      <div class="card">
+        <span class="card-title">🔴 Most Unstable</span>
+        <ul class="issue-list" id="unstableList"></ul>
+      </div>
+      <div class="card">
+        <span class="card-title">📉 Recently Degraded</span>
+        <ul class="issue-list" id="degradedList"></ul>
+      </div>
+    </div>
+  </div>
+</main>
+
+</div>
+
+<script>
+const API = '';
+let allTests = [];
+const catNames = {timing:'⏱️ Timing',order_dependency:'🔗 Order',shared_state:'🤝 Shared State',non_deterministic_data:'🎲 Random',environment_specific:'🌐 Environment'};
+const catClasses = {timing:'timing',order_dependency:'order',shared_state:'shared',non_deterministic_data:'random',environment_specific:'env'};
+
+function getRepo() { return new URLSearchParams(window.location.search).get('repo') || ''; }
+function trustClass(s) { return s >= 80 ? 'high' : s >= 50 ? 'mid' : 'low'; }
+
+// Auth
+(async () => {
+  try {
+    const res = await fetch(API + '/api/auth/me');
+    if (!res.ok) { window.location.href = '/login'; return; }
+    const user = await res.json();
+    document.getElementById('userName').textContent = user.name || user.email;
+    document.getElementById('userEmail').textContent = user.email;
+    if (user.avatar) document.getElementById('userAvatar').src = user.avatar;
+    loadRepo();
+  } catch(e) { window.location.href = '/login'; }
+})();
+
+async function loadRepo() {
+  const repo = getRepo();
+  if (!repo) { window.location.href = '/dashboard/'; return; }
+  document.getElementById('repoName').textContent = repo;
+  document.title = 'Falsky — ' + repo;
+
+  try {
+    const res = await fetch(API + '/api/dashboard?repo_name=' + encodeURIComponent(repo));
+    const data = await res.json();
+    allTests = data.tests || [];
+
+    const total = allTests.length;
+    const stable = allTests.filter(t => t.trust_score >= 80).length;
+    const flaky = allTests.filter(t => t.trust_score < 50).length;
+    const failed = allTests.filter(t => t.pass_rate < 0.5).length;
+    const avgTrust = total > 0 ? Math.round(allTests.reduce((s,t) => s + t.trust_score, 0) / total) : 100;
+
+    document.getElementById('repoSub').textContent = `${total} tests · Trust: ${avgTrust}/100`;
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statStable').textContent = stable;
+    document.getElementById('statFlaky').textContent = flaky;
+    document.getElementById('statFailed').textContent = failed;
+
+    // Gauge
+    document.getElementById('gaugeScore').textContent = avgTrust;
+    const offset = 327 - (327 * avgTrust / 100);
+    document.getElementById('gaugeArc').style.strokeDashoffset = offset;
+    document.getElementById('gaugeArc').style.stroke = avgTrust >= 80 ? 'var(--green)' : avgTrust >= 50 ? 'var(--amber)' : 'var(--red)';
+
+    // Trust distribution
+    const buckets = [0,0,0,0,0,0,0,0,0,0]; // 0-10, 10-20, ..., 90-100
+    allTests.forEach(t => { buckets[Math.min(Math.floor(t.trust_score / 10), 9)]++; });
+    const maxB = Math.max(...buckets, 1);
+    const colors = ['#ef4444','#ef4444','#f97316','#f97316','#eab308','#eab308','#22c55e','#22c55e','#3DDC84','#3DDC84'];
+    let distHTML = '', labelHTML = '';
+    buckets.forEach((count, i) => {
+      const h = Math.max(4, (count / maxB) * 100);
+      distHTML += `<div style="flex:1;height:${h}px;background:${colors[i]};border-radius:2px 2px 0 0;opacity:${count > 0 ? 1 : 0.2};transition:height .3s"></div>`;
+      labelHTML += `<div style="flex:1;text-align:center;font-family:var(--mono);font-size:8px;color:var(--dim)">${i*10}</div>`;
+    });
+    document.getElementById('trustDist').innerHTML = distHTML;
+    document.getElementById('trustLabels').innerHTML = labelHTML;
+
+    renderFlaky();
+    renderAll();
+    renderIssues();
+  } catch(e) {
+    console.error('Repo load error:', e);
+  }
+}
+
+function renderFlaky() {
+  const search = document.getElementById('searchFlaky').value.toLowerCase();
+  const cat = document.getElementById('filterCat').value;
+  let filtered = allTests.filter(t => t.trust_score < 80);
+  if (search) filtered = filtered.filter(t => t.test_name.toLowerCase().includes(search));
+  if (cat) filtered = filtered.filter(t => t.flaky_category === cat);
+  filtered.sort((a,b) => a.trust_score - b.trust_score);
+
+  if (filtered.length === 0) {
+    document.getElementById('flakyTable').innerHTML = '<tr><td colspan="6"><div class="empty"><h3>No flaky tests found</h3><p>All tests look stable! 🎉</p></div></td></tr>';
+    return;
+  }
+  document.getElementById('flakyTable').innerHTML = filtered.map(t => {
+    const cat = t.flaky_category;
+    const catHtml = cat ? `<span class="cat-pill ${catClasses[cat] || ''}">${catNames[cat] || cat}</span>` : '—';
+    return `<tr>
+      <td><a href="/dashboard/test.html?repo=${encodeURIComponent(getRepo())}&test=${encodeURIComponent(t.test_name)}" style="color:var(--paper);text-decoration:none">${t.test_name}</a></td>
+      <td><span class="trust-badge ${trustClass(t.trust_score)}">${Math.round(t.trust_score)}</span></td>
+      <td>${catHtml}</td>
+      <td>${Math.round(t.pass_rate * 100)}%</td>
+      <td>${t.runs}</td>
+      <td><a href="/dashboard/test.html?repo=${encodeURIComponent(getRepo())}&test=${encodeURIComponent(t.test_name)}" class="btn btn-ghost btn-sm">→</a></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderAll() {
+  const sorted = [...allTests].sort((a,b) => a.trust_score - b.trust_score);
+  document.getElementById('allTable').innerHTML = sorted.map(t => {
+    const status = t.trust_score >= 80 ? '✅' : t.trust_score >= 50 ? '⚠️' : '🔴';
+    return `<tr>
+      <td><a href="/dashboard/test.html?repo=${encodeURIComponent(getRepo())}&test=${encodeURIComponent(t.test_name)}" style="color:var(--paper);text-decoration:none">${t.test_name}</a></td>
+      <td><span class="trust-badge ${trustClass(t.trust_score)}">${Math.round(t.trust_score)}</span></td>
+      <td>${status}</td>
+      <td>${Math.round(t.pass_rate * 100)}%</td>
+      <td>${t.avg_duration ? t.avg_duration.toFixed(2)+'s' : '—'}</td>
+      <td><a href="/dashboard/test.html?repo=${encodeURIComponent(getRepo())}&test=${encodeURIComponent(t.test_name)}" class="btn btn-ghost btn-sm">→</a></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderIssues() {
+  const unstable = [...allTests].sort((a,b) => a.trust_score - b.trust_score).slice(0,5);
+  document.getElementById('unstableList').innerHTML = unstable.map(t =>
+    `<li><span class="trust-badge ${trustClass(t.trust_score)}">${Math.round(t.trust_score)}</span> <a href="/dashboard/test.html?repo=${encodeURIComponent(getRepo())}&test=${encodeURIComponent(t.test_name)}" style="color:var(--text)">${t.test_name}</a></li>`
+  ).join('') || '<li style="color:var(--dim)">No issues</li>';
+
+  document.getElementById('degradedList').innerHTML = '<li style="color:var(--dim)">Connect more runs to see trends</li>';
+}
+
+function filterTests() { renderFlaky(); }
+function showTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase().includes(tab)));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tab));
+}
+
+async function doLogout() {
+  await fetch(API + '/api/auth/logout', {method: 'POST'});
+  window.location.href = '/';
+}
+</script>
+</body>
+</html>

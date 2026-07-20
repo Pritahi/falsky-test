@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Falsky — Settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<link rel="stylesheet" href="/dashboard/design-system.css">
+<style>
+.section{margin-bottom:32px}
+.section-title{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--amber);text-transform:uppercase;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line2)}
+.field-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}
+.field-row:last-child{border-bottom:none}
+.field-label{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.field-value{font-family:var(--mono);font-size:12px;color:var(--text)}
+.api-key-box{display:flex;align-items:center;gap:8px;background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;margin-top:8px}
+.api-key-box code{flex:1;font-family:var(--mono);font-size:11px;color:var(--green);word-break:break-all;user-select:all}
+.copy-btn{padding:4px 10px;font-family:var(--mono);font-size:10px;background:var(--ink4);border:1px solid var(--line2);color:var(--muted);cursor:pointer;border-radius:var(--radius);transition:all .15s}
+.copy-btn:hover{color:var(--amber);border-color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="app">
+
+<aside class="sidebar">
+  <a href="/dashboard/" class="logo">
+    <svg width="28" height="13" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
+    FALS<em>KY</em>
+  </a>
+  <nav>
+    <a href="/dashboard/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="/dashboard/repos.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      <span>Repositories</span>
+    </a>
+    <a href="/dashboard/settings.html" class="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span>Settings</span>
+    </a>
+  </nav>
+  <div class="user-section">
+    <div class="user-info" id="userInfo">
+      <img id="userAvatar" src="" alt="">
+      <div>
+        <div class="name" id="userName">Loading…</div>
+        <div class="email" id="userEmail"></div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Settings</h1>
+      <p class="page-sub">Manage your account and integrations</p>
+    </div>
+  </div>
+
+  <!-- Account -->
+  <div class="card section">
+    <div class="section-title">Account</div>
+    <div class="field-row">
+      <span class="field-label">Name</span>
+      <span class="field-value" id="setName">—</span>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Email</span>
+      <span class="field-value" id="setEmail">—</span>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Plan</span>
+      <span class="field-value" id="setPlan">Free</span>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Auth Provider</span>
+      <span class="field-value" id="setAuth">Google</span>
+    </div>
+  </div>
+
+  <!-- API Key -->
+  <div class="card section">
+    <div class="section-title">API Key</div>
+    <p style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6">Use this key in your GitHub Actions workflow to send test results to Falsky.</p>
+    <div class="api-key-box">
+      <code id="apiKey">Loading…</code>
+      <button class="copy-btn" onclick="copyKey()">Copy</button>
+    </div>
+    <p style="font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:8px">⚠️ Keep this secret. Do not commit it to your repository.</p>
+  </div>
+
+  <!-- Notifications -->
+  <div class="card section">
+    <div class="section-title">Notifications</div>
+    <p style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.6">Get alerts when flaky tests are detected or trust scores drop.</p>
+    <div class="field-row">
+      <span class="field-label">Discord Webhook</span>
+      <input class="input" style="max-width:300px" placeholder="https://discord.com/api/webhooks/…" id="discordWebhook">
+    </div>
+    <div class="field-row">
+      <span class="field-label">Slack Webhook</span>
+      <input class="input" style="max-width:300px" placeholder="https://hooks.slack.com/services/…" id="slackWebhook">
+    </div>
+    <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="saveNotifications()">Save Notifications</button>
+  </div>
+
+  <!-- Danger Zone -->
+  <div class="card section" style="border-color:rgba(255,75,46,.3)">
+    <div class="section-title" style="color:var(--red)">Danger Zone</div>
+    <div class="field-row">
+      <div>
+        <span class="field-label">Sign Out</span>
+        <p style="font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:2px">Disconnect your Google account</p>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:var(--red)" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+</main>
+
+</div>
+
+<script>
+const API = '';
+
+(async () => {
+  try {
+    const res = await fetch(API + '/api/auth/me');
+    if (!res.ok) { window.location.href = '/login'; return; }
+    const user = await res.json();
+    document.getElementById('userName').textContent = user.name || user.email;
+    document.getElementById('userEmail').textContent = user.email;
+    document.getElementById('userAvatar').src = user.avatar || '';
+    document.getElementById('setName').textContent = user.name || '—';
+    document.getElementById('setEmail').textContent = user.email;
+    document.getElementById('setPlan').textContent = user.plan || 'Free';
+    document.getElementById('apiKey').textContent = user.api_key || 'No API key — contact support';
+  } catch(e) { window.location.href = '/login'; }
+})();
+
+function copyKey() {
+  const key = document.getElementById('apiKey').textContent;
+  navigator.clipboard.writeText(key).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1500);
+  });
+}
+
+function saveNotifications() {
+  // TODO: save to backend
+  const btn = event.target;
+  btn.textContent = 'Saved!';
+  btn.style.background = 'var(--green)';
+  setTimeout(() => { btn.textContent = 'Save Notifications'; btn.style.background = ''; }, 1500);
+}
+
+async function doLogout() {
+  await fetch(API + '/api/auth/logout', {method: 'POST'});
+  window.location.href = '/';
+}
+</script>
+</body>
+</html>

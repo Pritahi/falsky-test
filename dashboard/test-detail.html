@@ -6,281 +6,268 @@
 <title>Falsky — Test Detail</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<link rel="stylesheet" href="/dashboard/design-system.css">
 <style>
-:root {
-  --bg:#09090b;--bg-card:#18181b;--bg-hover:#27272a;--bg-input:#27272a;
-  --border:#27272a;--border-subtle:#1e1e22;
-  --text:#fafafa;--text-secondary:#a1a1aa;--text-muted:#71717a;
-  --accent:#8b5cf6;--accent-hover:#7c3aed;--accent-soft:rgba(139,92,246,0.12);
-  --green:#22c55e;--green-soft:rgba(34,197,94,0.12);
-  --yellow:#eab308;--yellow-soft:rgba(234,179,8,0.12);
-  --orange:#f97316;--orange-soft:rgba(249,115,22,0.12);
-  --red:#ef4444;--red-soft:rgba(239,68,68,0.12);
-  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
-  --mono:'JetBrains Mono','Fira Code',monospace;
-  --radius:12px;--radius-sm:8px;--radius-xs:6px;
-  --sidebar-w:220px;--topbar-h:52px;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
-
-.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--bg);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100}
-.sidebar-header{display:flex;align-items:center;gap:10px;padding:14px 16px;height:var(--topbar-h);border-bottom:1px solid var(--border);flex-shrink:0}
-.sidebar-logo{font-size:18px;font-weight:700;color:var(--accent);letter-spacing:-0.02em}
-.sidebar-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-xs);color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:500;transition:all .15s}
-.nav-item:hover{background:var(--bg-hover);color:var(--text)}
-.nav-item.active{background:var(--accent-soft);color:var(--accent)}
-.nav-item svg{width:18px;height:18px;flex-shrink:0}
-
-.main{margin-left:var(--sidebar-w);min-height:100vh}
-
-.topbar{height:var(--topbar-h);background:rgba(9,9,11,0.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:50}
-
-.back-btn{display:flex;align-items:center;gap:6px;color:var(--text-muted);text-decoration:none;font-size:12px;font-weight:500;padding:4px 8px;border-radius:var(--radius-xs);transition:all .15s}
-.back-btn:hover{color:var(--text);background:var(--bg-hover)}
-.back-btn svg{width:14px;height:14px}
-
-.topbar-sep{width:1px;height:20px;background:var(--border)}
-.topbar-title{font-family:var(--mono);font-size:13px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-.trust-badge{display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:13px;font-weight:700;font-family:var(--mono);border:1px solid;border-radius:var(--radius-xs)}
-.trust-badge-circle{width:24px;height:24px;border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:700;font-family:var(--mono)}
-
-.content{padding:20px;max-width:960px}
-
-.loading-state{display:flex;align-items:center;justify-content:center;min-height:40vh;color:var(--text-muted);gap:10px;font-size:13px}
-.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.error-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
-.error-state h2{color:var(--red);margin-bottom:8px;font-size:18px}
-
-.section-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
-.section-title{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.section-title::before{content:'●';color:var(--accent);font-size:8px}
-
-.metrics-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
-.metric-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:all .15s}
-.metric-card:hover{border-color:var(--text-muted)}
-.metric-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.metric-label{font-size:12px;color:var(--text-secondary);font-weight:600}
-.metric-weight{font-size:10px;color:var(--text-muted);background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--mono)}
-.metric-value-row{display:flex;align-items:baseline;gap:6px;margin-bottom:6px}
-.metric-value{font-size:24px;font-weight:700;line-height:1.2}
-.metric-unit{font-size:12px;color:var(--text-muted)}
-.metric-bar-bg{height:4px;background:var(--bg);border-radius:2px;overflow:hidden;margin-top:6px}
-.metric-bar-fill{height:100%;border-radius:2px;transition:width .8s}
-.metric-contrib{font-size:11px;color:var(--text-muted);margin-top:4px;font-family:var(--mono)}
-.metric-contrib span{color:var(--accent);font-weight:600}
-.metric-arrow{font-size:14px;margin-left:4px}
-.metric-arrow.up{color:var(--green)}
-.metric-arrow.down{color:var(--red)}
-.metric-arrow.flat{color:var(--text-muted)}
-
-.flaky-card{border-left:3px solid var(--red);padding-left:16px}
-.flaky-card .flaky-cat-name{font-size:14px;font-weight:600;margin-bottom:4px;color:var(--red)}
-.flaky-card .flaky-desc{font-size:13px;color:var(--text-secondary);margin-bottom:10px;line-height:1.6}
-.flaky-card .flaky-rec{font-size:12px;color:var(--text-muted);padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-xs);font-family:var(--mono)}
-
-.chart-container{position:relative;width:100%;height:240px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-xs)}
-.chart-container canvas{width:100%!important;height:100%!important}
-
-.data-table{width:100%;border-collapse:collapse}
-.data-table thead th{color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}
-.data-table tbody td{padding:8px 12px;border-bottom:1px solid var(--border-subtle);font-size:12px;vertical-align:middle;font-family:var(--mono)}
-.data-table tbody tr:last-child td{border-bottom:none}
-.data-table tbody tr:hover td{background:var(--bg-hover)}
-
-.status-dot{display:inline-block;width:6px;height:6px;border-radius:2px;margin-right:4px;vertical-align:middle}
-.status-dot.passed{background:var(--green)}
-.status-dot.failed{background:var(--red)}
-.status-dot.skipped{background:var(--text-muted)}
-
-.stamp-badge{display:inline-block;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
-.stamp-badge.passed{background:var(--green-soft);color:var(--green)}
-.stamp-badge.failed{background:var(--red-soft);color:var(--red)}
-.stamp-badge.skipped{background:var(--bg);color:var(--text-muted)}
-
-.error-msg{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-muted);cursor:pointer;position:relative}
-.error-msg:hover{color:var(--text-secondary)}
-.error-tooltip{display:none;position:absolute;bottom:calc(100%+6px);left:0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:11px;color:var(--text-secondary);white-space:pre-wrap;word-break:break-all;z-index:20;max-height:160px;overflow-y:auto;min-width:200px}
-.error-msg:hover .error-tooltip{display:block}
-
-.error-patterns-grid{display:grid;gap:8px}
-.error-pattern-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-xs);padding:10px 12px;display:flex;align-items:flex-start;gap:10px}
-.error-pattern-text{flex:1;font-family:var(--mono);font-size:11px;color:var(--text-secondary);line-height:1.5;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.error-pattern-count{font-size:11px;font-weight:700;color:var(--red);background:var(--red-soft);padding:2px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0;font-family:var(--mono)}
-
-@media(max-width:900px){.metrics-grid{grid-template-columns:1fr}.content{padding:12px}}
+.score-big{text-align:center;padding:24px}
+.score-big .value{font-family:var(--disp);font-size:4rem;color:var(--paper)}
+.score-big .label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-top:4px}
+.breakdown{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.breakdown-item{background:var(--ink3);padding:12px;border:1px solid var(--line);border-radius:var(--radius)}
+.breakdown-item .bl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:4px}
+.breakdown-item .bv{font-family:var(--mono);font-size:14px;font-weight:600}
+.confidence-bar{height:6px;background:var(--line2);border-radius:3px;overflow:hidden;margin-top:8px}
+.confidence-fill{height:100%;border-radius:3px;transition:width .5s}
 </style>
 </head>
 <body>
+<div class="grain"></div>
+<div class="app">
 
+<!-- Sidebar -->
 <aside class="sidebar">
-  <div class="sidebar-header"><div class="sidebar-logo">Falsky</div></div>
-  <nav class="sidebar-nav">
-    <a href="/dashboard/" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Dashboard</a>
-    <a href="/dashboard/guide.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Guide</a>
-    <a href="/" class="nav-item" style="margin-top:auto;border-top:1px solid var(--border);padding-top:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Home</a>
+  <a href="/dashboard/" class="logo">
+    <svg width="28" height="13" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
+    FALS<em>KY</em>
+  </a>
+  <nav>
+    <a href="/dashboard/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="/dashboard/repos.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      <span>Repositories</span>
+    </a>
+    <a href="/dashboard/settings.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span>Settings</span>
+    </a>
   </nav>
-</aside>
-
-<div class="main">
-  <div class="topbar">
-    <a href="/dashboard/" class="back-btn" id="backBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Back</a>
-    <div class="topbar-sep"></div>
-    <div class="topbar-title" id="topbarTitle">Loading...</div>
-    <div class="trust-badge" id="trustBadge" style="display:none"><div class="trust-badge-circle" id="badgeCircle">—</div><span id="badgeValue">—</span></div>
-  </div>
-
-  <div class="content">
-    <div class="loading-state" id="loadingState"><div class="spinner"></div><span>Loading test data...</span></div>
-    <div class="error-state" id="errorState" style="display:none"><h2>Test Not Found</h2><p>Could not load data for this test.</p></div>
-    <div id="detailContent" style="display:none">
-
-      <div class="section-title" style="margin-bottom:12px">Score Breakdown</div>
-      <div class="metrics-grid" id="metricsGrid"></div>
-
-      <div class="section-card" id="flakyCard" style="display:none">
-        <div class="section-title">Flaky Classification</div>
-        <div class="flaky-card" id="flakyContent"></div>
+  <div class="user-section">
+    <div class="user-info" id="userInfo">
+      <img id="userAvatar" src="" alt="">
+      <div>
+        <div class="name" id="userName">Loading…</div>
+        <div class="email" id="userEmail"></div>
       </div>
-
-      <div class="section-card">
-        <div class="section-title">Trust Score History</div>
-        <div class="chart-container"><canvas id="historyChart"></canvas></div>
-      </div>
-
-      <div class="section-card">
-        <div class="section-title">Run History</div>
-        <table class="data-table">
-          <thead><tr><th>#</th><th>Verdict</th><th>Duration</th><th>Error</th><th>Trust</th><th>Date</th></tr></thead>
-          <tbody id="historyBody"></tbody>
-        </table>
-      </div>
-
-      <div class="section-card" id="errorPatternsSection" style="display:none">
-        <div class="section-title">Error Patterns</div>
-        <div class="error-patterns-grid" id="errorPatternsGrid"></div>
-      </div>
-
     </div>
   </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title" id="testName" style="font-size:1.2rem">Test</h1>
+      <p class="page-sub" id="testSub">Loading…</p>
+    </div>
+    <a id="backBtn" href="/dashboard/" class="btn btn-ghost btn-sm">← Back to Repo</a>
+  </div>
+
+  <!-- Score + Breakdown -->
+  <div class="chart-row">
+    <div class="card score-big">
+      <div class="value" id="trustScore">—</div>
+      <div class="label">Trust Score</div>
+      <div style="margin-top:12px">
+        <span class="trust-badge" id="trustBadge">—</span>
+      </div>
+      <div style="margin-top:16px">
+        <div class="label">Flaky Probability</div>
+        <div style="font-family:var(--mono);font-size:18px;font-weight:600;margin-top:4px" id="flakyProb">—</div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="label">Confidence</div>
+        <div class="confidence-bar"><div class="confidence-fill" id="confBar" style="width:0%"></div></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:4px" id="confVal">—</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-title">Score Breakdown</span>
+      <div class="breakdown">
+        <div class="breakdown-item">
+          <div class="bl">Bayesian Pass Rate</div>
+          <div class="bv" id="bdPass" style="color:var(--green)">—</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="bl">Recent Trend</div>
+          <div class="bv" id="bdTrend">—</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="bl">Duration Stability</div>
+          <div class="bv" id="bdDuration">—</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="bl">Error Consistency</div>
+          <div class="bv" id="bdError">—</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:12px;background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius)">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:4px">Flaky Category</div>
+        <div id="bdCategory" style="font-family:var(--mono);font-size:13px">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('history')">Run History</button>
+    <button class="tab-btn" onclick="showTab('errors')">Error Patterns</button>
+  </div>
+
+  <!-- Run History -->
+  <div class="tab-content active" id="tab-history">
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Status</th>
+              <th>Duration</th>
+              <th>Trust Score</th>
+              <th>Environment</th>
+            </tr>
+          </thead>
+          <tbody id="historyTable">
+            <tr><td colspan="5" style="text-align:center;color:var(--dim);padding:32px"><div class="spinner"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Patterns -->
+  <div class="tab-content" id="tab-errors">
+    <div class="card">
+      <span class="card-title">Unique Error Patterns</span>
+      <div id="errorPatterns" style="margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--muted)">Loading…</div>
+    </div>
+  </div>
+</main>
+
 </div>
 
 <script>
-const API = window.location.origin;
-const params = new URLSearchParams(window.location.search);
-const repoName = params.get('repo_name')||'';
-const testName = params.get('test_name')||'';
-const $ = id => document.getElementById(id);
+const API = '';
+const catNames = {timing:'⏱️ Timing Flakiness',order_dependency:'🔗 Order Dependency',shared_state:'🤝 Shared State Contamination',non_deterministic_data:'🎲 Non-Deterministic Data',environment_specific:'🌐 Environment Specific'};
+const catClasses = {timing:'timing',order_dependency:'order',shared_state:'shared',non_deterministic_data:'random',environment_specific:'env'};
 
-$('backBtn').href = '/dashboard/' + (repoName ? '?repo='+encodeURIComponent(repoName) : '');
+function getParam(k) { return new URLSearchParams(window.location.search).get(k) || ''; }
+function trustClass(s) { return s >= 80 ? 'high' : s >= 50 ? 'mid' : 'low'; }
 
-function trustColor(s){if(s>=90)return'var(--green)';if(s>=70)return'var(--yellow)';if(s>=50)return'var(--orange)';return'var(--red)';}
-function trustHex(s){if(s>=90)return'#22c55e';if(s>=70)return'#eab308';if(s>=50)return'#f97316';return'#ef4444';}
+(async () => {
+  try {
+    const res = await fetch(API + '/api/auth/me');
+    if (!res.ok) { window.location.href = '/login'; return; }
+    const user = await res.json();
+    document.getElementById('userName').textContent = user.name || user.email;
+    document.getElementById('userEmail').textContent = user.email;
+    if (user.avatar) document.getElementById('userAvatar').src = user.avatar;
+    loadTest();
+  } catch(e) { window.location.href = '/login'; }
+})();
 
-const catInfo={timing:{desc:'Inconsistent execution times — possible timeout or race condition issues.',rec:'Add explicit waits or mock time-dependent components.'},order_dependency:{desc:'Outcome changes based on execution order — shared state or isolation issues.',rec:'Ensure each test cleans up after itself. Use setup/teardown fixtures.'},shared_state:{desc:'Shares mutable state with other tests — intermittent failures.',rec:'Isolate test state. Use unique identifiers for test data.'},non_deterministic_data:{desc:'Fails due to unpredictable external data or random values.',rec:'Seed random generators. Mock external APIs.'}};
+async function loadTest() {
+  const repo = getParam('repo');
+  const test = getParam('test');
+  if (!repo || !test) { window.location.href = '/dashboard/'; return; }
 
-async function loadTestDetail(){
-  if(!repoName||!testName){$('loadingState').style.display='none';$('errorState').style.display='block';return;}
-  try{
-    const res=await fetch(`${API}/api/tests/${encodeURIComponent(testName)}?repo_name=${encodeURIComponent(repoName)}`);
-    if(!res.ok)throw new Error('Not found');
-    const data=await res.json();
-    $('loadingState').style.display='none';$('detailContent').style.display='block';
-    renderHeader(data);renderMetrics(data);renderFlaky(data);renderChart(data.history||[]);renderHistory(data.history||[]);renderErrors(data.history||[]);
-  }catch(e){$('loadingState').style.display='none';$('errorState').style.display='block';}
+  document.getElementById('testName').textContent = test;
+  document.getElementById('testSub').textContent = repo;
+  document.getElementById('backBtn').href = '/dashboard/repo.html?repo=' + encodeURIComponent(repo);
+  document.title = 'Falsky — ' + test;
+
+  try {
+    const res = await fetch(API + '/api/tests/' + encodeURIComponent(test) + '?repo_name=' + encodeURIComponent(repo));
+    const data = await res.json();
+
+    // Score
+    const score = Math.round(data.trust_score || 0);
+    document.getElementById('trustScore').textContent = score;
+    const badge = document.getElementById('trustBadge');
+    badge.textContent = score >= 80 ? '✅ Stable' : score >= 50 ? '⚠️ Flaky' : '🔴 Unstable';
+    badge.className = 'trust-badge ' + trustClass(score);
+
+    // Flaky probability
+    const prob = data.flaky_probability || 0;
+    document.getElementById('flakyProb').textContent = Math.round(prob * 100) + '%';
+    document.getElementById('flakyProb').style.color = prob > 0.7 ? 'var(--red)' : prob > 0.3 ? 'var(--amber)' : 'var(--green)';
+
+    // Confidence
+    const conf = data.breakdown?.confidence || 0;
+    document.getElementById('confBar').style.width = (conf * 100) + '%';
+    document.getElementById('confBar').style.background = conf > 0.7 ? 'var(--green)' : conf > 0.4 ? 'var(--amber)' : 'var(--red)';
+    document.getElementById('confVal').textContent = Math.round(conf * 100) + '% confident';
+
+    // Breakdown
+    const bd = data.breakdown || {};
+    const passRate = bd.pass_rate?.value || 0;
+    document.getElementById('bdPass').textContent = Math.round(passRate * 100) + '%';
+    document.getElementById('bdPass').style.color = passRate >= 0.8 ? 'var(--green)' : passRate >= 0.5 ? 'var(--amber)' : 'var(--red)';
+
+    const trend = bd.recent_trend?.value || 0;
+    document.getElementById('bdTrend').textContent = (trend >= 0 ? '+' : '') + Math.round(trend);
+    document.getElementById('bdTrend').style.color = trend >= 0 ? 'var(--green)' : 'var(--red)';
+
+    const dur = bd.duration_stability?.value || 100;
+    document.getElementById('bdDuration').textContent = Math.round(dur) + '%';
+
+    const err = bd.error_consistency?.value || 0;
+    document.getElementById('bdError').textContent = Math.round(err) + '%';
+
+    // Category
+    const cat = data.flaky_category;
+    const catEl = document.getElementById('bdCategory');
+    if (cat) {
+      catEl.innerHTML = `<span class="cat-pill ${catClasses[cat] || ''}">${catNames[cat] || cat}</span>`;
+    } else {
+      catEl.textContent = 'None detected';
+      catEl.style.color = 'var(--green)';
+    }
+
+    // History
+    const history = data.history || [];
+    if (history.length === 0) {
+      document.getElementById('historyTable').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--dim);padding:24px">No history yet</td></tr>';
+    } else {
+      document.getElementById('historyTable').innerHTML = history.map(h => {
+        const status = h.status === 'passed' ? '✅' : h.status === 'failed' ? '❌' : '⏭️';
+        const time = h.run_timestamp ? new Date(h.run_timestamp).toLocaleString() : '—';
+        return `<tr>
+          <td style="color:var(--dim)">${time}</td>
+          <td>${status} ${h.status}</td>
+          <td>${h.duration ? h.duration.toFixed(3)+'s' : '—'}</td>
+          <td>${h.trust_score !== undefined ? Math.round(h.trust_score) : '—'}</td>
+          <td style="color:var(--dim)">${h.environment || '—'}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // Error patterns
+    const patterns = bd.error_patterns || [];
+    if (patterns.length === 0) {
+      document.getElementById('errorPatterns').innerHTML = '<div style="color:var(--dim)">No error patterns detected</div>';
+    } else {
+      document.getElementById('errorPatterns').innerHTML = patterns.map(p =>
+        `<div style="padding:10px;background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:8px">
+          <div style="color:var(--red);font-size:11px;margin-bottom:4px">${p.count}x (${p.percentage}%)</div>
+          <div style="color:var(--text);font-size:11px;word-break:break-all">${p.pattern}</div>
+        </div>`
+      ).join('');
+    }
+  } catch(e) {
+    console.error('Test load error:', e);
+  }
 }
 
-function renderHeader(data){
-  const score=Math.round(data.trust_score||0);const color=trustHex(score);
-  $('topbarTitle').textContent=data.test_name||testName;
-  document.title=`Falsky — ${data.test_name||testName}`;
-  $('trustBadge').style.display='flex';$('trustBadge').style.borderColor=color;
-  $('badgeCircle').textContent=score;$('badgeCircle').style.background=color;
-  $('badgeValue').textContent=score+'/100';$('badgeValue').style.color=color;
+function showTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase().includes(tab)));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + tab));
 }
-
-function renderMetrics(data){
-  const pr=data.pass_rate||0,trend=data.recent_trend||0,dv=data.duration_variance||0,ec=data.error_consistency||0;
-  const pp=(pr*60).toFixed(1),tp=(Math.max(0,(50+trend))/100*20).toFixed(1),dp=((100-dv)/100*10).toFixed(1),ep=(ec/100*10).toFixed(1);
-  const ta=trend>0?'up':trend<0?'down':'flat';
-  const tac=ta==='up'?'↑':ta==='down'?'↓':'→';
-  const stab=dv<15?'Stable':dv<40?'Moderate':'Unstable';
-  $('metricsGrid').innerHTML=`
-    <div class="metric-card"><div class="metric-header"><span class="metric-label">Pass Rate</span><span class="metric-weight">60%</span></div><div class="metric-value-row"><span class="metric-value" style="color:${trustColor(pr*100)}">${Math.round(pr*100)}%</span><span class="metric-unit">of runs pass</span></div><div class="metric-bar-bg"><div class="metric-bar-fill" style="width:${pr*100}%;background:${trustColor(pr*100)}"></div></div><div class="metric-contrib">Contributes <span>${pp}</span> pts</div></div>
-    <div class="metric-card"><div class="metric-header"><span class="metric-label">Recent Trend</span><span class="metric-weight">20%</span></div><div class="metric-value-row"><span class="metric-value" style="color:${trend>=0?'var(--green)':'var(--red)'}">${trend>=0?'+':''}${trend.toFixed(1)}%</span><span class="metric-arrow ${ta}">${tac}</span></div><div class="metric-bar-bg"><div class="metric-bar-fill" style="width:${Math.max(0,Math.min(100,(50+trend)))}%;background:${trend>=0?'var(--green)':'var(--red)'}"></div></div><div class="metric-contrib">Contributes <span>${tp}</span> pts</div></div>
-    <div class="metric-card"><div class="metric-header"><span class="metric-label">Duration Stability</span><span class="metric-weight">10%</span></div><div class="metric-value-row"><span class="metric-value" style="color:${dv<30?'var(--green)':dv<60?'var(--yellow)':'var(--red)'}">${dv.toFixed(1)}%</span><span class="metric-unit">variance (${stab})</span></div><div class="metric-bar-bg"><div class="metric-bar-fill" style="width:${100-dv}%;background:${dv<30?'var(--green)':dv<60?'var(--yellow)':'var(--red)'}"></div></div><div class="metric-contrib">Contributes <span>${dp}</span> pts</div></div>
-    <div class="metric-card"><div class="metric-header"><span class="metric-label">Error Consistency</span><span class="metric-weight">10%</span></div><div class="metric-value-row"><span class="metric-value" style="color:${ec>60?'var(--green)':ec>30?'var(--yellow)':'var(--red)'}">${ec.toFixed(1)}%</span><span class="metric-unit">pattern consistency</span></div><div class="metric-bar-bg"><div class="metric-bar-fill" style="width:${ec}%;background:${ec>60?'var(--green)':ec>30?'var(--yellow)':'var(--red)'}"></div></div><div class="metric-contrib">Contributes <span>${ep}</span> pts</div></div>`;
-}
-
-function renderFlaky(data){
-  const cat=data.flaky_category;if(!cat||!catInfo[cat])return;
-  $('flakyCard').style.display='block';
-  $('flakyContent').innerHTML=`<div class="flaky-cat-name">${cat.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}</div><div class="flaky-desc">${catInfo[cat].desc}</div><div class="flaky-rec"><strong>Fix:</strong> ${catInfo[cat].rec}</div>`;
-}
-
-function renderChart(history){
-  const canvas=$('historyChart');const c=canvas.parentElement;const dpr=window.devicePixelRatio||1;
-  canvas.width=c.clientWidth*dpr;canvas.height=c.clientHeight*dpr;
-  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
-  const W=c.clientWidth,H=c.clientHeight,pad={top:16,right:16,bottom:32,left:40},pW=W-pad.left-pad.right,pH=H-pad.top-pad.bottom;
-  ctx.clearRect(0,0,W,H);
-
-  // Grid
-  ctx.strokeStyle='rgba(39,39,42,0.8)';ctx.lineWidth=1;
-  for(let v=0;v<=100;v+=20){const y=pad.top+pH-(v/100)*pH;ctx.beginPath();ctx.setLineDash([4,4]);ctx.moveTo(pad.left,y);ctx.lineTo(W-pad.right,y);ctx.stroke();ctx.setLineDash([]);}
-
-  ctx.fillStyle='#52525b';ctx.font='10px JetBrains Mono, monospace';ctx.textAlign='right';ctx.textBaseline='middle';
-  for(let v=0;v<=100;v+=20){const y=pad.top+pH-(v/100)*pH;ctx.fillText(v,pad.left-6,y);}
-
-  if(!history.length){ctx.fillStyle='#52525b';ctx.textAlign='center';ctx.font='12px JetBrains Mono, monospace';ctx.fillText('No history',W/2,H/2);return;}
-
-  const pts=history.slice(-20);const n=pts.length;const xStep=n>1?pW/(n-1):0;
-  ctx.fillStyle='#52525b';ctx.textAlign='center';ctx.textBaseline='top';ctx.font='9px JetBrains Mono, monospace';
-  pts.forEach((p,i)=>{const x=n>1?pad.left+i*xStep:pad.left+pW/2;if(n<=10||i%2===0||i===n-1)ctx.fillText(i+1,x,H-pad.bottom+8);});
-
-  const coords=pts.map((p,i)=>{const x=n>1?pad.left+i*xStep:pad.left+pW/2;const s=Math.max(0,Math.min(100,p.trust_score||0));const y=pad.top+pH-(s/100)*pH;return{x,y,s};});
-
-  // Area
-  if(coords.length>1){ctx.beginPath();ctx.moveTo(coords[0].x,pad.top+pH);coords.forEach(c=>ctx.lineTo(c.x,c.y));ctx.lineTo(coords[coords.length-1].x,pad.top+pH);ctx.closePath();const g=ctx.createLinearGradient(0,pad.top,0,pad.top+pH);g.addColorStop(0,'rgba(139,92,246,0.15)');g.addColorStop(1,'rgba(139,92,246,0)');ctx.fillStyle=g;ctx.fill();}
-
-  // Line
-  ctx.beginPath();ctx.strokeStyle='#8b5cf6';ctx.lineWidth=2;ctx.lineJoin='round';ctx.lineCap='round';
-  coords.forEach((c,i)=>{if(i===0)ctx.moveTo(c.x,c.y);else ctx.lineTo(c.x,c.y);});ctx.stroke();
-
-  // Dots
-  coords.forEach(c=>{ctx.beginPath();ctx.arc(c.x,c.y,3,0,Math.PI*2);ctx.fillStyle=trustHex(c.s);ctx.fill();ctx.strokeStyle='var(--bg-card)';ctx.lineWidth=2;ctx.stroke();});
-}
-
-window.addEventListener('resize',()=>{if(window._chartHistory)renderChart(window._chartHistory);});
-
-function renderHistory(history){
-  window._chartHistory=history;const rev=[...history].reverse();
-  $('historyBody').innerHTML=rev.map((h,i)=>{
-    const num=rev.length-i;const status=h.status||'unknown';
-    const dur=h.duration!=null?(h.duration<1?(h.duration*1000).toFixed(0)+'ms':h.duration.toFixed(2)+'s'):'—';
-    const error=h.error_message||'';const score=Math.round(h.trust_score||0);
-    const time=h.run_timestamp?new Date(h.run_timestamp).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
-    return `<tr><td style="color:var(--text-muted)">#${num}</td><td><span class="stamp-badge ${status}">${status}</span></td><td>${dur}</td><td class="error-msg">${error?escHtml(error):'<span style="color:var(--text-muted)">—</span>'}${error?`<div class="error-tooltip">${escHtml(error)}</div>`:''}</td><td style="color:${trustColor(score)};font-weight:600">${score}</td><td style="color:var(--text-muted);white-space:nowrap">${time}</td></tr>`;
-  }).join('');
-}
-
-function renderErrors(history){
-  const errors=history.filter(h=>h.status==='failed'&&h.error_message).map(h=>h.error_message);
-  if(errors.length<2)return;
-  const counts={};errors.forEach(e=>{const k=e.trim().slice(0,100);counts[k]=(counts[k]||0)+1;});
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,3);
-  if(!sorted.length)return;
-  $('errorPatternsSection').style.display='block';
-  $('errorPatternsGrid').innerHTML=sorted.map(([msg,cnt])=>`<div class="error-pattern-card"><div class="error-pattern-text">${escHtml(msg)}</div><div class="error-pattern-count">&times;${cnt}</div></div>`).join('');
-}
-
-function escHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-
-loadTestDetail();
 </script>
 </body>
 </html>

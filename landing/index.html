@@ -3,658 +3,204 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Falsky — Flaky Test Seismology</title>
-<meta name="description" content="Falsky instruments every test run, records every tremor, and triangulates the epicenter of flaky tests before they shake production.">
+<title>Falsky — AI Flaky Test Detector</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
 <style>
-:root{
-  --ink:#0C1517;--ink2:#0F1B1E;--ink3:#0A1315;
-  --line:#1E3237;--line2:#2C464B;
-  --paper:#F2E8D5;--paper2:#E7DABF;
-  --red:#FF4B2E;--amber:#FFB020;--green:#3DDC84;
-  --text:#D7E4E2;--muted:#8AA0A2;--dim:#5E767A;
-  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--disp:'Anton',sans-serif;
-}
+:root{--ink:#0C1517;--ink2:#0F1B1E;--ink3:#0A1315;--line:#1E3237;--line2:#2C464B;--paper:#F2E8D5;--red:#FF4B2E;--amber:#FFB020;--green:#3DDC84;--text:#D7E4E2;--muted:#8AA0A2;--dim:#5E767A;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--disp:'Anton',sans-serif}
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
 ::selection{background:var(--amber);color:#171310}
-body{
-  font-family:var(--sans);color:var(--text);background-color:var(--ink);
-  background-image:
-    radial-gradient(1100px 560px at 85% -8%, rgba(61,220,132,.06), transparent 60%),
-    radial-gradient(900px 520px at -8% 32%, rgba(255,75,46,.05), transparent 55%),
-    linear-gradient(rgba(120,160,165,.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(120,160,165,.05) 1px, transparent 1px);
-  background-size:auto,auto,46px 46px,46px 46px;
-  background-attachment:fixed;overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.6;
-}
-.grain{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
-  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2"/></filter><rect width="140" height="140" filter="url(%23n)"/></svg>');}
-.container{max-width:1180px;margin:0 auto;padding:0 24px}
-a{color:inherit;text-decoration:none}
+body{font-family:var(--sans);color:var(--text);background:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--amber);text-decoration:none}
 
-/* progress */
-#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:99;
-  background:repeating-linear-gradient(-45deg,var(--amber) 0 10px,#171310 10px 20px)}
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;background:rgba(12,21,23,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav .logo{display:flex;align-items:center;gap:8px;font-family:var(--disp);font-size:1.3rem;letter-spacing:.08em;color:var(--paper)}
+.nav .logo em{font-style:normal;color:var(--red)}
+.nav .links{display:flex;gap:24px}
+.nav .links a{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.nav .links a:hover{color:var(--paper)}
+.nav .cta{padding:8px 16px;background:var(--amber);color:#171310;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;border-radius:2px;display:inline-flex;align-items:center;gap:6px}
+.nav .cta:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--red)}
 
-/* header */
-header{position:sticky;top:0;z-index:80;background:rgba(12,21,23,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.hbar{display:flex;align-items:center;gap:32px;height:62px}
-.logo{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-size:1.25rem;letter-spacing:.08em;color:var(--paper)}
-.logo em{font-style:normal;color:var(--red)}
-nav{display:flex;gap:26px;margin-left:auto}
-nav a{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--muted);position:relative;padding:4px 0;transition:color .3s}
-nav a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--amber);transform:scaleX(0);transform-origin:left;transition:transform .3s}
-nav a:hover{color:var(--paper)} nav a:hover::after{transform:scaleX(1)}
-.nav-cta{padding:8px 18px;background:var(--red);color:#fff;border-radius:4px;font-weight:600;font-size:12px;letter-spacing:.08em;transition:all .2s}
-.nav-cta:hover{background:#e63e24;transform:translateY(-1px)}
-.nav-cta::after{display:none}
-.status{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.1em}
-.led{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite}
-.led.red{background:var(--red);box-shadow:0 0 8px var(--red)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+/* Hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;position:relative}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(255,75,46,.06) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-family:var(--disp);font-size:clamp(2.5rem,6vw,4.5rem);letter-spacing:.04em;color:var(--paper);text-transform:uppercase;line-height:1.1;margin-bottom:16px}
+.hero h1 span{color:var(--red)}
+.hero p{font-family:var(--mono);font-size:14px;letter-spacing:.06em;color:var(--muted);max-width:520px;line-height:1.7;margin-bottom:32px}
+.hero .actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.hero .btn{padding:14px 28px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;transition:all .15s;border-radius:2px;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.hero .btn-primary{background:var(--amber);color:#171310;box-shadow:4px 4px 0 var(--red)}
+.hero .btn-primary:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--red)}
+.hero .btn-ghost{background:none;color:var(--muted);border:1px solid var(--line2)}
+.hero .btn-ghost:hover{color:var(--text);border-color:var(--muted)}
 
-/* hero */
-.hero{position:relative;padding:92px 0 76px}
-.contours{position:absolute;right:-180px;top:-120px;width:760px;height:760px;opacity:.15;pointer-events:none;animation:spin 140s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;position:relative;z-index:2}
-.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.24em;color:var(--amber);display:flex;align-items:center;gap:10px;margin-bottom:26px}
-.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);animation:pulse 1.4s infinite}
-h1{font-family:var(--disp);font-weight:400;font-size:clamp(3.2rem,7.4vw,6.4rem);line-height:.94;letter-spacing:.01em;color:var(--paper);text-transform:uppercase}
-h1 .red{color:var(--red);position:relative;display:inline-block;cursor:default}
-h1 .red svg{position:absolute;left:0;bottom:-12px;width:100%;height:12px}
-h1 .red:hover{animation:shake .4s steps(2) infinite}
-@keyframes shake{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(-2px,1px) rotate(-.6deg)}75%{transform:translate(2px,-1px) rotate(.6deg)}}
-.hero-sub{margin:30px 0 34px;max-width:52ch;color:#A9BDBB;font-size:1.06rem;line-height:1.75}
-.hero-sub b{color:var(--paper);font-weight:600}
-.cta-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
-.btn{font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:15px 24px;border:2px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:10px;transition:all .18s}
-.btn-primary{background:var(--amber);color:#171310;box-shadow:5px 5px 0 var(--red)}
-.btn-primary:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--red)}
-.btn-primary:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--red)}
-.btn-ghost{background:transparent;color:var(--text);border-color:var(--line2)}
-.btn-ghost:hover{border-color:var(--green);color:var(--green);transform:translate(-2px,-2px);box-shadow:5px 5px 0 rgba(61,220,132,.2)}
-.runner-chips{margin-top:30px;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;color:var(--dim)}
-.runner-chips b{color:var(--muted);font-weight:500}
+/* Seismo animation */
+.seismo{margin:40px 0;opacity:.5;width:100%;max-width:600px}
+.seismo svg{width:100%;height:50px}
 
-/* panel */
-.panel{position:relative;background:var(--ink2);border:1px solid var(--line2);border-radius:4px;box-shadow:10px 10px 0 rgba(0,0,0,.5), inset 0 0 0 1px rgba(61,220,132,.05)}
-.screw{position:absolute;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#4A6266,#141F22);box-shadow:inset 0 0 2px #000}
-.screw.tl{top:8px;left:8px}.screw.tr{top:8px;right:8px}.screw.bl{bottom:8px;left:8px}.screw.br{bottom:8px;right:8px}
-.panel-tag{position:absolute;top:-13px;right:22px;background:var(--red);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.2em;padding:5px 10px;transform:rotate(-2.5deg);box-shadow:3px 3px 0 rgba(0,0,0,.4)}
-.panel-head{display:flex;align-items:center;gap:10px;padding:16px 22px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:#9FB6B3}
-.panel-head .spacer{margin-left:auto;color:var(--dim);letter-spacing:.1em}
-#seismo{display:block;width:100%;height:220px;background:var(--ink3)}
-.readouts{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}
-.ro{padding:16px 22px;border-left:1px solid var(--line)}
-.ro:first-child{border-left:none}
-.ro small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--dim);margin-bottom:6px}
-.ro b{font-family:var(--disp);font-weight:400;font-size:1.55rem;color:var(--paper);letter-spacing:.03em}
-#mag{color:var(--amber);transition:color .2s}
-#mag.flash{color:var(--red);text-shadow:0 0 14px rgba(255,75,46,.7)}
-.evlog{border-top:1px solid var(--line);padding:14px 22px 18px;min-height:158px;font-family:var(--mono);font-size:11px}
-.ev{display:grid;grid-template-columns:64px 1fr 62px;gap:12px;padding:5px 0;color:var(--muted);align-items:baseline}
-.ev .n{color:#BFD2CF;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ev .m{font-weight:600}
-.ev .note{grid-column:2/4;color:var(--dim);font-size:10px;margin-top:-2px}
-.ev.new{animation:evflash 1.4s ease-out}
-@keyframes evflash{0%{background:rgba(255,176,32,.16)}100%{background:transparent}}
-.m-lo{color:var(--green)} .m-md{color:var(--amber)} .m-hi{color:var(--red)}
+/* Features */
+.features{padding:80px 40px;max-width:1000px;margin:0 auto}
+.features h2{font-family:var(--disp);font-size:1.6rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase;text-align:center;margin-bottom:48px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.feature{background:var(--ink2);border:1px solid var(--line2);padding:24px;border-radius:2px}
+.feature .icon{font-size:24px;margin-bottom:12px}
+.feature h3{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--paper);text-transform:uppercase;margin-bottom:8px}
+.feature p{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7}
 
-/* tape marquee */
-.tape-wrap{overflow:hidden;transform:rotate(-1.1deg);margin:26px -30px 0}
-.tape{background:var(--paper);color:#3A3125;position:relative;padding:13px 0;box-shadow:0 8px 24px rgba(0,0,0,.35)}
-.tape::before,.tape::after{content:"";position:absolute;left:0;right:0;height:6px;background-image:radial-gradient(circle,var(--ink) 1.5px,transparent 1.6px);background-size:13px 6px;background-position:center}
-.tape::before{top:2px}.tape::after{bottom:2px}
-.tape-track{display:flex;width:max-content;animation:slide 30s linear infinite;font-family:var(--mono);font-size:12.5px;letter-spacing:.04em}
-.tape:hover .tape-track{animation-play-state:paused}
-.tape-track span{padding:0 20px;white-space:nowrap}
-.ok{color:#177A4C;font-weight:600}.fl{color:#C23A22;font-weight:600}.rt{color:#B07A12;font-weight:600}
-@keyframes slide{to{transform:translateX(-50%)}}
+/* How it works */
+.how{padding:80px 40px;max-width:800px;margin:0 auto}
+.how h2{font-family:var(--disp);font-size:1.6rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase;text-align:center;margin-bottom:48px}
+.steps{display:flex;flex-direction:column;gap:24px}
+.step{display:flex;gap:16px;align-items:flex-start}
+.step .num{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--ink2);border:1px solid var(--amber);color:var(--amber);font-family:var(--mono);font-size:13px;font-weight:600;flex-shrink:0;border-radius:2px}
+.step .text h4{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--paper);text-transform:uppercase;margin-bottom:4px}
+.step .text p{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.6}
 
-/* sections */
-.sec{padding:100px 0}
-.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:14px}
-.sec-head h2{font-family:var(--disp);font-weight:400;font-size:clamp(2.1rem,4.6vw,3.4rem);line-height:1;letter-spacing:.015em;color:var(--paper);text-transform:uppercase}
-.sec-head h2 i{font-style:normal;color:var(--red)}
-.sec-num{font-family:var(--disp);font-size:clamp(3rem,6vw,4.6rem);line-height:1;color:transparent;-webkit-text-stroke:1px var(--line2);user-select:none}
-.sec-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.26em;color:var(--amber);margin-bottom:16px;display:block}
-.sec-lede{color:var(--muted);max-width:60ch;line-height:1.7;margin-bottom:10px}
+/* CTA */
+.cta-section{padding:80px 40px;text-align:center}
+.cta-section h2{font-family:var(--disp);font-size:1.6rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase;margin-bottom:16px}
+.cta-section p{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:24px}
 
-/* steps */
-.steps{margin-top:52px}
-.step{display:grid;grid-template-columns:110px 1fr;gap:30px;padding:36px 8px;border-top:1px dashed var(--line2);transition:transform .3s}
-.step:last-child{border-bottom:1px dashed var(--line2)}
-.step-num{font-family:var(--disp);font-size:3.2rem;line-height:1;color:transparent;-webkit-text-stroke:1.5px var(--amber);transition:color .3s}
-.step:hover .step-num{color:var(--amber)}
-.step:hover{transform:translateX(8px)}
-.step h3{font-family:var(--disp);font-weight:400;font-size:1.55rem;letter-spacing:.03em;color:var(--paper);text-transform:uppercase;margin-bottom:12px}
-.step p{color:var(--muted);line-height:1.75;max-width:64ch}
-.step code{font-family:var(--mono);font-size:12px;color:var(--green);background:rgba(61,220,132,.07);border:1px solid rgba(61,220,132,.25);padding:3px 9px;display:inline-block;margin-top:14px}
+/* Footer */
+.footer{padding:32px 40px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em}
+.footer a{color:var(--muted)}
 
-/* richter scale */
-.scale{margin-top:48px;border-bottom:1px solid var(--line)}
-.scale-row{display:grid;grid-template-columns:72px 1.05fr 1.55fr 150px;gap:22px;align-items:center;padding:19px 16px;border-top:1px solid var(--line);border-left:2px solid transparent;border-right:2px solid transparent;transition:all .22s}
-.scale-row:hover{background:var(--ink2);border-left-color:var(--amber);transform:translateX(5px)}
-.rn{font-family:var(--disp);font-size:1.9rem;color:#557276;transition:color .2s}
-.scale-row:hover .rn{color:var(--amber)}
-.scale-row .nm{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.08em;color:var(--paper)}
-.scale-row .rg{font-family:var(--mono);font-size:10.5px;color:var(--amber);letter-spacing:.1em;margin-top:4px}
-.sd{font-size:13.5px;color:var(--muted);line-height:1.55}
-.sb{height:8px;background:#132226;position:relative;overflow:hidden}
-.sb i{position:absolute;inset:0;right:auto;width:var(--w);background:var(--c)}
-.scale-row.hit{background:#1C1410;border:2px solid var(--red);box-shadow:7px 7px 0 rgba(255,75,46,.16)}
-.scale-row.hit .rn{color:var(--red)}
-
-/* verdict */
-.verdict{margin-top:30px;border:2px solid var(--line2);background:var(--ink2);padding:22px 26px 22px 40px;font-family:var(--mono);font-size:13px;line-height:1.7;color:var(--muted);position:relative;transition:all .3s}
-.verdict::before{content:"";position:absolute;left:0;top:0;bottom:0;width:14px;background:repeating-linear-gradient(-45deg,var(--amber) 0 9px,#171310 9px 18px)}
-.verdict.alert{border-color:var(--red);color:var(--text)}
-.verdict b{color:var(--amber);letter-spacing:.14em}
-.verdict.alert b{color:var(--red)}
-.sim-row{margin-top:34px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.sim-note{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.12em}
-
-/* sensors */
-.sensors{margin-top:48px;border-bottom:1px solid var(--line)}
-.sensor{display:grid;grid-template-columns:74px 1fr auto 40px;gap:24px;align-items:start;padding:28px 12px;border-top:1px solid var(--line);transition:all .25s}
-.sensor:hover{background:linear-gradient(90deg,var(--ink2),transparent)}
-.sensor .idx{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--amber);padding-top:3px;transition:color .2s}
-.sensor:hover .idx{color:var(--red)}
-.sensor h3{font-size:1.02rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--paper);margin-bottom:8px}
-.sensor p{font-size:13.5px;color:var(--muted);line-height:1.65;max-width:62ch}
-.tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;padding-top:3px}
-.tag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted);border:1px solid var(--line2);padding:4px 10px;transition:all .2s}
-.sensor:hover .tag{border-color:var(--green);color:var(--green)}
-.sensor .arr{font-family:var(--mono);color:var(--dim);padding-top:2px;transition:all .25s}
-.sensor:hover .arr{transform:translateX(7px);color:var(--red)}
-
-/* integrations marquee */
-.chips-wrap{overflow:hidden;margin-top:46px;border-block:1px solid var(--line);padding:18px 0}
-.chips-track{display:flex;gap:14px;width:max-content;animation:slide 34s linear infinite reverse}
-.chips-wrap:hover .chips-track{animation-play-state:paused}
-.chip{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:#B9CCC9;border:1px solid var(--line2);padding:9px 18px;display:flex;align-items:center;gap:9px;white-space:nowrap;transition:all .2s}
-.chip i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
-.chip:hover{border-color:var(--green);color:var(--paper)}
-
-/* stats */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line2);background:var(--ink2);box-shadow:10px 10px 0 rgba(0,0,0,.4)}
-.stat{padding:36px 30px;border-left:1px solid var(--line);transition:background .25s;position:relative}
-.stat:first-child{border-left:none}
-.stat:hover{background:#122024}
-.stat small{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--dim);display:block;margin-bottom:14px}
-.stat b{font-family:var(--disp);font-weight:400;font-size:clamp(2.2rem,3.8vw,3.2rem);color:var(--amber);letter-spacing:.02em;display:block;line-height:1}
-.stat.g b{color:var(--green)} .stat.r b{color:var(--red)} .stat.p b{color:var(--paper)}
-.stat span{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em;display:block;margin-top:12px;line-height:1.6}
-
-/* field notes (paper) */
-.paper-sec{background:var(--paper);color:#2E2820;position:relative;overflow:hidden}
-.paper-sec::after{content:"";position:absolute;right:6%;top:14%;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(150,105,50,.16) 0 58%,transparent 60%);pointer-events:none}
-.paper-sec .sec-eyebrow{color:#8A6A2F}
-.paper-sec h2{color:#201B14}
-.paper-sec .sec-num{-webkit-text-stroke-color:#C9B892}
-.quote{font-family:var(--mono);font-size:clamp(1.1rem,2.1vw,1.45rem);line-height:1.8;max-width:56ch;margin-top:44px;position:relative;z-index:2}
-.quote::before{content:"// FIELD NOTE —";display:block;font-size:11px;letter-spacing:.24em;color:#8A6A2F;margin-bottom:20px}
-.attrib{margin-top:28px;font-size:14px;color:#6B5F4C}
-.attrib b{color:#201B14}
-.stamp{position:absolute;right:8%;bottom:16%;border:3px solid #C23A22;color:#C23A22;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.22em;padding:10px 16px;transform:rotate(5deg);opacity:.8;mix-blend-mode:multiply;z-index:3}
-
-/* install */
-.hazard{height:12px;background:repeating-linear-gradient(-45deg,var(--amber) 0 15px,#171310 15px 30px)}
-.install-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-.install-grid h2{font-family:var(--disp);font-weight:400;font-size:clamp(2.4rem,5vw,3.8rem);line-height:1;color:var(--paper);text-transform:uppercase;margin-bottom:22px}
-.install-grid h2 i{font-style:normal;color:var(--amber)}
-.install-grid p{color:var(--muted);line-height:1.75;max-width:46ch;margin-bottom:32px}
-.fine{margin-top:20px;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--dim)}
-.terminal{background:var(--ink3);border:1px solid var(--line2);box-shadow:12px 12px 0 rgba(0,0,0,.5);position:relative}
-.term-head{display:flex;align-items:center;gap:8px;padding:13px 18px;border-bottom:1px solid var(--line)}
-.tdot{width:10px;height:10px;border-radius:50%}
-.term-head span{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.1em;margin-left:10px}
-.copy{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.14em;background:none;border:1px solid var(--line2);color:var(--muted);padding:5px 12px;cursor:pointer;transition:all .2s}
-.copy:hover{border-color:var(--green);color:var(--green)}
-.term-body{padding:24px 22px;font-family:var(--mono);font-size:13px;line-height:2.1}
-.term-body .p{color:var(--green)}
-.term-body .cmd{color:var(--paper)}
-.term-body .out{color:var(--muted)}
-.term-body .ok-l{color:var(--green)}
-.term-body .warn-l{color:var(--amber)}
-.cursor{display:inline-block;width:8px;height:15px;background:var(--green);vertical-align:-2px;animation:pulse 1s steps(1) infinite}
-
-/* footer */
-footer{border-top:1px solid var(--line);padding:60px 0 26px;margin-top:40px}
-.fgrid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:44px;margin-bottom:48px}
-.ftag{color:var(--muted);font-size:14px;line-height:1.7;max-width:32ch;margin-top:16px}
-.fcol h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--dim);margin-bottom:20px}
-.fcol a{display:block;font-family:var(--mono);font-size:12.5px;color:var(--muted);padding:6px 0;letter-spacing:.06em;transition:all .2s}
-.fcol a:hover{color:var(--amber);transform:translateX(5px)}
-.fstatus{font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:2.2;letter-spacing:.08em}
-.fstatus .row{display:flex;align-items:center;gap:10px}
-.fbottom{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px dashed var(--line2);padding-top:22px;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--dim)}
-.fbottom b{color:var(--amber);font-weight:500}
-
-/* reveal */
-.rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease;transition-delay:var(--d,0s)}
-.rv.in{opacity:1;transform:none}
-
-/* responsive */
-@media(max-width:980px){
-  .hero-grid{grid-template-columns:1fr;gap:48px}
-  .contours{opacity:.2}
-  .install-grid{grid-template-columns:1fr}
-  .stats{grid-template-columns:1fr 1fr}
-  .stat:nth-child(3){border-left:none;border-top:1px solid var(--line)}
-  .stat:nth-child(4){border-top:1px solid var(--line)}
-}
-@media(max-width:840px){nav{display:none}}
-@media(max-width:720px){
-  .scale-row{grid-template-columns:52px 1fr}
-  .sd,.sb{grid-column:2}
-  .sensor{grid-template-columns:1fr;gap:12px}
-  .tags{justify-content:flex-start}
-  .arr{display:none}
-  .fgrid{grid-template-columns:1fr}
-  .stamp{position:static;display:inline-block;margin-top:34px}
-}
-@media(max-width:560px){
-  .step{grid-template-columns:1fr;gap:14px}
-  .stats{grid-template-columns:1fr}
-  .stat{border-left:none;border-top:1px solid var(--line)}
-  .stat:first-child{border-top:none}
-}
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation:none!important;transition:none!important}
-  .rv{opacity:1;transform:none}
+@media(max-width:768px){
+  .nav{padding:12px 20px}
+  .nav .links{display:none}
+  .hero{padding:100px 20px 60px}
+  .features,.how,.cta-section{padding:40px 20px}
+  .footer{flex-direction:column;gap:8px}
 }
 </style>
 </head>
 <body>
-<div class="grain"></div>
-<div id="progress"></div>
 
-<!-- Header -->
-<header>
-  <div class="container hbar">
-    <a class="logo" href="#top">
-      <svg width="34" height="16" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
-      FALS<em>KY</em>
+<!-- Nav -->
+<nav class="nav">
+  <a href="/" class="logo">
+    <svg width="34" height="16" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
+    FALS<em>KY</em>
+  </a>
+  <div class="links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="https://github.com/Pritahi/falsky-core" target="_blank">GitHub</a>
+  </div>
+  <a href="/login" class="cta">Sign in with Google</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="seismo">
+    <svg viewBox="0 0 600 50" fill="none">
+      <polyline points="0,25 60,25 90,25 110,8 130,42 150,15 170,35 190,25 240,25 280,25 300,10 320,40 340,18 360,32 380,25 440,25 480,25 500,12 520,38 540,25 600,25" stroke="#FF4B2E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <animate attributeName="stroke-dasharray" values="0,1200;1200,0" dur="4s" repeatCount="indefinite"/>
+      </polyline>
+    </svg>
+  </div>
+  <h1>Your CI has <span>tremors</span></h1>
+  <p>Detect flaky tests before they break your pipeline. Bayesian-powered trust scores for every test in your suite.</p>
+  <div class="actions">
+    <a href="/login" class="btn btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Get Started Free
     </a>
-    <nav>
-      <a href="#method">METHOD</a>
-      <a href="#scale">SCALE</a>
-      <a href="#sensors">SENSORS</a>
-      <a href="#notes">FIELD NOTES</a>
-      <a href="#install">INSTALL</a>
-      <a href="/dashboard/" style="color:var(--amber)">DASHBOARD</a>
-      <a href="/login" class="nav-cta">SIGN IN</a>
-    </nav>
-    <div class="status"><span class="led"></span> LIVE · <span class="utc">--:--:--</span></div>
-  </div>
-</header>
-
-<!-- ============ HERO / STATION ============ -->
-<section class="hero" id="top">
-  <svg class="contours" viewBox="0 0 760 760" fill="none">
-    <ellipse cx="380" cy="380" rx="90" ry="70" stroke="#2C464B" stroke-dasharray="4 6"/>
-    <ellipse cx="380" cy="380" rx="160" ry="130" stroke="#2C464B"/>
-    <ellipse cx="380" cy="380" rx="235" ry="195" stroke="#2C464B" stroke-dasharray="2 8"/>
-    <ellipse cx="380" cy="380" rx="310" ry="265" stroke="#2C464B"/>
-    <ellipse cx="380" cy="380" rx="375" ry="335" stroke="#2C464B" stroke-dasharray="6 10"/>
-  </svg>
-  <div class="container hero-grid">
-    <div>
-      <div class="eyebrow"><span class="dot"></span> STATION FLK-01 · FLAKY TEST SEISMOLOGY · EST. 2026</div>
-      <h1>YOUR CI<br>HAS <span class="red">TREMORS.<svg viewBox="0 0 200 12" preserveAspectRatio="none"><polyline points="0,6 15,2 30,10 45,3 60,9 75,2 90,10 105,4 120,9 135,2 150,10 165,3 180,9 200,5" fill="none" stroke="#FF4B2E" stroke-width="3"/></svg></span></h1>
-      <p class="hero-sub">A test that passes on your machine and fails in CI isn't haunted — it's <b>flaky</b>. Falsky instruments every run, records every tremor, and triangulates the epicenter <b>before it shakes production</b>.</p>
-      <div class="cta-row">
-        <a href="#install" class="btn btn-primary">▶ Install the sensor</a>
-        <a href="#method" class="btn btn-ghost">Read the method ↓</a>
-      </div>
-      <div class="runner-chips">COMPATIBLE RUNNERS → <b>pytest · jest · junit · cypress · playwright · rspec</b></div>
-    </div>
-
-    <div class="panel rv">
-      <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
-      <div class="panel-tag">⚠ LIVE FEED</div>
-      <div class="panel-head"><span class="led red"></span> DRUM RECORDER — CH.01 MAIN <span class="spacer">GAIN ×40 · 60 SPS</span></div>
-      <canvas id="seismo"></canvas>
-      <div class="readouts">
-        <div class="ro"><small>MAGNITUDE</small><b id="mag">0.3</b></div>
-        <div class="ro"><small>EVENTS TODAY</small><b id="evcount">0</b></div>
-        <div class="ro"><small>STATION UPTIME</small><b>99.98%</b></div>
-      </div>
-      <div class="evlog" id="evlog"></div>
-    </div>
-  </div>
-
-  <div class="tape-wrap" aria-hidden="true">
-    <div class="tape"><div class="tape-track" id="tape"></div></div>
+    <a href="#features" class="btn btn-ghost">Learn More ↓</a>
   </div>
 </section>
 
-<!-- ============ METHOD ============ -->
-<section class="sec" id="method">
-  <div class="container">
-    <div class="sec-head rv">
-      <div>
-        <span class="sec-eyebrow">SEC. 01 // DRILL LOG</span>
-        <h2>HOW DETECTION <i>WORKS</i></h2>
-      </div>
-      <div class="sec-num">01</div>
+<!-- Features -->
+<section class="features" id="features">
+  <h2>What Falsky Detects</h2>
+  <div class="features-grid">
+    <div class="feature">
+      <div class="icon">⏱️</div>
+      <h3>Timing Flakes</h3>
+      <p>Tests that fail due to timeouts, slow responses, or race conditions. Detected via z-score anomaly detection on duration data.</p>
     </div>
-    <p class="sec-lede rv">Flakiness isn't a bug you find — it's a signal you record. Four stages, zero rewrites.</p>
-    <div class="steps">
-      <div class="step rv" style="--d:.05s">
-        <div class="step-num">01</div>
-        <div><h3>Attach the sensors</h3>
-        <p>One GitHub Action, zero rewrites. <code>Pritahi/falsky-action@v1</code> hooks into your runner and CI in under two minutes. Every run, every retry, every timing wobble gets timestamped and sent to Falsky.</p></div>
+    <div class="feature">
+      <div class="icon">🔗</div>
+      <h3>Order Dependency</h3>
+      <p>Tests that pass or fail depending on execution order. Sequential pattern analysis catches alternating and periodic failures.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🤝</div>
+      <h3>Shared State</h3>
+      <p>Tests that contaminate each other through shared databases, files, or services. Clustered failure patterns reveal the culprit.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🎲</div>
+      <h3>Non-Deterministic Data</h3>
+      <p>Tests that fail randomly due to unstable test data, UUIDs, or timestamps. High error diversity is the signal.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🌐</div>
+      <h3>Environment Specific</h3>
+      <p>Tests that pass locally but fail in CI (or vice versa). Cross-environment pass rate comparison catches these.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">📊</div>
+      <h3>Bayesian Scoring</h3>
+      <p>Every test gets a trust score (0-100) using Beta-Binomial conjugate priors. Better than naive pass/total, especially with small samples.</p>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="how" id="how">
+  <h2>How It Works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="num">1</div>
+      <div class="text">
+        <h4>Connect your repo</h4>
+        <p>Sign in with Google, connect your GitHub repository. Falsky automatically detects your test framework.</p>
       </div>
-      <div class="step rv" style="--d:.1s">
-        <div class="step-num">02</div>
-        <div><h3>Record every tremor</h3>
-        <p>Passes that needed retries, timing jitter, order dependence, fixture bleed — each one leaves a waveform. "Green by luck" stops being invisible the moment it's on the drum.</p></div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div class="text">
+        <h4>Run your tests</h4>
+        <p>Install the GitHub Action in your workflow. It reads JUnit XML output and sends it to Falsky's Trust Engine.</p>
       </div>
-      <div class="step rv" style="--d:.15s">
-        <div class="step-num">03</div>
-        <div><h3>Locate the epicenter</h3>
-        <p>Bayesian scoring and z-score anomaly detection triangulate root cause — shared state, leaked randomness, network ghosts, resource races — down to the category. Not a stack trace. A verdict.</p></div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div class="text">
+        <h4>Get trust scores</h4>
+        <p>Every test gets a Bayesian trust score. Flaky tests are categorized and flagged with confidence levels.</p>
       </div>
-      <div class="step rv" style="--d:.2s">
-        <div class="step-num">04</div>
-        <div><h3>Issue foreshock alerts</h3>
-        <p>Quarantine a test before it shakes main. Alerts fire when a test's flakiness magnitude trends upward — not after the build is already red and the blame game has begun.</p></div>
+    </div>
+    <div class="step">
+      <div class="num">4</div>
+      <div class="text">
+        <h4>Fix before it breaks</h4>
+        <p>See trends, catch degrading tests early, and quarantine unreliable tests before they block your pipeline.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ RICHTER SCALE ============ -->
-<section class="sec" id="scale" style="padding-top:40px">
-  <div class="container">
-    <div class="sec-head rv">
-      <div>
-        <span class="sec-eyebrow">SEC. 02 // INTERACTIVE</span>
-        <h2>THE FLAKINESS <i>SCALE</i></h2>
-      </div>
-      <div class="sec-num">02</div>
-    </div>
-    <p class="sec-lede rv">Every flaky test gets a magnitude, I through VII. Hover to inspect — then run a live simulation.</p>
-
-    <div class="scale rv">
-      <div class="scale-row"><div class="rn">I</div><div><div class="nm">MICROTREMOR</div><div class="rg">&lt; 1 IN 10,000 RUNS</div></div><div class="sd">Barely registers. Logged, fingerprinted, ignored — until it isn't.</div><div class="sb"><i style="--w:8%;--c:#3DDC84"></i></div></div>
-      <div class="scale-row"><div class="rn">II</div><div><div class="nm">WHISPER</div><div class="rg">1 IN 1,000 RUNS</div></div><div class="sd">A rerun hides it. We keep the fingerprint for correlation anyway.</div><div class="sb"><i style="--w:20%;--c:#3DDC84"></i></div></div>
-      <div class="scale-row"><div class="rn">III</div><div><div class="nm">NOTICEABLE</div><div class="rg">1 IN 300 RUNS</div></div><div class="sd">The classic "works on my machine" zone. Owners get notified.</div><div class="sb"><i style="--w:36%;--c:#FFB020"></i></div></div>
-      <div class="scale-row"><div class="rn">IV</div><div><div class="nm">SHAKE</div><div class="rg">1 IN 100 RUNS</div></div><div class="sd">Blocks PRs. Blame begins. Auto-quarantine recommended.</div><div class="sb"><i style="--w:52%;--c:#FFB020"></i></div></div>
-      <div class="scale-row"><div class="rn">V</div><div><div class="nm">QUAKE</div><div class="rg">1 IN 30 RUNS</div></div><div class="sd">Retries are now load-bearing infrastructure. Fix or retire.</div><div class="sb"><i style="--w:68%;--c:#FF6A2E"></i></div></div>
-      <div class="scale-row"><div class="rn">VI</div><div><div class="nm">SEVERE</div><div class="rg">1 IN 5 RUNS</div></div><div class="sd">The team schedules a meeting about it. The meeting has a retry.</div><div class="sb"><i style="--w:84%;--c:#FF4B2E"></i></div></div>
-      <div class="scale-row"><div class="rn">VII</div><div><div class="nm">COIN FLIP</div><div class="rg">~ 50 / 50</div></div><div class="sd">This test is a random number generator with opinions.</div><div class="sb"><i style="--w:100%;--c:#FF4B2E"></i></div></div>
-    </div>
-    <div class="verdict rv" id="verdict"><b>STANDBY //</b> awaiting simulation — press RUN to sample 1,000 executions against the scale.</div>
-    <div class="sim-row rv">
-      <button class="btn btn-primary" id="simBtn">▶ Run 1,000 simulated runs</button>
-      <span class="sim-note">SAMPLES HISTORICAL FLAKINESS DISTRIBUTION · NO TESTS HARMED</span>
-    </div>
-  </div>
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Start detecting flaky tests</h2>
+  <p>Free forever for open source. No credit card required.</p>
+  <a href="/login" class="btn btn-primary" style="margin-top:8px">
+    <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+    Sign in with Google
+  </a>
 </section>
 
-<!-- ============ SENSORS ============ -->
-<section class="sec" id="sensors" style="padding-top:40px">
-  <div class="container">
-    <div class="sec-head rv">
-      <div>
-        <span class="sec-eyebrow">SEC. 03 // SENSOR ARRAY</span>
-        <h2>WHAT FALSKY <i>DETECTS</i></h2>
-      </div>
-      <div class="sec-num">03</div>
-    </div>
-    <p class="sec-lede rv">Six independent sensors, one drum. Each root-cause class gets its own waveform signature.</p>
-    <div class="sensors rv">
-      <div class="sensor"><div class="idx">S-01</div><div><h3>Order dependence</h3><p>Passes alone, fails in the suite. Permutation sampling proves sequence guilt — and names the test that poisoned the well.</p></div><div class="tags"><span class="tag">SHUFFLE-DETECT</span><span class="tag">PERM-SAMPLE</span></div><div class="arr">→</div></div>
-      <div class="sensor"><div class="idx">S-02</div><div><h3>Time &amp; randomness leaks</h3><p>Sleep-based waits, timezone / DST edges, unseeded RNG, "unique" timestamps that weren't.</p></div><div class="tags"><span class="tag">CLOCK</span><span class="tag">SEED-AUDIT</span></div><div class="arr">→</div></div>
-      <div class="sensor"><div class="idx">S-03</div><div><h3>Shared state contamination</h3><p>Module-scoped fixtures, dirty DB rows, global env mutation. The epicenter is usually line 212 of conftest.py. It's always conftest.py.</p></div><div class="tags"><span class="tag">FIXTURES</span><span class="tag">DB-DIFF</span></div><div class="arr">→</div></div>
-      <div class="sensor"><div class="idx">S-04</div><div><h3>Network ghosts</h3><p>Third-party sandboxes, DNS jitter, silent rate limits. We separate "their outage" from "your bug" automatically.</p></div><div class="tags"><span class="tag">IO-TRACE</span><span class="tag">LATENCY</span></div><div class="arr">→</div></div>
-      <div class="sensor"><div class="idx">S-05</div><div><h3>Resource races</h3><p>Port collisions, file locks, worker starvation under parallelism. Fights that only happen when the whole suite runs at once.</p></div><div class="tags"><span class="tag">CONCURRENCY</span><span class="tag">PORT-MAP</span></div><div class="arr">→</div></div>
-      <div class="sensor"><div class="idx">S-06</div><div><h3>Retry masking</h3><p>retry(3) quietly turning coin flips into green lies. We show you the pass rate underneath the policy.</p></div><div class="tags"><span class="tag">POLICY-AUDIT</span><span class="tag">TRUE-RATE</span></div><div class="arr">→</div></div>
-    </div>
-    <div class="chips-wrap rv"><div class="chips-track" id="chips"></div></div>
-  </div>
-</section>
-
-<!-- ============ STATS ============ -->
-<section class="sec" style="padding-top:20px">
-  <div class="container">
-    <div class="stats rv">
-      <div class="stat"><small>KPI-01</small><b data-count="2.4" data-dec="1" data-suffix="B">0</b><span>test runs instrumented across all stations</span></div>
-      <div class="stat g"><small>KPI-02</small><b data-count="38412">0</b><span>flaky epicenters located to file &amp; line</span></div>
-      <div class="stat p"><small>KPI-03</small><b data-count="94" data-suffix="%">0</b><span>median drop in mystery red builds within 60 days</span></div>
-      <div class="stat r"><small>KPI-04</small><b data-count="11" data-suffix=" min">0</b><span>median time from first tremor to epicenter</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ FIELD NOTES ============ -->
-<section class="sec paper-sec" id="notes">
-  <div class="container">
-    <div class="sec-head rv">
-      <div>
-        <span class="sec-eyebrow">SEC. 04 // FIELD NOTES</span>
-        <h2>FROM THE OBSERVATORY</h2>
-      </div>
-      <div class="sec-num">04</div>
-    </div>
-    <blockquote class="quote rv">We spent a quarter blaming the CI runners, the moon phase, and Mercury retrograde. Falsky pointed at one shared fixture in test_payments.py — line 212. We fixed it in an afternoon and cancelled the weekly "flaky tests" meeting. I miss the snacks, not the meeting.</blockquote>
-    <p class="attrib rv"><b>Staff Engineer, payments platform</b> · station FLK-117 · 4,200 tests under watch</p>
-    <div class="stamp">EPICENTER CONFIRMED ✓</div>
-  </div>
-</section>
-
-<!-- ============ INSTALL ============ -->
-<div class="hazard"></div>
-<section class="sec" id="install">
-  <div class="container install-grid">
-    <div class="rv">
-      <span class="sec-eyebrow">SEC. 05 // DEPLOYMENT</span>
-      <h2>INSTALL THE <i>SENSOR</i></h2>
-      <p>Two minutes between you and a quiet CI. The GitHub Action attaches to your existing workflow — no test rewrites, no new CI stage, no permission from the platform team.</p>
-      <a href="/dashboard/" class="btn btn-primary">Go to Dashboard →</a>
-      <div class="fine">FREE FOR 1 REPO · NO CARD · 100 RUNS/MONTH</div>
-    </div>
-    <div class="terminal rv" style="--d:.1s">
-      <div class="term-head">
-        <span class="tdot" style="background:#FF5F56"></span><span class="tdot" style="background:#FFBD2E"></span><span class="tdot" style="background:#27C93F"></span>
-        <span>ci.yml</span>
-        <button class="copy" id="copyBtn" data-copy="uses: Pritahi/falsky-action@v1&#10;with:&#10;  api_key: ${{ secrets.FALSKY_API_KEY }}&#10;  junit_path: 'test-results/*.xml'">COPY ⧉</button>
-      </div>
-      <div class="term-body">
-        <div><span class="p">$</span> <span class="cmd">uses: Pritahi/falsky-action@v1</span></div>
-        <div><span class="p">&nbsp;&nbsp;</span> <span class="cmd">with:</span></div>
-        <div><span class="p">&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="cmd">api_key</span>: <span class="out">${{ secrets.FALSKY_API_KEY }}</span></div>
-        <div><span class="p">&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="cmd">junit_path</span>: <span class="ok-l">'test-results/*.xml'</span></div>
-        <div class="out">scanning workflow… found 412 tests across 3 jobs</div>
-        <div class="ok-l">✓ 412 tests instrumented in 41s</div>
-        <div class="ok-l">✓ station FLK-2026 online — drum spinning</div>
-        <div class="warn-l">⚠ first tremor recorded: test_payments.py::test_refund — MAG 3.2</div>
-        <div><span class="p">$</span> <span class="cursor"></span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ FOOTER ============ -->
-<footer>
-  <div class="container">
-    <div class="fgrid">
-      <div>
-        <a class="logo" href="#top"><svg width="34" height="16" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg> FALS<em>KY</em></a>
-        <p class="ftag">Seismology for your test suite. Every run recorded, every tremor explained, every epicenter located.</p>
-      </div>
-      <div class="fcol">
-        <h4>STATION</h4>
-        <a href="/dashboard/">Dashboard</a>
-        <a href="/dashboard/guide.html">Documentation</a>
-        <a href="/dashboard/">Dashboard</a>
-        <a href="https://github.com/Pritahi/falsky-core">GitHub</a>
-        <a href="#method">Method</a>
-        <a href="#sensors">Sensor array</a>
-      </div>
-      <div class="fcol">
-        <h4>TELEMETRY</h4>
-        <div class="fstatus">
-          <div class="row"><span class="led"></span> ALL SYSTEMS NOMINAL</div>
-          <div>STATION FLK-01 · MONITORING ACTIVE</div>
-          <div>UTC — <span class="utc">--:--:--</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="fbottom">
-      <span>© 2026 <b>FALSKY</b> INSTRUMENTS · ALL FREQUENCIES RESERVED</span>
-      <span><b>TESTS SHOULD BE BORING.</b></span>
-    </div>
-  </div>
+<!-- Footer -->
+<footer class="footer">
+  <span>© 2026 Falsky · MIT License</span>
+  <span><a href="https://github.com/Pritahi/falsky-core">GitHub</a> · <a href="/docs">API Docs</a></span>
 </footer>
 
-<script>
-/* ---------- clock ---------- */
-const pad=n=>String(n).padStart(2,'0');
-function tickClock(){const d=new Date();const t=pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds());
-  document.querySelectorAll('.utc').forEach(e=>e.textContent=t);}
-tickClock();setInterval(tickClock,1000);
-
-/* ---------- scroll progress ---------- */
-addEventListener('scroll',()=>{const h=document.documentElement;
-  document.getElementById('progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
-
-/* ---------- marquees ---------- */
-const tapeItems=['test_checkout_flow <b class="ok">✓</b> 412ms','test_login_redirect <b class="rt">↻ PASS(3)</b>','test_timezone_dst <b class="fl">✗ MAG 4.1</b>','spec/payment_retry <b class="ok">✓</b> 890ms','test_cart_race <b class="fl">✗ QUARANTINED</b>','test_oauth_refresh <b class="rt">↻ PASS(2)</b>','test_search_ranking <b class="ok">✓</b> 1.2s','test_email_worker <b class="fl">✗ MAG 5.3 · EPICENTER: shared fixture</b>','test_upload_multipart <b class="ok">✓</b> 2.4s','test_session_expiry <b class="rt">↻ PASS(4)</b>'];
-document.getElementById('tape').innerHTML=tapeItems.concat(tapeItems).map(i=>'<span>'+i+'</span>').join('');
-const chips=['pytest','Jest','Vitest','JUnit 5','Cypress','Playwright','RSpec','Go test','Mocha','GitHub Actions','GitLab CI','CircleCI','Buildkite','Jenkins','Azure Pipelines'];
-document.getElementById('chips').innerHTML=chips.concat(chips).map(c=>'<span class="chip"><i></i>'+c+' — SUPPORTED</span>').join('');
-
-/* ---------- reveal on scroll ---------- */
-const rvs=document.querySelectorAll('.rv');
-const io=new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
-},{threshold:.15});
-rvs.forEach(el=>io.observe(el));
-
-/* ---------- seismograph ---------- */
-const cv=document.getElementById('seismo'),ctx=cv.getContext('2d');
-const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let W,H,dpr,buf=[],tremors=[],frameN=0,evCount=0;
-function sizeCv(){const r=cv.getBoundingClientRect();dpr=devicePixelRatio||1;
-  cv.width=r.width*dpr;cv.height=220*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);W=r.width;H=220;}
-sizeCv();addEventListener('resize',sizeCv);
-
-const names=['test_checkout_flow','test_login_redirect','test_timezone_dst','test_cart_race','test_oauth_refresh','test_search_ranking','test_email_worker','test_session_expiry','spec/payment_retry','test_upload_multipart'];
-const notesHi=['epicenter: shared fixture in conftest.py','order-dependent — fails after test_cart','auto-quarantined · ticket filed','root cause: unseeded RNG in helper.py'];
-const notesLo=['passed after 3 retries — flagged','green by luck · fingerprint kept','timing jitter ±410ms detected','rerun passed — waveform archived'];
-const magEl=document.getElementById('mag'),evEl=document.getElementById('evcount'),logEl=document.getElementById('evlog');
-
-function pushLog(mag){
-  evCount++;evEl.textContent=evCount;
-  const t=new Date(),ts=pad(t.getUTCHours())+':'+pad(t.getUTCMinutes())+':'+pad(t.getUTCSeconds());
-  const hi=mag>=4,cls=hi?'m-hi':(mag>=2.5?'m-md':'m-lo');
-  const pool=hi?notesHi:notesLo,note=pool[Math.floor(Math.random()*pool.length)];
-  const name=names[Math.floor(Math.random()*names.length)];
-  const row=document.createElement('div');row.className='ev new';
-  row.innerHTML='<span>'+ts+'</span><span class="n">'+name+'</span><span class="m '+cls+'">MAG '+mag.toFixed(1)+'</span><span class="note">'+note+'</span>';
-  logEl.prepend(row);
-  while(logEl.children.length>5)logEl.lastChild.remove();
-}
-function spawnTremor(){
-  let amp=10+Math.random()*40;if(Math.random()<.16)amp+=26;
-  tremors.push({age:0,dur:110+Math.random()*140,amp,ph:Math.random()*6});
-  const mag=Math.min(6.8,1.2+amp/12+Math.random()*.6);
-  magEl.textContent=mag.toFixed(1);magEl.classList.add('flash');
-  setTimeout(()=>{magEl.classList.remove('flash');magEl.textContent=(0.2+Math.random()*.4).toFixed(1);},1600);
-  pushLog(mag);
-}
-['seed','seed','seed'].forEach(()=>pushLog(1.5+Math.random()*4.5));
-
-let markers=[],buf2=[];
-function draw(){
-  frameN++;
-  let tv=0;
-  tremors=tremors.filter(t=>t.age<t.dur);
-  for(const t of tremors){const p=t.age/t.dur;
-    tv+=Math.exp(-3.4*p)*Math.sin(t.age*.32+t.ph)*t.amp*(p<.08?p/.08:1);t.age++;}
-  if(!reduced&&!document.hidden&&tremors.length<2&&Math.random()<.012)spawnTremor();
-  const maxPts=Math.ceil(W/2)+2;
-  buf.push((Math.random()-.5)*3+tv);if(buf.length>maxPts)buf.shift();
-  buf2.push((Math.random()-.5)*2+tv*.42);if(buf2.length>maxPts)buf2.shift();
-  markers.forEach(m=>m.x-=2);markers=markers.filter(m=>m.x>0);
-
-  ctx.clearRect(0,0,W,H);
-  ctx.strokeStyle='rgba(70,110,115,.22)';ctx.lineWidth=1;
-  const off=(frameN*2)%46;
-  for(let x=-off;x<W;x+=46){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=0;y<H;y+=36){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-  ctx.strokeStyle='rgba(120,160,165,.35)';ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
-
-  function trace(b,col,w,glow){ctx.beginPath();
-    for(let i=0;i<b.length;i++){const x=i*2,y=H/2-b[i];i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
-    ctx.strokeStyle=col;ctx.lineWidth=w;ctx.shadowColor=glow;ctx.shadowBlur=6;ctx.stroke();ctx.shadowBlur=0;}
-  trace(buf2,'rgba(255,176,32,.45)',1,'rgba(255,176,32,.4)');
-  trace(buf,'#3DDC84',1.6,'rgba(61,220,132,.6)');
-
-  ctx.fillStyle='rgba(61,220,132,.8)';ctx.font='9px IBM Plex Mono';ctx.fillText('CH.01 MAIN',10,H-10);
-  ctx.fillStyle='rgba(255,176,32,.7)';ctx.fillText('CH.02 NIGHTLY',10,H-24);
-  requestAnimationFrame(draw);
-}
-draw();
-
-function scheduleTremor(){spawnTremor();setTimeout(scheduleTremor,3000+Math.random()*5000);}
-setTimeout(scheduleTremor,2000);
-
-/* ---------- richter simulator ---------- */
-const rows=[...document.querySelectorAll('.scale-row')],verdict=document.getElementById('verdict'),simBtn=document.getElementById('simBtn');
-const verdicts=[
-  '<b>VERDICT — MAG I · MICROTREMOR.</b> Logged & fingerprinted. No action needed; the drum remembers.',
-  '<b>VERDICT — MAG II · WHISPER.</b> A rerun hid it. Fingerprint kept for cross-run correlation.',
-  '<b>VERDICT — MAG III · NOTICEABLE.</b> Classic "works on my machine". Owner notified with waveform attached.',
-  '<b>VERDICT — MAG IV · SHAKE.</b> Order-dependent — fails only after test_cart. Quarantined · ticket auto-filed.',
-  '<b>VERDICT — MAG V · QUAKE.</b> Shared-state bleed. Epicenter: conftest.py, line 212. Refactor scheduled.',
-  '<b>VERDICT — MAG VI · SEVERE.</b> Retry policy is load-bearing. True pass rate underneath: 19%. Escalated.',
-  '<b>VERDICT — MAG VII · COIN FLIP.</b> This test is a random number generator with opinions. Auto-quarantined.'];
-const weights=[1,2,4,5,4,2,1];
-function weighted(){const tot=weights.reduce((a,b)=>a+b),r=Math.random()*tot;let c=0;
-  for(let i=0;i<weights.length;i++){c+=weights[i];if(r<c)return i;}return 3;}
-let running=false;
-simBtn.addEventListener('click',()=>{
-  if(running)return;running=true;simBtn.style.opacity=.5;
-  verdict.classList.remove('alert');verdict.innerHTML='<b>SCANNING //</b> sampling 1,000 executions… correlating waveforms…';
-  rows.forEach(r=>r.classList.remove('hit'));
-  const total=18+Math.floor(Math.random()*8),final=weighted();
-  let i=0;
-  (function step(){
-    rows.forEach(r=>r.classList.remove('scan'));
-    rows[i%rows.length].classList.add('scan');
-    i++;
-    if(i<=total){const slow=i>total-6?70+(i-(total-6))*95:60;setTimeout(step,slow);}
-    else{rows.forEach(r=>r.classList.remove('scan'));rows[final].classList.add('hit');
-      verdict.classList.add('alert');verdict.innerHTML=verdicts[final];
-      running=false;simBtn.style.opacity=1;}
-  })();
-});
-
-/* ---------- copy terminal ---------- */
-document.getElementById('copyBtn').addEventListener('click',function(){
-  const text=this.dataset.copy;
-  navigator.clipboard.writeText(text).then(()=>{
-    this.textContent='COPIED ✓';this.style.borderColor='var(--green)';this.style.color='var(--green)';
-    setTimeout(()=>{this.textContent='COPY ⧉';this.style.borderColor='';this.style.color='';},1500);
-  });
-});
-
-/* ---------- smooth scroll ---------- */
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
-  a.addEventListener('click',e=>{
-    const t=document.querySelector(a.getAttribute('href'));
-    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
-  });
-});
-</script>
 </body>
 </html>

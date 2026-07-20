@@ -1051,23 +1051,47 @@ def _check_user_auth(request: Request):
 
 # ===================== PAGE ROUTES =====================
 
-@app.get("/dashboard/", response_class=HTMLResponse)
-def serve_dashboard(request: Request):
+def _auth_page(request: Request):
+    """Redirect to login if not authenticated."""
     if not _check_user_auth(request):
         return RedirectResponse(url="/login", status_code=302)
+    return None
+
+@app.get("/dashboard/", response_class=HTMLResponse)
+def serve_dashboard(request: Request):
+    redirect = _auth_page(request)
+    if redirect: return redirect
     return _serve_html(os.path.join("dashboard", "index.html"), "Falsky Dashboard")
+
+@app.get("/dashboard/repos.html", response_class=HTMLResponse)
+def serve_repos(request: Request):
+    redirect = _auth_page(request)
+    if redirect: return redirect
+    return _serve_html(os.path.join("dashboard", "repos.html"), "Falsky — Repositories")
+
+@app.get("/dashboard/repo.html", response_class=HTMLResponse)
+def serve_repo(request: Request):
+    redirect = _auth_page(request)
+    if redirect: return redirect
+    return _serve_html(os.path.join("dashboard", "repo.html"), "Falsky — Repository")
+
+@app.get("/dashboard/test.html", response_class=HTMLResponse)
+def serve_test_page(request: Request):
+    redirect = _auth_page(request)
+    if redirect: return redirect
+    return _serve_html(os.path.join("dashboard", "test-detail.html"), "Falsky — Test Detail")
 
 @app.get("/dashboard/test-detail.html", response_class=HTMLResponse)
 def serve_test_detail(request: Request):
-    if not _check_user_auth(request):
-        return RedirectResponse(url="/login", status_code=302)
+    redirect = _auth_page(request)
+    if redirect: return redirect
     return _serve_html(os.path.join("dashboard", "test-detail.html"), "Test Detail")
 
-@app.get("/dashboard/guide.html", response_class=HTMLResponse)
-def serve_guide(request: Request):
-    if not _check_user_auth(request):
-        return RedirectResponse(url="/login", status_code=302)
-    return _serve_html(os.path.join("dashboard", "guide.html"), "Falsky Guide")
+@app.get("/dashboard/settings.html", response_class=HTMLResponse)
+def serve_settings(request: Request):
+    redirect = _auth_page(request)
+    if redirect: return redirect
+    return _serve_html(os.path.join("dashboard", "settings.html"), "Falsky — Settings")
 
 @app.get("/analytics", response_class=HTMLResponse)
 def serve_admin():
