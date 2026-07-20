@@ -252,18 +252,18 @@ def auth_callback(request: Request):
     access_token = request.query_params.get("access_token")
     error = request.query_params.get("error")
     if error:
-        return RedirectResponse(url=f"/admin/?error={urllib.parse.quote(error)}")
+        return RedirectResponse(url=f"/analytics?error={urllib.parse.quote(error)}")
     if not access_token:
-        return RedirectResponse(url="/admin/?error=no_token")
+        return RedirectResponse(url="/analytics?error=no_token")
     if SUPABASE_JWT_SECRET:
         try:
             payload = jwt.decode(access_token, SUPABASE_JWT_SECRET, algorithms=["HS256"], audience="authenticated")
             email = payload.get("email", "")
             if ALLOWED_ADMIN_EMAILS and email not in ALLOWED_ADMIN_EMAILS:
-                return RedirectResponse(url="/admin/?error=unauthorized")
+                return RedirectResponse(url="/analytics?error=unauthorized")
         except Exception:
-            return RedirectResponse(url="/admin/?error=invalid_token")
-    response = RedirectResponse(url="/admin/")
+            return RedirectResponse(url="/analytics?error=invalid_token")
+    response = RedirectResponse(url="/analytics")
     response.set_cookie(key="falsky_admin_token", value=access_token, httponly=True, secure=True, samesite="lax", max_age=86400 * 7, path="/")
     return response
 
@@ -701,7 +701,7 @@ def serve_test_detail():
 def serve_guide():
     return _serve_html(os.path.join("dashboard", "guide.html"), "Falsky Guide")
 
-@app.get("/admin/", response_class=HTMLResponse)
+@app.get("/analytics", response_class=HTMLResponse)
 def serve_admin():
     return _serve_html(os.path.join("dashboard", "admin.html"), "Falsky Admin")
 
