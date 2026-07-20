@@ -3,820 +3,845 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Falsky — Trust Dashboard</title>
+<title>TREMOR — Station Console FLK-01</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #09090b;
-  --bg-card: #18181b;
-  --bg-hover: #27272a;
-  --bg-input: #27272a;
-  --border: #27272a;
-  --border-subtle: #1e1e22;
-  --text: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --accent: #8b5cf6;
-  --accent-hover: #7c3aed;
-  --accent-soft: rgba(139,92,246,0.12);
-  --green: #22c55e;
-  --green-soft: rgba(34,197,94,0.12);
-  --yellow: #eab308;
-  --yellow-soft: rgba(234,179,8,0.12);
-  --orange: #f97316;
-  --orange-soft: rgba(249,115,22,0.12);
-  --red: #ef4444;
-  --red-soft: rgba(239,68,68,0.12);
-  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --radius-xs: 6px;
-  --sidebar-w: 240px;
-  --topbar-h: 56px;
-  --transition: 0.15s ease;
+:root{
+  --ink:#0C1517;--ink2:#0F1B1E;--ink3:#0A1315;--ink4:#122024;
+  --line:#1E3237;--line2:#2C464B;
+  --paper:#F2E8D5;--red:#FF4B2E;--amber:#FFB020;--green:#3DDC84;
+  --text:#D7E4E2;--muted:#8AA0A2;--dim:#5E767A;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--disp:'Anton',sans-serif;
 }
+*{margin:0;padding:0;box-sizing:border-box}
+::selection{background:var(--amber);color:#171310}
+html,body{height:100%}
+body{
+  font-family:var(--sans);color:var(--text);background:var(--ink);
+  background-image:
+    radial-gradient(1100px 560px at 88% -8%,rgba(61,220,132,.05),transparent 60%),
+    radial-gradient(900px 520px at -8% 40%,rgba(255,75,46,.045),transparent 55%),
+    linear-gradient(rgba(120,160,165,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(120,160,165,.045) 1px,transparent 1px);
+  background-size:auto,auto,46px 46px,46px 46px;background-attachment:fixed;overflow:hidden;
+}
+.grain{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2"/></filter><rect width="140" height="140" filter="url(%23n)"/></svg>')}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--ink3)}
+::-webkit-scrollbar-thumb{background:var(--line2);border:2px solid var(--ink3)}
+::-webkit-scrollbar-thumb:hover{background:var(--amber)}
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* ============ APP SHELL ============ */
+.app{display:grid;grid-template-columns:242px 1fr;height:100vh}
+.side{background:var(--ink2);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 0}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-size:1.3rem;letter-spacing:.08em;color:var(--paper);padding:0 22px 20px;border-bottom:1px solid var(--line)}
+.logo em{font-style:normal;color:var(--red)}
+.station-id{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--dim);padding:16px 22px 8px}
+nav{display:flex;flex-direction:column;gap:2px;padding:6px 10px}
+.nitem{display:flex;align-items:center;gap:12px;padding:13px 12px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--muted);cursor:pointer;border-left:3px solid transparent;transition:all .18s;user-select:none}
+.nitem .idx{font-size:10px;color:var(--dim);transition:color .18s}
+.nitem .arr{margin-left:auto;opacity:0;transform:translateX(-6px);transition:all .18s;color:var(--red)}
+.nitem:hover{color:var(--paper);background:var(--ink4)}
+.nitem:hover .arr{opacity:1;transform:none}
+.nitem.active{color:var(--amber);border-left-color:var(--amber);background:linear-gradient(90deg,rgba(255,176,32,.09),transparent)}
+.nitem.active .idx{color:var(--amber)}
+.side-foot{margin-top:auto;padding:16px 22px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim);line-height:2.1}
+.side-foot .row{display:flex;align-items:center;gap:8px}
+kbd{border:1px solid var(--line2);padding:1px 5px;font-family:var(--mono);font-size:9px;color:var(--muted)}
+.led{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite;flex:none}
+.led.red{background:var(--red);box-shadow:0 0 8px var(--red)}
+.led.amber{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font);
-  line-height: 1.5;
-  min-height: 100vh;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
+.mainwrap{display:flex;flex-direction:column;min-width:0;height:100vh}
+.topbar{height:64px;flex:none;display:flex;align-items:center;gap:18px;padding:0 26px;border-bottom:1px solid var(--line);background:rgba(12,21,23,.92);backdrop-filter:blur(6px)}
+.tb-eyebrow{font-family:var(--mono);font-size:9.5px;letter-spacing:.26em;color:var(--amber)}
+.tb-title{font-family:var(--disp);font-weight:400;font-size:1.35rem;letter-spacing:.03em;color:var(--paper);line-height:1.05}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.thr-chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--amber);border:1px solid rgba(255,176,32,.4);background:rgba(255,176,32,.07);padding:7px 12px;cursor:pointer;transition:all .2s}
+.thr-chip:hover{background:rgba(255,176,32,.16);transform:translateY(-1px)}
+.bell{position:relative;font-size:15px;background:none;border:1px solid var(--line2);color:var(--muted);width:38px;height:34px;cursor:pointer;transition:all .2s}
+.bell:hover{border-color:var(--red);color:var(--red);transform:translateY(-1px)}
+.bell i{position:absolute;top:-7px;right:-7px;font-style:normal;font-family:var(--mono);font-size:9px;background:var(--red);color:#fff;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 8px rgba(255,75,46,.6)}
+.tb-clock{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--muted)}
+.tb-live{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--green)}
 
-/* ===== SIDEBAR ===== */
-.sidebar {
-  position: fixed; top: 0; left: 0;
-  width: var(--sidebar-w); height: 100vh;
-  background: var(--bg);
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  z-index: 100;
-  transition: width 0.3s ease;
-}
-.sidebar.collapsed { width: 64px; }
+.content{flex:1;overflow-y:auto;padding:28px 30px 60px}
+.view{display:none}
+.view.active{display:block;animation:viewIn .4s ease}
+@keyframes viewIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
-.sidebar-header {
-  display: flex; align-items: center; gap: 10px;
-  padding: 16px 20px; height: var(--topbar-h);
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
+/* ============ SHARED ============ */
+.panel{position:relative;background:var(--ink2);border:1px solid var(--line2);box-shadow:8px 8px 0 rgba(0,0,0,.4)}
+.screw{position:absolute;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#4A6266,#141F22);z-index:3}
+.screw.tl{top:7px;left:7px}.screw.tr{top:7px;right:7px}.screw.bl{bottom:7px;left:7px}.screw.br{bottom:7px;right:7px}
+.phead{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:#9FB6B3}
+.phead .spacer{margin-left:auto;color:var(--dim);letter-spacing:.1em}
+.btn{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:12px 18px;border:2px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .16s;background:none}
+.btn-amber{background:var(--amber);color:#171310;box-shadow:4px 4px 0 var(--red)}
+.btn-amber:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--red)}
+.btn-amber:active{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--red)}
+.btn-line{color:var(--text);border-color:var(--line2)}
+.btn-line:hover{border-color:var(--green);color:var(--green);transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(61,220,132,.15)}
+.btn-red{color:var(--red);border-color:rgba(255,75,46,.5)}
+.btn-red:hover{background:rgba(255,75,46,.12);transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(255,75,46,.2)}
+.mag-badge{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;padding:4px 9px;border:1px solid;flex:none}
+.m-lo{color:var(--green);border-color:rgba(61,220,132,.45);background:rgba(61,220,132,.07)}
+.m-md{color:var(--amber);border-color:rgba(255,176,32,.45);background:rgba(255,176,32,.07)}
+.m-hi{color:var(--red);border-color:rgba(255,75,46,.5);background:rgba(255,75,46,.08)}
+.stamp{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.24em;padding:7px 13px;border:2.5px solid;transform:rotate(-2.5deg)}
+.st-red{color:var(--red);border-color:var(--red)}
+.st-amber{color:var(--amber);border-color:var(--amber)}
+.st-green{color:var(--green);border-color:var(--green)}
+.hazard{height:10px;background:repeating-linear-gradient(-45deg,var(--amber) 0 13px,#171310 13px 26px)}
+.toast-zone{position:fixed;bottom:24px;right:24px;z-index:200;display:flex;flex-direction:column;gap:10px}
+.toast{background:var(--ink2);border:1px solid var(--line2);border-left:10px solid var(--amber);padding:14px 20px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--text);box-shadow:8px 8px 0 rgba(0,0,0,.5);animation:toastIn .3s ease;max-width:360px}
+.toast.red{border-left-color:var(--red)}
+.toast.green{border-left-color:var(--green)}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(40px)}}
 
-.sidebar-logo {
-  font-size: 18px; font-weight: 700;
-  color: var(--accent);
-  letter-spacing: -0.02em;
-  white-space: nowrap;
-}
+/* ============ DASHBOARD ============ */
+.dash-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+.span2{grid-column:1/-1}
+#drum{display:block;width:100%;height:230px;background:var(--ink3)}
+.vitals{display:flex;flex-direction:column}
+.vrow{padding:15px 20px;border-bottom:1px dashed var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:10px;transition:background .2s}
+.vrow:hover{background:var(--ink4)}
+.vrow small{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--dim)}
+.vrow b{font-family:var(--disp);font-weight:400;font-size:1.7rem;letter-spacing:.03em;color:var(--paper);transition:color .2s}
+#vMag{color:var(--amber)}
+#vMag.flash{color:var(--red);text-shadow:0 0 14px rgba(255,75,46,.7)}
+.vrow b.gr{color:var(--green)}.vrow b.rd{color:var(--red)}
+.gain{padding:16px 20px;margin-top:auto}
+.gain small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--dim);margin-bottom:10px}
+.seg{display:flex;border:1px solid var(--line2)}
+.seg button{flex:1;font-family:var(--mono);font-size:11px;letter-spacing:.1em;padding:9px 0;background:none;border:none;color:var(--muted);cursor:pointer;transition:all .15s;border-left:1px solid var(--line2)}
+.seg button:first-child{border-left:none}
+.seg button:hover{color:var(--paper)}
+.seg button.on{background:var(--amber);color:#171310;font-weight:600}
+#map{display:block;width:100%;height:262px;background:var(--ink3);cursor:crosshair}
+.map-coord{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim);padding:9px 20px;border-top:1px solid var(--line)}
+.feed{max-height:309px;overflow:hidden;padding:12px 18px}
+.ev{display:grid;grid-template-columns:56px 1fr 56px;gap:10px;padding:6px 0;font-family:var(--mono);font-size:10.5px;color:var(--muted);align-items:baseline;border-bottom:1px dashed rgba(30,50,55,.6)}
+.ev .n{color:#BFD2CF;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev .m{font-weight:600}
+.ev .note{grid-column:2/4;color:var(--dim);font-size:9.5px;margin-top:-2px}
+.ev.new{animation:evflash 1.4s ease-out}
+@keyframes evflash{0%{background:rgba(255,176,32,.16)}100%{background:transparent}}
+.ev .alert-flag{color:var(--red);font-weight:600}
+.hist{padding:18px 20px;display:flex;flex-direction:column;gap:11px}
+.hrow{display:grid;grid-template-columns:34px 1fr 44px;gap:12px;align-items:center;font-family:var(--mono);font-size:11px;color:var(--muted);cursor:default}
+.hrow:hover .hbar i{filter:brightness(1.35)}
+.hrow:hover b{color:var(--paper)}
+.hrow b{text-align:right;font-weight:500;transition:color .15s}
+.hbar{height:14px;background:#132226;position:relative;overflow:hidden}
+.hbar i{position:absolute;inset:0;right:auto;width:0;transition:width 1s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s)}
+.hist.grown .hbar i{width:var(--w)}
+.suite-row{display:grid;grid-template-columns:14px 1.2fr 130px 74px 84px 60px 90px;gap:14px;align-items:center;padding:13px 20px;border-bottom:1px dashed var(--line);font-family:var(--mono);font-size:11.5px;transition:background .18s;cursor:pointer}
+.suite-row:last-child{border-bottom:none}
+.suite-row:hover{background:var(--ink4)}
+.suite-row .sname{color:var(--paper);letter-spacing:.06em;font-weight:500}
+.suite-row .sp{color:var(--muted)}
+.suite-row .pass{font-weight:600}
+.t-up{color:var(--green)}.t-dn{color:var(--red)}
+.suite-row .go{color:var(--dim);text-align:right;letter-spacing:.1em;transition:all .18s}
+.suite-row:hover .go{color:var(--amber);transform:translateX(4px)}
+canvas.spark{display:block;width:130px;height:30px}
+.q-row{display:grid;grid-template-columns:1.4fr 1fr 70px 110px 1fr;gap:16px;align-items:center;padding:14px 20px;border-bottom:1px dashed var(--line);font-family:var(--mono);font-size:11.5px;transition:all .3s}
+.q-row:last-child{border-bottom:none}
+.q-row:hover{background:var(--ink4)}
+.q-row .qn{color:var(--paper);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.q-row .qs{color:var(--dim);letter-spacing:.08em}
+.q-row .qd{color:var(--muted)}
+.q-actions{display:flex;gap:8px;justify-content:flex-end}
+.qbtn{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;padding:7px 11px;border:1px solid var(--line2);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
+.qbtn:hover{transform:translateY(-1px)}
+.qbtn.rel:hover{border-color:var(--green);color:var(--green)}
+.qbtn.term:hover{border-color:var(--red);color:var(--red)}
+.q-row.gone{opacity:0;transform:translateX(40px)}
 
-.sidebar-toggle {
-  position: absolute; top: 16px; right: -12px;
-  width: 24px; height: 24px;
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 6px; color: var(--text-muted);
-  cursor: pointer; display: flex;
-  align-items: center; justify-content: center;
-  font-size: 12px; transition: all var(--transition);
-  z-index: 101;
-}
-.sidebar-toggle:hover { background: var(--bg-hover); color: var(--text); }
+/* ============ REPORTS ============ */
+.rep-grid{display:grid;grid-template-columns:400px 1fr;gap:20px;align-items:start}
+.rep-tools{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.ftabs{display:flex;gap:6px;flex-wrap:wrap}
+.ftab{font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:7px 11px;border:1px solid var(--line2);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
+.ftab:hover{color:var(--paper);border-color:var(--muted)}
+.ftab.on{background:var(--amber);color:#171310;border-color:var(--amber);font-weight:600}
+.srch{position:relative}
+.srch input{width:100%;background:var(--ink3);border:1px solid var(--line2);color:var(--text);font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;padding:10px 12px 10px 32px;outline:none;transition:border-color .2s}
+.srch input:focus{border-color:var(--amber)}
+.srch::before{content:"⌕";position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:14px}
+.rep-list{max-height:calc(100vh - 280px);overflow-y:auto}
+.ritem{display:grid;grid-template-columns:10px 1fr 96px;gap:12px;align-items:center;padding:13px 16px;border-bottom:1px dashed var(--line);cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.ritem:hover{background:var(--ink4)}
+.ritem.sel{border-left-color:var(--amber);background:linear-gradient(90deg,rgba(255,176,32,.08),transparent)}
+.ritem .rn{font-family:var(--mono);font-size:11.5px;color:var(--paper);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ritem .rm{font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.08em;margin-top:4px}
+.ritem .rm b{color:var(--muted);font-weight:500}
+canvas.rspark{display:block;width:96px;height:26px}
+.rep-empty{padding:40px 20px;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--dim)}
+.det-head{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.det-head h2{font-family:var(--disp);font-weight:400;font-size:1.7rem;letter-spacing:.02em;color:var(--paper);line-height:1.1}
+.det-meta{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--dim);margin-top:7px}
+.det-meta b{color:var(--muted);font-weight:500}
+.det-head .right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.det-stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}
+.dstat{padding:16px 22px;border-left:1px solid var(--line)}
+.dstat:first-child{border-left:none}
+.dstat small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--dim);margin-bottom:7px}
+.dstat b{font-family:var(--disp);font-weight:400;font-size:1.5rem;color:var(--paper);letter-spacing:.02em}
+.dstat b.am{color:var(--amber)}.dstat b.gr{color:var(--green)}.dstat b.rd{color:var(--red)}
+#wave{display:block;width:100%;height:170px;background:var(--ink3)}
+.timeline{display:flex;gap:5px;padding:14px 20px;border-top:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.timeline .tl-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--dim);margin-right:8px}
+.rchip{width:15px;height:15px;border:1px solid;transition:transform .12s;cursor:default}
+.rchip:hover{transform:scale(1.35)}
+.rc-pass{background:rgba(61,220,132,.25);border-color:var(--green)}
+.rc-retry{background:rgba(255,176,32,.25);border-color:var(--amber)}
+.rc-fail{background:rgba(255,75,46,.3);border-color:var(--red)}
+.evidence{padding:16px 22px;font-family:var(--mono);font-size:11.5px;line-height:2.1;color:var(--muted)}
+.evidence .ehead{font-size:9.5px;letter-spacing:.24em;color:var(--red);margin-bottom:8px}
+.evidence div::before{content:"▸ ";color:var(--amber)}
+.evidence .cause-tag{display:inline-block;border:1px solid rgba(255,75,46,.5);color:var(--red);font-size:10px;letter-spacing:.14em;padding:3px 9px;margin-bottom:10px}
+.det-actions{padding:16px 22px;border-top:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap}
 
-.sidebar-nav {
-  flex: 1; padding: 12px 8px;
-  display: flex; flex-direction: column; gap: 2px;
-}
+/* ============ SETTINGS ============ */
+.set-wrap{max-width:880px}
+.set-sec{margin-bottom:22px}
+.set-body{padding:8px 24px 18px}
+.set-row{display:flex;align-items:center;gap:18px;padding:15px 0;border-bottom:1px dashed var(--line);flex-wrap:wrap}
+.set-row:last-child{border-bottom:none}
+.set-lab{flex:1;min-width:220px}
+.set-lab b{display:block;font-size:13.5px;font-weight:600;color:var(--paper);letter-spacing:.03em}
+.set-lab span{display:block;font-size:11.5px;color:var(--dim);margin-top:4px;line-height:1.5}
+.tgl{display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.tgl input{display:none}
+.track{width:48px;height:23px;border:1px solid var(--line2);background:var(--ink3);position:relative;transition:all .2s;border-radius:3px;flex:none}
+.knob{position:absolute;top:3px;left:3px;width:15px;height:15px;background:#3A5257;transition:all .2s;border-radius:2px}
+.tgl input:checked+.track{background:rgba(61,220,132,.12);border-color:var(--green)}
+.tgl input:checked+.track .knob{left:28px;background:var(--green);box-shadow:0 0 9px var(--green)}
+.tgl .tst{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--dim);width:30px}
+.tgl input:checked~.tst{color:var(--green)}
+.slider-wrap{width:280px}
+.slider-val{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--amber);letter-spacing:.08em;margin-bottom:8px;display:flex;justify-content:space-between}
+.slider-val span:last-child{color:var(--dim);font-weight:400;font-size:10px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--line2);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--amber);border:2px solid #171310;box-shadow:0 0 0 1px var(--amber);cursor:grab}
+input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;background:var(--amber);border:2px solid #171310;border-radius:0;box-shadow:0 0 0 1px var(--amber);cursor:grab}
+.ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:7px;letter-spacing:.05em}
+.sel{position:relative;width:230px}
+.sel select,.tin{appearance:none;-webkit-appearance:none;width:100%;background:var(--ink3);border:1px solid var(--line2);color:var(--text);font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;padding:11px 34px 11px 12px;cursor:pointer;outline:none;transition:border-color .2s}
+.tin{padding:11px 12px;cursor:text;width:280px}
+.sel select:focus,.tin:focus{border-color:var(--amber)}
+.sel::after{content:"▾";position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--amber);pointer-events:none;font-size:11px}
+.runner-grid{display:flex;gap:10px;flex-wrap:wrap;padding:16px 0 6px}
+.runner{display:flex;align-items:center;gap:10px;border:1px solid var(--line2);padding:10px 14px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted);transition:all .2s}
+.runner:hover{border-color:var(--muted);transform:translateY(-2px)}
+.runner.linked{border-color:var(--green);color:var(--paper)}
+.runner .rst{font-size:9px;letter-spacing:.14em;color:var(--dim)}
+.runner.linked .rst{color:var(--green)}
+.rlink{background:none;border:none;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--amber);cursor:pointer;text-decoration:underline dotted;padding:0}
+.runner.linked .rlink{color:var(--dim)}
+.danger{border-color:rgba(255,75,46,.5)}
+.danger .phead{color:var(--red);border-bottom-color:rgba(255,75,46,.3)}
+.save-bar{display:flex;align-items:center;gap:16px;margin-top:26px}
+.save-note{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim)}
 
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 12px; border-radius: var(--radius-xs);
-  color: var(--text-muted); text-decoration: none;
-  font-size: 13px; font-weight: 500;
-  transition: all var(--transition);
-  white-space: nowrap; overflow: hidden;
+/* ============ RESPONSIVE ============ */
+@media(max-width:1180px){.rep-grid{grid-template-columns:340px 1fr}}
+@media(max-width:1024px){
+  .dash-grid{grid-template-columns:1fr}
+  .rep-grid{grid-template-columns:1fr}
+  .rep-list{max-height:340px}
+  .suite-row{grid-template-columns:14px 1fr 130px 70px 60px}
+  .suite-row .sp,.suite-row .go{display:none}
 }
-.nav-item:hover { background: var(--bg-hover); color: var(--text); }
-.nav-item.active { background: var(--accent-soft); color: var(--accent); }
-.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-
-.nav-label { transition: opacity 0.3s; }
-.sidebar.collapsed .nav-label { opacity: 0; pointer-events: none; }
-.sidebar.collapsed .sidebar-logo span { display: none; }
-
-/* ===== MAIN ===== */
-.main {
-  margin-left: var(--sidebar-w);
-  min-height: 100vh;
-  transition: margin-left 0.3s;
-}
-.sidebar.collapsed ~ .main { margin-left: 64px; }
-
-/* ===== TOPBAR ===== */
-.topbar {
-  position: sticky; top: 0;
-  height: var(--topbar-h);
-  background: rgba(9,9,11,0.8);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center;
-  padding: 0 24px; gap: 16px;
-  z-index: 50;
-}
-
-.repo-select {
-  background: var(--bg-input); border: 1px solid var(--border);
-  color: var(--text); padding: 6px 28px 6px 10px;
-  border-radius: var(--radius-xs); font-size: 13px;
-  font-family: var(--font); outline: none;
-  cursor: pointer; min-width: 160px;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2371717a' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  transition: border-color var(--transition);
-}
-.repo-select:focus { border-color: var(--accent); }
-
-.search-box { position: relative; flex: 1; max-width: 320px; }
-.search-box input {
-  width: 100%; background: var(--bg-input);
-  border: 1px solid var(--border); color: var(--text);
-  padding: 6px 10px 6px 32px; border-radius: var(--radius-xs);
-  font-size: 13px; font-family: var(--font); outline: none;
-  transition: border-color var(--transition);
-}
-.search-box input::placeholder { color: var(--text-muted); }
-.search-box input:focus { border-color: var(--accent); }
-.search-box svg {
-  position: absolute; left: 8px; top: 50%;
-  transform: translateY(-50%); width: 16px; height: 16px;
-  color: var(--text-muted);
-}
-
-.auto-refresh {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 11px; font-family: var(--mono);
-  color: var(--text-muted); white-space: nowrap;
-}
-
-.pulse-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--green);
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-/* ===== CONTENT ===== */
-.content { padding: 24px; max-width: 1200px; }
-
-/* ===== ALERT BANNER ===== */
-.alert-banner {
-  background: var(--red-soft); border: 1px solid rgba(239,68,68,0.2);
-  padding: 12px 16px; border-radius: var(--radius-sm);
-  margin-bottom: 20px; display: flex;
-  align-items: center; gap: 10px;
-  font-size: 13px; color: var(--red);
-}
-.alert-banner svg { flex-shrink: 0; }
-.alert-banner a {
-  color: var(--red); text-decoration: none;
-  margin-left: auto; font-weight: 500;
-  font-family: var(--mono); font-size: 12px;
-}
-.alert-banner a:hover { text-decoration: underline; }
-
-/* ===== STATS ROW ===== */
-.stats-row {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 12px; margin-bottom: 20px;
-}
-
-.stat-card {
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 16px;
-  transition: all var(--transition);
-}
-.stat-card:hover { border-color: var(--text-muted); }
-
-.stat-icon {
-  width: 32px; height: 32px;
-  border-radius: var(--radius-xs);
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 10px;
-}
-.stat-icon svg { width: 16px; height: 16px; }
-.stat-icon.purple { background: var(--accent-soft); color: var(--accent); }
-.stat-icon.green { background: var(--green-soft); color: var(--green); }
-.stat-icon.red { background: var(--red-soft); color: var(--red); }
-.stat-icon.yellow { background: var(--yellow-soft); color: var(--yellow); }
-
-.stat-label {
-  font-size: 11px; color: var(--text-muted);
-  text-transform: uppercase; letter-spacing: 0.06em;
-  font-weight: 600; margin-bottom: 4px;
-}
-
-.stat-value {
-  font-size: 28px; font-weight: 700;
-  line-height: 1; letter-spacing: -0.02em;
-}
-
-.stat-sub {
-  font-size: 11px; color: var(--text-muted);
-  margin-top: 2px; font-family: var(--mono);
-}
-
-/* Trust ring */
-.trust-ring-wrap {
-  display: flex; align-items: center; gap: 10px;
-}
-.trust-ring-wrap svg { flex-shrink: 0; }
-
-/* ===== SECTION CARD ===== */
-.section-card {
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius); overflow: hidden;
-  margin-bottom: 16px;
-}
-
-.section-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.section-title {
-  font-size: 13px; font-weight: 600;
-  color: var(--text); letter-spacing: -0.01em;
-}
-
-.section-badge {
-  font-size: 10px; font-family: var(--mono);
-  color: var(--text-muted); background: var(--bg);
-  padding: 2px 8px; border-radius: 4px;
-  letter-spacing: 0.04em;
-}
-
-.section-body { padding: 16px; }
-
-/* ===== TRUST DISTRIBUTION ===== */
-.dist-bar {
-  height: 8px; border-radius: 4px; overflow: hidden;
-  display: flex; background: var(--bg);
-}
-.dist-bar div {
-  height: 100%;
-  transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.dist-legend {
-  display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap;
-}
-.dist-legend-item {
-  display: flex; align-items: center; gap: 6px;
-  font-family: var(--mono); font-size: 11px;
-  color: var(--text-secondary);
-}
-.dist-legend-dot {
-  width: 8px; height: 8px; border-radius: 2px;
-}
-
-/* ===== TABLES ===== */
-.data-table { width: 100%; border-collapse: collapse; }
-
-.data-table thead th {
-  color: var(--text-muted); font-weight: 600;
-  font-size: 11px; text-transform: uppercase;
-  letter-spacing: 0.06em; padding: 10px 14px;
-  text-align: left; border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.data-table tbody tr {
-  cursor: pointer; transition: background var(--transition);
-}
-.data-table tbody tr:hover { background: var(--bg-hover); }
-
-.data-table tbody td {
-  padding: 10px 14px; border-bottom: 1px solid var(--border-subtle);
-  font-size: 13px; vertical-align: middle;
-}
-.data-table tbody tr:last-child td { border-bottom: none; }
-
-.test-name-cell {
-  font-family: var(--mono); font-size: 12px;
-  max-width: 280px; overflow: hidden;
-  text-overflow: ellipsis; white-space: nowrap;
-  color: var(--text);
-}
-
-/* Trust mini bar */
-.trust-mini {
-  display: flex; align-items: center; gap: 8px;
-}
-.trust-bar-bg {
-  width: 60px; height: 4px;
-  background: var(--bg); border-radius: 2px; overflow: hidden;
-}
-.trust-bar-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
-.trust-val {
-  font-weight: 600; font-size: 13px;
-  min-width: 28px; font-family: var(--mono);
-}
-
-/* Category tags */
-.cat-tag {
-  display: inline-block; padding: 2px 8px;
-  font-family: var(--mono); font-size: 10px;
-  font-weight: 500; white-space: nowrap;
-  border-radius: 4px; letter-spacing: 0.02em;
-}
-.cat-tag.timing { background: var(--orange-soft); color: var(--orange); }
-.cat-tag.shared_state { background: var(--red-soft); color: var(--red); }
-.cat-tag.order_dependency { background: var(--accent-soft); color: var(--accent); }
-.cat-tag.non_deterministic_data { background: var(--yellow-soft); color: var(--yellow); }
-
-/* Run dots */
-.run-dots { display: flex; gap: 3px; }
-.run-dot { width: 6px; height: 6px; border-radius: 2px; }
-.run-dot.passed { background: var(--green); }
-.run-dot.failed { background: var(--red); }
-.run-dot.skipped { background: var(--text-muted); }
-
-/* CI run status */
-.run-status-all-pass { color: var(--green); font-weight: 500; font-size: 12px; }
-.run-status-has-fail { color: var(--red); font-weight: 600; font-size: 12px; }
-
-.branch-tag {
-  display: inline-block; padding: 2px 6px;
-  background: var(--bg); border: 1px solid var(--border);
-  font-family: var(--mono); font-size: 11px;
-  color: var(--text-secondary); border-radius: 4px;
-}
-
-.run-id-cell {
-  font-family: var(--mono); font-size: 11px; color: var(--text-muted);
-}
-
-.time-cell {
-  color: var(--text-muted); font-size: 12px;
-  white-space: nowrap; font-family: var(--mono);
-}
-
-/* View button */
-.view-btn {
-  padding: 4px 12px; background: var(--accent);
-  border: none; color: #fff;
-  font-family: var(--font); font-size: 11px;
-  font-weight: 500; cursor: pointer;
-  transition: all var(--transition);
-  text-decoration: none; white-space: nowrap;
-  border-radius: var(--radius-xs);
-}
-.view-btn:hover { background: var(--accent-hover); }
-
-/* Empty state */
-.empty-state {
-  text-align: center; padding: 40px 20px;
-  color: var(--text-muted); font-size: 13px;
-}
-
-/* Loading */
-.loading {
-  display: flex; align-items: center; justify-content: center;
-  padding: 40px; color: var(--text-muted);
-  gap: 8px; font-size: 13px;
-}
-.spinner {
-  width: 16px; height: 16px;
-  border: 2px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* No-repo state */
-.no-repo {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  min-height: 60vh; text-align: center; gap: 12px;
-}
-.no-repo svg { color: var(--text-muted); margin-bottom: 8px; }
-.no-repo h2 { color: var(--text); font-size: 20px; font-weight: 700; }
-.no-repo p { color: var(--text-muted); font-size: 13px; max-width: 360px; }
-
-/* Responsive */
-@media (max-width: 900px) {
-  .sidebar { width: 64px; }
-  .sidebar .nav-label, .sidebar .sidebar-logo span { display: none; }
-  .main { margin-left: 64px !important; }
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .content { padding: 16px; }
-}
-@media (max-width: 600px) {
-  .stats-row { grid-template-columns: 1fr; }
-  .topbar { padding: 0 12px; gap: 8px; }
-  .search-box { max-width: none; }
+@media(max-width:880px){
+  body{overflow:auto}
+  .app{grid-template-columns:1fr;height:auto}
+  .side{flex-direction:row;align-items:center;flex-wrap:wrap;border-right:none;border-bottom:1px solid var(--line);padding:12px 16px;gap:8px;position:sticky;top:0;z-index:50}
+  .logo{border:none;padding:0 14px 0 0}
+  .station-id{display:none}
+  nav{flex-direction:row;padding:0;flex:1}
+  .nitem{border-left:none;border-bottom:3px solid transparent;padding:10px 12px}
+  .nitem.active{border-bottom-color:var(--amber)}
+  .nitem .arr{display:none}
+  .side-foot{display:none}
+  .mainwrap{height:auto}
+  .content{overflow:visible;padding:20px 16px 50px}
+  .det-stats{grid-template-columns:1fr 1fr}
+  .dstat:nth-child(3){border-left:none;border-top:1px solid var(--line)}
+  .dstat:nth-child(4){border-top:1px solid var(--line)}
+  .q-row{grid-template-columns:1fr 70px;gap:8px}
+  .q-row .qs,.q-row .qd{display:none}
+  .tb-clock{display:none}
 }
 </style>
 </head>
 <body>
+<div class="grain"></div>
 
-<!-- Sidebar -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div class="sidebar-logo"><span>Falsky</span></div>
-  </div>
-  <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">
-    <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12">
-      <path d="M2 3h12v1.5H2zm0 4.25h12v1.5H2zm0 4.25h12v1.5H2z"/>
-    </svg>
-  </button>
-  <nav class="sidebar-nav">
-    <a href="/dashboard/" class="nav-item active" data-page="dashboard">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>
-      </svg>
-      <span class="nav-label">Dashboard</span>
-    </a>
-    <a href="/dashboard/guide.html" class="nav-item" data-page="guide">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-      </svg>
-      <span class="nav-label">Guide</span>
-    </a>
-    <a href="/" class="nav-item" style="margin-top:auto;border-top:1px solid var(--border);padding-top:12px">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-      <span class="nav-label">Home</span>
-    </a>
-  </nav>
-</aside>
-
-<!-- Main Content -->
-<div class="main" id="mainArea">
-  <!-- Top Bar -->
-  <div class="topbar">
-    <select class="repo-select" id="repoSelect">
-      <option value="">Select repo...</option>
-    </select>
-    <div class="search-box">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input type="text" id="searchInput" placeholder="Filter tests...">
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side">
+    <div class="logo"><svg width="32" height="15" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>TREM<em>O</em>R</div>
+    <div class="station-id">STATION FLK-01 · MUMBAI DC</div>
+    <nav>
+      <div class="nitem active" data-view="dash"><span class="idx">01</span>DASHBOARD<span class="arr">→</span></div>
+      <div class="nitem" data-view="reports"><span class="idx">02</span>TEST REPORTS<span class="arr">→</span></div>
+      <div class="nitem" data-view="settings"><span class="idx">03</span>SETTINGS<span class="arr">→</span></div>
+    </nav>
+    <div class="side-foot">
+      <div class="row"><span class="led"></span> DRUM · SPINNING</div>
+      <div>v2.4.1 · BUILD 8842</div>
+      <div><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> SWITCH PANEL</div>
     </div>
-    <div class="auto-refresh">
-      <div class="pulse-dot"></div>
-      <span id="liveClock">--:--:--</span>
-    </div>
-  </div>
+  </aside>
 
-  <div class="content">
-    <!-- No repo selected state -->
-    <div class="no-repo" id="noRepo">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>
-      <h2>Select a Repository</h2>
-      <p>Choose a repository from the dropdown above to view its trust dashboard.</p>
-    </div>
-
-    <!-- Dashboard content -->
-    <div id="dashContent" style="display:none">
-
-      <!-- Quarantine Banner -->
-      <div class="alert-banner" id="qBanner" style="display:none">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <span><strong>Quarantine Alert:</strong> <span id="qCount">0</span> test(s) below trust threshold</span>
-        <a href="#" id="qLink">View quarantined →</a>
+  <div class="mainwrap">
+    <!-- ============ TOPBAR ============ -->
+    <header class="topbar">
+      <div>
+        <div class="tb-eyebrow" id="tbEyebrow">FLK-01 // OPERATIONS</div>
+        <div class="tb-title" id="tbTitle">STATION DASHBOARD</div>
       </div>
-
-      <!-- Stats Row -->
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-icon purple">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          </div>
-          <div class="stat-label">Total Tests</div>
-          <div class="stat-value" id="sTotal">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon green">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </div>
-          <div class="stat-label">Avg Trust Score</div>
-          <div class="trust-ring-wrap">
-            <svg width="40" height="40" viewBox="0 0 40 40" id="trustRingSvg">
-              <circle cx="20" cy="20" r="16" fill="none" stroke="var(--bg)" stroke-width="3"/>
-              <circle cx="20" cy="20" r="16" fill="none" stroke="var(--green)" stroke-width="3"
-                stroke-dasharray="100.5" stroke-dashoffset="100.5" stroke-linecap="round"
-                transform="rotate(-90 20 20)" id="trustRingCircle"/>
-              <text x="20" y="20" text-anchor="middle" dominant-baseline="central"
-                fill="var(--text)" font-size="10" font-weight="700" font-family="var(--mono)" id="trustRingText">—</text>
-            </svg>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon red">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          </div>
-          <div class="stat-label">Flaky Tests</div>
-          <div class="stat-value" id="sFlaky">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon yellow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          </div>
-          <div class="stat-label">CI Runs</div>
-          <div class="stat-value" id="sRuns">—</div>
-        </div>
+      <div class="tb-right">
+        <button class="thr-chip" id="thrChip" title="Alert threshold — click to configure">ALERT ≥ M3.5</button>
+        <button class="bell" id="bell" title="Tremor alerts">⚠<i id="bellCount">0</i></button>
+        <span class="tb-clock"><span class="utc">--:--:--</span> UTC</span>
+        <span class="tb-live"><span class="led"></span>LIVE</span>
       </div>
+    </header>
 
-      <!-- Trust Distribution -->
-      <div class="section-card">
-        <div class="section-header">
-          <div class="section-title">Trust Distribution</div>
-          <div class="section-badge">Overview</div>
+    <main class="content">
+
+      <!-- ================================================== DASHBOARD -->
+      <section class="view active" id="view-dash">
+        <div class="dash-grid">
+
+          <div class="panel">
+            <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+            <div class="phead"><span class="led red"></span> DRUM RECORDER — CH.01 MAIN <span class="spacer">60 SPS · GAIN ×<span id="gainLbl">40</span></span></div>
+            <canvas id="drum"></canvas>
+          </div>
+
+          <div class="panel vitals">
+            <div class="phead">STATION VITALS</div>
+            <div class="vrow"><small>CURRENT MAGNITUDE</small><b id="vMag">0.3</b></div>
+            <div class="vrow"><small>EVENTS TODAY</small><b id="vEvents">128</b></div>
+            <div class="vrow"><small>QUARANTINED</small><b class="rd" id="vQuar">3</b></div>
+            <div class="vrow"><small>MEAN RUN TIME</small><b class="gr">4m 12s</b></div>
+            <div class="gain">
+              <small>DRUM GAIN</small>
+              <div class="seg" id="gainSeg">
+                <button data-g="10">×10</button><button data-g="40" class="on">×40</button><button data-g="100">×100</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="phead"><span class="led amber"></span> EPICENTER MAP — SUITE GRID <span class="spacer">CLICK TO PING</span></div>
+            <canvas id="map"></canvas>
+            <div class="map-coord" id="mapCoord">CURSOR: — · — · SECTOR —</div>
+          </div>
+
+          <div class="panel">
+            <div class="phead"><span class="led"></span> LIVE EVENT FEED <span class="spacer">AUTO-SCROLL</span></div>
+            <div class="feed" id="feed"></div>
+          </div>
+
+          <div class="panel">
+            <div class="phead">MAGNITUDE DISTRIBUTION — 7 DAYS</div>
+            <div class="hist" id="hist">
+              <div class="hrow"><span>I</span><div class="hbar"><i style="--w:44%;--c:1;--d:0s;background:var(--green)"></i></div><b>34</b></div>
+              <div class="hrow"><span>II</span><div class="hbar"><i style="--w:66%;--d:.08s;background:var(--green)"></i></div><b>51</b></div>
+              <div class="hrow"><span>III</span><div class="hbar"><i style="--w:100%;--d:.16s;background:var(--amber)"></i></div><b>77</b></div>
+              <div class="hrow"><span>IV</span><div class="hbar"><i style="--w:82%;--d:.24s;background:var(--amber)"></i></div><b>63</b></div>
+              <div class="hrow"><span>V</span><div class="hbar"><i style="--w:49%;--d:.32s;background:#FF6A2E"></i></div><b>38</b></div>
+              <div class="hrow"><span>VI</span><div class="hbar"><i style="--w:27%;--d:.4s;background:var(--red)"></i></div><b>21</b></div>
+              <div class="hrow"><span>VII</span><div class="hbar"><i style="--w:12%;--d:.48s;background:var(--red)"></i></div><b>9</b></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="phead">SUITE HEALTH — PASS RATE TREND <span class="spacer">CLICK TO INSPECT</span></div>
+            <div id="suiteList"></div>
+          </div>
+
+          <div class="panel span2">
+            <div class="phead"><span class="led red"></span> QUARANTINE BAY — <span id="qCount">3</span> TESTS ISOLATED <span class="spacer">DO NOT CROSS TAPE</span></div>
+            <div class="hazard"></div>
+            <div id="quarList"></div>
+          </div>
+
         </div>
-        <div class="section-body">
-          <div class="dist-bar" id="distBar"></div>
-          <div class="dist-legend" id="distLegend">
-            <div class="dist-legend-item"><div class="dist-legend-dot" style="background:var(--green)"></div><span id="legHigh">High (90+) — 0</span></div>
-            <div class="dist-legend-item"><div class="dist-legend-dot" style="background:var(--yellow)"></div><span id="legMed">Medium (70-89) — 0</span></div>
-            <div class="dist-legend-item"><div class="dist-legend-dot" style="background:var(--orange)"></div><span id="legLow">Low (50-69) — 0</span></div>
-            <div class="dist-legend-item"><div class="dist-legend-dot" style="background:var(--red)"></div><span id="legCrit">Critical (&lt;50) — 0</span></div>
+      </section>
+
+      <!-- ================================================== REPORTS -->
+      <section class="view" id="view-reports">
+        <div class="rep-grid">
+          <div class="panel">
+            <div class="phead">WAVEFORM ARCHIVE <span class="spacer" id="repCount">12 RECORDS</span></div>
+            <div class="rep-tools">
+              <div class="ftabs" id="ftabs">
+                <button class="ftab on" data-f="all">ALL</button>
+                <button class="ftab" data-f="flaky">FLAKY</button>
+                <button class="ftab" data-f="quarantined">QUARANTINED</button>
+                <button class="ftab" data-f="stable">STABLE</button>
+              </div>
+              <div class="srch"><input id="repSearch" type="text" placeholder="search test or suite…" autocomplete="off"></div>
+            </div>
+            <div class="rep-list" id="repList"></div>
+          </div>
+
+          <div class="panel" id="detPanel">
+            <div class="phead">SEISMOGRAM — TEST DETAIL <span class="spacer" id="detId">REC-0001</span></div>
+            <div class="det-head">
+              <div>
+                <h2 id="detName">—</h2>
+                <div class="det-meta">SUITE <b id="detSuite">—</b> · LAST RUN <b id="detLast">—</b> · CAUSE <b id="detCause">—</b></div>
+              </div>
+              <div class="right"><span class="stamp" id="detStamp">—</span></div>
+            </div>
+            <div class="det-stats">
+              <div class="dstat"><small>TRUE PASS RATE</small><b id="dsPass">—</b></div>
+              <div class="dstat"><small>MEAN DURATION</small><b id="dsMean">—</b></div>
+              <div class="dstat"><small>RETRY POLICY</small><b id="dsRetry">—</b></div>
+              <div class="dstat"><small>MAGNITUDE</small><b class="am" id="dsMag">—</b></div>
+            </div>
+            <div class="phead" style="border-top:1px solid var(--line)">LAST 20 RUNS — WAVEFORM REPLAY</div>
+            <canvas id="wave"></canvas>
+            <div class="timeline" id="timeline"><span class="tl-label">RUNS →</span></div>
+            <div class="evidence" id="evidence"></div>
+            <div class="det-actions">
+              <button class="btn btn-red" id="actQuar">⛔ QUARANTINE</button>
+              <button class="btn btn-line" id="actAssign">ASSIGN OWNER</button>
+              <button class="btn btn-line" id="actExport">EXPORT .SEIS</button>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Flaky Tests Table -->
-      <div class="section-card">
-        <div class="section-header">
-          <div class="section-title">Flaky Tests</div>
-          <div class="section-badge" id="flakyCountBadge">0 tests</div>
-        </div>
-        <div class="section-body" style="padding:0">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Test Name</th>
-                <th>Trust Score</th>
-                <th>Pass Rate</th>
-                <th>Category</th>
-                <th>Last 10 Runs</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="flakyBody"></tbody>
-          </table>
-          <div class="empty-state" id="flakyEmpty" style="display:none">
-            No flaky tests detected — all tests are reliable.
+      <!-- ================================================== SETTINGS -->
+      <section class="view" id="view-settings">
+        <div class="set-wrap">
+
+          <div class="panel set-sec">
+            <div class="phead"><span class="led"></span> STATION IDENTITY</div>
+            <div class="set-body">
+              <div class="set-row">
+                <div class="set-lab"><b>Station name</b><span>Printed on every report header and alert payload.</span></div>
+                <input class="tin" value="FLK-01 · MUMBAI DC">
+              </div>
+              <div class="set-row">
+                <div class="set-lab"><b>Reporting timezone</b><span>Timestamps on the drum and in the archive.</span></div>
+                <div class="sel"><select><option>UTC (station default)</option><option>Asia/Kolkata</option><option>America/New_York</option><option>Europe/Berlin</option></select></div>
+              </div>
+              <div class="set-row">
+                <div class="set-lab"><b>Waveform retention</b><span>Raw traces older than this are compressed to fingerprints.</span></div>
+                <div class="slider-wrap">
+                  <div class="slider-val"><span id="retVal">90 DAYS</span><span>30–365</span></div>
+                  <input type="range" id="retSlider" min="30" max="365" step="5" value="90">
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Recent CI Runs -->
-      <div class="section-card">
-        <div class="section-header">
-          <div class="section-title">Recent CI Runs</div>
-          <div class="section-badge">History</div>
-        </div>
-        <div class="section-body" style="padding:0">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Run ID</th>
-                <th>Branch</th>
-                <th>Total</th>
-                <th>Passed</th>
-                <th>Failed</th>
-                <th>Avg Trust</th>
-                <th>Time</th>
-              </tr>
-            </thead>
-            <tbody id="runsBody"></tbody>
-          </table>
-          <div class="empty-state" id="runsEmpty" style="display:none">
-            No CI runs recorded yet.
+          <div class="panel set-sec">
+            <div class="phead"><span class="led amber"></span> DETECTION THRESHOLDS</div>
+            <div class="set-body">
+              <div class="set-row">
+                <div class="set-lab"><b>Alert magnitude threshold</b><span>Events at or above this magnitude ring the bell and ping channels. Applies live to the dashboard feed.</span></div>
+                <div class="slider-wrap">
+                  <div class="slider-val"><span id="thrVal">M 3.5</span><span>1.0–7.0</span></div>
+                  <input type="range" id="thrSlider" min="1" max="7" step="0.1" value="3.5">
+                  <div class="ticks"><span>I</span><span>II</span><span>III</span><span>IV</span><span>V</span><span>VI</span><span>VII</span></div>
+                </div>
+              </div>
+              <div class="set-row">
+                <div class="set-lab"><b>Auto-quarantine</b><span>Isolate a test automatically when its rolling magnitude crosses the bay threshold.</span></div>
+                <label class="tgl"><input type="checkbox" checked id="tAutoQ"><span class="track"><span class="knob"></span></span><span class="tst">ON</span></label>
+              </div>
+              <div class="set-row">
+                <div class="set-lab"><b>Retry masking audit</b><span>Compute the true pass rate underneath retry(N) policies and flag masked coin-flips.</span></div>
+                <label class="tgl"><input type="checkbox" checked><span class="track"><span class="knob"></span></span><span class="tst">ON</span></label>
+              </div>
+              <div class="set-row">
+                <div class="set-lab"><b>Order-dependence sampling</b><span>Shuffle permutations per nightly run to catch sequence guilt.</span></div>
+                <div class="sel"><select><option>50 permutations / night</option><option>Off</option><option>10 permutations / night</option><option>100 permutations / night</option></select></div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-    </div>
+          <div class="panel set-sec">
+            <div class="phead"><span class="led"></span> ALERT ROUTING</div>
+            <div class="set-body">
+              <div class="set-row">
+                <div class="set-lab"><b>Slack — #ci-seismology</b><span>Webhook for tremor alerts and quarantine notices.</span></div>
+                <label class="tgl"><input type="checkbox" checked><span class="track"><span class="knob"></span></span><span class="tst">ON</span></label>
+                <input class="tin" style="width:230px" value="hooks.slack.com/T0X/B0X/…">
+              </div>
+              <div class="set-row">
+                <div class="set-lab"><b>Email digest</b><span>Daily observatory summary, 08:00 station time.</span></div>
+                <label class="tgl"><input type="checkbox" checked><span class="track"><span class="knob"></span></span><span class="tst">ON</span></label>
+                <input class="tin" style="width:230px" value="eng-core@company.dev">
+              </div>
+              <div class="set-row">
+                <div class="set-lab"><b>PagerDuty — MAG V+</b><span>Only severe quakes page a human. As it should be.</span></div>
+                <label class="tgl"><input type="checkbox"><span class="track"><span class="knob"></span></span><span class="tst">OFF</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel set-sec">
+            <div class="phead">RUNNER LINKS</div>
+            <div class="set-body">
+              <div class="runner-grid" id="runners">
+                <div class="runner linked"><span class="led"></span>GitHub Actions<span class="rst">LINKED</span><button class="rlink">unlink</button></div>
+                <div class="runner linked"><span class="led"></span>pytest<span class="rst">LINKED</span><button class="rlink">unlink</button></div>
+                <div class="runner"><span class="led amber"></span>Playwright<span class="rst">STANDBY</span><button class="rlink">link</button></div>
+                <div class="runner"><span class="led amber"></span>GitLab CI<span class="rst">STANDBY</span><button class="rlink">link</button></div>
+                <div class="runner"><span class="led amber"></span>Jest<span class="rst">STANDBY</span><button class="rlink">link</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel set-sec danger">
+            <div class="hazard"></div>
+            <div class="phead">⚠ DANGER ZONE — IRREVERSIBLE OPERATIONS</div>
+            <div class="set-body">
+              <div class="set-row">
+                <div class="set-lab"><b>Purge waveform archive</b><span>Deletes all raw traces. Fingerprints and verdicts are kept. There is no undo — the drum does not remember.</span></div>
+                <button class="btn btn-red" id="purgeBtn">PURGE ARCHIVE</button>
+              </div>
+              <div class="set-row">
+                <div class="set-lab"><b>Decommission station</b><span>Stops recording, detaches all runners, ships the final report.</span></div>
+                <button class="btn btn-red" id="decomBtn">DECOMMISSION</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="save-bar">
+            <button class="btn btn-amber" id="saveBtn">▸ WRITE CONFIG TO STATION</button>
+            <span class="save-note">CHANGES APPLY TO THE LIVE DRUM IMMEDIATELY</span>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
   </div>
 </div>
 
+<div class="toast-zone" id="toasts"></div>
+
 <script>
-const API = window.location.origin;
-let currentRepo = localStorage.getItem('falsky_repo') || '';
-let allFlakyTests = [];
-let searchFilter = '';
+/* ================= STATE ================= */
+const S={gain:40,threshold:3.5,events:128,bell:0,quar:3,view:'dash',selTest:0,filter:'all',search:''};
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const dpr=()=>window.devicePixelRatio||1;
+function fit(cv){const d=dpr(),r=cv.getBoundingClientRect();cv.width=r.width*d;cv.height=r.height*d;
+  const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);return[c,r.width,r.height];}
 
-const $ = id => document.getElementById(id);
+/* ================= TOASTS ================= */
+function toast(msg,type=''){const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;
+  $('toasts').appendChild(t);setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),320);},3400);}
 
-$('sidebarToggle').addEventListener('click', () => {
-  $('sidebar').classList.toggle('collapsed');
-});
+/* ================= CLOCK ================= */
+function tick(){const d=new Date(),t=pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds());
+  document.querySelectorAll('.utc').forEach(e=>e.textContent=t);}
+tick();setInterval(tick,1000);
 
-$('repoSelect').addEventListener('change', e => {
-  currentRepo = e.target.value;
-  localStorage.setItem('falsky_repo', currentRepo);
-  loadDashboard();
-});
-
-$('searchInput').addEventListener('input', e => {
-  searchFilter = e.target.value.toLowerCase();
-  renderFlakyTable();
-});
-
-function trustColor(score) {
-  if (score >= 90) return 'var(--green)';
-  if (score >= 70) return 'var(--yellow)';
-  if (score >= 50) return 'var(--orange)';
-  return 'var(--red)';
+/* ================= NAV ================= */
+const TITLES={dash:['FLK-01 // OPERATIONS','STATION DASHBOARD'],reports:['FLK-01 // WAVEFORM ARCHIVE','TEST REPORTS'],settings:['FLK-01 // CONFIGURATION','STATION SETTINGS']};
+function activate(v){S.view=v;
+  document.querySelectorAll('.nitem').forEach(n=>n.classList.toggle('active',n.dataset.view===v));
+  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+v));
+  $('tbEyebrow').textContent=TITLES[v][0];$('tbTitle').textContent=TITLES[v][1];
+  if(v==='dash'){requestAnimationFrame(()=>{sizeDrum();sizeMap();$('hist').classList.add('grown');drawSuiteSparks();});}
+  if(v==='reports'){renderList();requestAnimationFrame(()=>drawWave(T[S.selTest]));}
 }
+document.querySelectorAll('.nitem').forEach(n=>n.addEventListener('click',()=>activate(n.dataset.view)));
+addEventListener('keydown',e=>{if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  if(e.key==='1')activate('dash');if(e.key==='2')activate('reports');if(e.key==='3')activate('settings');});
+$('thrChip').addEventListener('click',()=>activate('settings'));
 
-function formatTime(ts) {
-  if (!ts) return '—';
-  const d = new Date(ts);
-  const diff = Date.now() - d;
-  if (diff < 60000) return 'just now';
-  if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
-  if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-}
+/* ================= BELL ================= */
+function bumpBell(){S.bell++;$('bellCount').textContent=S.bell;}
+$('bell').addEventListener('click',()=>{const n=S.bell;S.bell=0;$('bellCount').textContent=0;
+  toast(n?n+' tremor(s) since last sweep — review the feed':'Bell clear. Station quiet. For now.',n?'red':'green');});
 
-async function loadRepos() {
-  try {
-    const res = await fetch(`${API}/api/repos`);
-    const data = await res.json();
-    const sel = $('repoSelect');
-    sel.innerHTML = '<option value="">Select repo...</option>';
-    (data.repos || []).forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = r.name;
-      opt.textContent = r.name;
-      if (r.name === currentRepo) opt.selected = true;
-      sel.appendChild(opt);
-    });
-    if (currentRepo) loadDashboard();
-  } catch (e) { console.error('Failed to load repos:', e); }
-}
+/* ================= DATA ================= */
+const NAMES=['test_refund_race','test_dst_boundary','test_session_expiry','test_oauth_refresh','test_cart_total','test_search_ranking','test_email_worker','test_coupon_stack','test_webhook_retry','test_index_rebuild','test_stock_sync','test_login_throttle'];
+const NOTES_LO=['passed after 3 retries — flagged','green by luck · fingerprint kept','timing jitter ±410ms detected','rerun passed — waveform archived','seed mismatch captured'];
+const NOTES_HI=['epicenter: shared fixture in conftest.py','order-dependent — fails after test_cart','auto-quarantined · ticket filed','root cause: unseeded RNG in helper.py','port 8081 collision under workers=4'];
+const CAUSES={
+ 'SHARED STATE':['module-scoped fixture mutates db.orders','fails 92% of runs when executed after test_cart_total','epicenter: conftest.py:212 — uncleaned row'],
+ 'ORDER DEPENDENCE':['passes 100% in isolation','fails in 7/10 shuffled permutations','poisoning test identified: test_session_expiry'],
+ 'TIMING':['sleep(2) wait vs p95 latency 1.9s — razor thin','failures cluster 00:00–01:00 UTC (DST edge)','wall-clock read inside assertion'],
+ 'NETWORK':['third-party sandbox p99 = 4.2s','failures correlate with provider status-page incidents','no circuit breaker on outbound call'],
+ 'RESOURCE RACE':['port 8081 collision under --workers=4','file lock contention on /tmp/cache.db','only reproduces when full suite runs in parallel'],
+ 'RETRY MASKING':['retry(3) policy hides a 19% true pass rate','green builds are statistically load-bearing','recommend: fix, then remove policy'],
+ '—':['no anomalies recorded','waveform flat across all channels','this test is boring. keep it that way.']};
+function mkRuns(pass,ret){const r=[];for(let i=0;i<20;i++){const x=Math.random()*100;
+  r.push(x<pass?'pass':(ret>0&&Math.random()<.55?'retry':'fail'));}return r;}
+const T=[
+ {name:'test_refund_race',suite:'payments',mag:5.6,status:'quarantined',cause:'SHARED STATE',pass:38,mean:842,ret:3,days:12},
+ {name:'test_index_rebuild',suite:'search',mag:6.2,status:'quarantined',cause:'RESOURCE RACE',pass:31,mean:8800,ret:3,days:4},
+ {name:'test_email_worker',suite:'notifications',mag:5.1,status:'quarantined',cause:'RETRY MASKING',pass:19,mean:3400,ret:3,days:21},
+ {name:'test_coupon_stack',suite:'checkout',mag:4.7,status:'flaky',cause:'SHARED STATE',pass:52,mean:275,ret:2},
+ {name:'test_dst_boundary',suite:'checkout',mag:4.2,status:'flaky',cause:'TIMING',pass:61,mean:318,ret:1},
+ {name:'test_search_ranking',suite:'search',mag:3.8,status:'flaky',cause:'RESOURCE RACE',pass:67,mean:2100,ret:2},
+ {name:'test_session_expiry',suite:'auth',mag:3.4,status:'flaky',cause:'ORDER DEPENDENCE',pass:72,mean:190,ret:2},
+ {name:'test_webhook_retry',suite:'notifications',mag:3.1,status:'flaky',cause:'NETWORK',pass:76,mean:1650,ret:1},
+ {name:'test_oauth_refresh',suite:'auth',mag:2.9,status:'flaky',cause:'NETWORK',pass:88,mean:1240,ret:1},
+ {name:'test_stock_sync',suite:'inventory',mag:2.2,status:'stable',cause:'TIMING',pass:94,mean:540,ret:1},
+ {name:'test_cart_total',suite:'checkout',mag:1.6,status:'stable',cause:'—',pass:99,mean:122,ret:0},
+ {name:'test_login_throttle',suite:'auth',mag:1.3,status:'stable',cause:'—',pass:100,mean:98,ret:0},
+];
+T.forEach(t=>t.runs=mkRuns(t.pass,t.ret));
+const SUITES=[
+ {name:'payments',pass:71,trend:'down',mean:'6m 40s',spark:[88,86,84,79,81,76,74,71]},
+ {name:'auth',pass:96,trend:'up',mean:'2m 05s',spark:[91,92,94,93,95,94,96,96]},
+ {name:'checkout',pass:84,trend:'down',mean:'4m 52s',spark:[93,90,89,87,88,85,84,84]},
+ {name:'search',pass:79,trend:'down',mean:'9m 14s',spark:[90,88,85,86,82,81,80,79]},
+ {name:'inventory',pass:93,trend:'up',mean:'3m 31s',spark:[87,88,90,89,91,92,92,93]},
+ {name:'notifications',pass:88,trend:'up',mean:'5m 08s',spark:[80,82,81,84,85,84,87,88]},
+];
 
-async function loadDashboard() {
-  if (!currentRepo) {
-    $('noRepo').style.display = 'flex';
-    $('dashContent').style.display = 'none';
-    return;
-  }
-  $('noRepo').style.display = 'none';
-  $('dashContent').style.display = 'block';
+/* ================= DRUM ================= */
+const drum=$('drum');let dctx,W,H,buf=[],buf2=[],markers=[],tremors=[],frame=0;
+function sizeDrum(){[dctx,W,H]=fit(drum);const max=Math.ceil(W/2)+2;
+  while(buf.length>max)buf.shift();while(buf2.length>max)buf2.shift();}
+function spawnTremor(){let amp=10+Math.random()*40;if(Math.random()<.16)amp+=26;
+  tremors.push({age:0,dur:110+Math.random()*140,amp,ph:Math.random()*6});
+  const mag=Math.min(6.8,1.2+amp/12+Math.random()*.6);
+  const v=$('vMag');v.textContent=mag.toFixed(1);v.classList.add('flash');bumpBell();
+  setTimeout(()=>{v.classList.remove('flash');v.textContent=(0.2+Math.random()*.4).toFixed(1);},1600);
+  markers.push({x:W});pushFeed(mag);}
+function drawDrum(){frame++;const g=S.gain/40;let tv=0;
+  tremors=tremors.filter(t=>t.age<t.dur);
+  for(const t of tremors){const p=t.age/t.dur;
+    tv+=Math.exp(-3.4*p)*Math.sin(t.age*.32+t.ph)*t.amp*(p<.08?p/.08:1);t.age++;}
+  if(!document.hidden&&tremors.length<2&&Math.random()<.012)spawnTremor();
+  const max=Math.ceil(W/2)+2;
+  buf.push(Math.max(-(H/2-10),Math.min(H/2-10,((Math.random()-.5)*3+tv)*g)));if(buf.length>max)buf.shift();
+  buf2.push(((Math.random()-.5)*2+tv*.42)*g);if(buf2.length>max)buf2.shift();
+  markers.forEach(m=>m.x-=2);markers=markers.filter(m=>m.x>0);
+  dctx.clearRect(0,0,W,H);
+  dctx.strokeStyle='rgba(70,110,115,.22)';dctx.lineWidth=1;
+  const off=(frame*2)%46;
+  for(let x=-off;x<W;x+=46){dctx.beginPath();dctx.moveTo(x,0);dctx.lineTo(x,H);dctx.stroke();}
+  for(let y=0;y<H;y+=36){dctx.beginPath();dctx.moveTo(0,y);dctx.lineTo(W,y);dctx.stroke();}
+  dctx.strokeStyle='rgba(120,160,165,.35)';dctx.beginPath();dctx.moveTo(0,H/2);dctx.lineTo(W,H/2);dctx.stroke();
+  const trace=(b,col,w,gl)=>{dctx.beginPath();
+    for(let i=0;i<b.length;i++){const x=i*2,y=H/2-b[i];i?dctx.lineTo(x,y):dctx.moveTo(x,y);}
+    dctx.strokeStyle=col;dctx.lineWidth=w;dctx.shadowColor=gl;dctx.shadowBlur=6;dctx.stroke();dctx.shadowBlur=0;};
+  trace(buf2,'rgba(255,176,32,.4)',1,'rgba(255,176,32,.35)');
+  trace(buf,'#3DDC84',1.6,'rgba(61,220,132,.55)');
+  dctx.fillStyle='#FF4B2E';dctx.font='9px IBM Plex Mono';
+  markers.forEach(m=>{dctx.fillRect(m.x,6,2,14);dctx.fillText('EV',m.x+5,14);});
+  dctx.fillStyle='rgba(61,220,132,.8)';dctx.fillText('CH.01 MAIN',10,H-10);
+  dctx.fillStyle='rgba(255,176,32,.7)';dctx.fillText('CH.02 NIGHTLY',10,H-24);}
+$('gainSeg').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+  $('gainSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  S.gain=+b.dataset.g;$('gainLbl').textContent=S.gain;toast('DRUM GAIN SET TO ×'+S.gain);}));
 
-  try {
-    const res = await fetch(`${API}/api/dashboard?repo_name=${encodeURIComponent(currentRepo)}`);
-    const data = await res.json();
-    renderStats(data.stats || {});
-    renderDistribution(data.trust_distribution || {});
-    allFlakyTests = data.flaky_tests || [];
-    renderFlakyTable();
-    renderRuns(data.recent_runs || []);
-    loadQuarantine();
-  } catch (e) { console.error('Failed to load dashboard:', e); }
-}
+/* ================= EPICENTER MAP ================= */
+const map=$('map');let mctx,MW,MH,pings=[],mpos=null;
+const BLOCKS=[{x:.05,y:.12,w:.27,h:.36,n:'PAYMENTS'},{x:.37,y:.08,w:.24,h:.32,n:'AUTH'},{x:.67,y:.14,w:.27,h:.4,n:'CHECKOUT'},{x:.09,y:.6,w:.3,h:.32,n:'SEARCH'},{x:.46,y:.58,w:.22,h:.34,n:'INVENTORY'},{x:.73,y:.62,w:.2,h:.3,n:'NOTIFS'}];
+const EPIS=[{x:.19,y:.3,m:5.6},{x:.49,y:.22,m:3.4},{x:.8,y:.33,m:4.2},{x:.23,y:.76,m:3.8},{x:.57,y:.74,m:2.2},{x:.83,y:.77,m:5.1}];
+function sizeMap(){[mctx,MW,MH]=fit(map);}
+function drawMap(){mctx.clearRect(0,0,MW,MH);
+  mctx.strokeStyle='rgba(70,110,115,.18)';mctx.lineWidth=1;
+  for(let x=0;x<MW;x+=38){mctx.beginPath();mctx.moveTo(x,0);mctx.lineTo(x,MH);mctx.stroke();}
+  for(let y=0;y<MH;y+=38){mctx.beginPath();mctx.moveTo(0,y);mctx.lineTo(MW,y);mctx.stroke();}
+  mctx.font='9px IBM Plex Mono';
+  BLOCKS.forEach(b=>{const x=b.x*MW,y=b.y*MH,w=b.w*MW,h=b.h*MH;
+    mctx.strokeStyle='rgba(44,70,75,.9)';mctx.strokeRect(x,y,w,h);
+    mctx.fillStyle='rgba(138,160,162,.55)';mctx.fillText(b.n,x+8,y+15);});
+  const t=frame/60;
+  EPIS.forEach((e,i)=>{const x=e.x*MW,y=e.y*MH,col=e.m>=5?'255,75,46':(e.m>=3?'255,176,32':'61,220,132');
+    for(let k=0;k<2;k++){const p=((t*.5)+k*.5+i*.13)%1,r=5+p*30,a=(1-p)*.55;
+      mctx.strokeStyle=`rgba(${col},${a})`;mctx.lineWidth=1.5;
+      mctx.beginPath();mctx.arc(x,y,r,0,7);mctx.stroke();}
+    mctx.fillStyle=`rgb(${col})`;mctx.beginPath();mctx.arc(x,y,3,0,7);mctx.fill();});
+  pings=pings.filter(p=>p.age<60);
+  pings.forEach(p=>{const r=4+p.age*2.4,a=1-p.age/60;
+    mctx.strokeStyle=`rgba(242,232,213,${a*.7})`;mctx.lineWidth=1;
+    mctx.beginPath();mctx.arc(p.x,p.y,r,0,7);mctx.stroke();p.age++;});
+  if(mpos){mctx.strokeStyle='rgba(242,232,213,.35)';mctx.setLineDash([4,4]);
+    mctx.beginPath();mctx.moveTo(mpos.x,0);mctx.lineTo(mpos.x,MH);mctx.moveTo(0,mpos.y);mctx.lineTo(MW,mpos.y);mctx.stroke();
+    mctx.setLineDash([]);}}
+map.addEventListener('mousemove',e=>{const r=map.getBoundingClientRect();
+  mpos={x:e.clientX-r.left,y:e.clientY-r.top};
+  const sec=BLOCKS.find(b=>mpos.x/r.width>b.x&&mpos.x/r.width<b.x+b.w&&mpos.y/r.height>b.y&&mpos.y/r.height<b.y+b.h);
+  $('mapCoord').textContent=`CURSOR: ${(mpos.x/r.width).toFixed(2)} · ${(mpos.y/r.height).toFixed(2)} · SECTOR ${sec?sec.n:'—'}`;});
+map.addEventListener('mouseleave',()=>{mpos=null;$('mapCoord').textContent='CURSOR: — · — · SECTOR —';});
+map.addEventListener('click',e=>{const r=map.getBoundingClientRect();
+  pings.push({x:e.clientX-r.left,y:e.clientY-r.top,age:0});
+  toast('PING SENT — no new epicenter at this coordinate');});
 
-function renderStats(stats) {
-  $('sTotal').textContent = stats.total || 0;
-  $('sRuns').textContent = stats.total_runs || 0;
+/* ================= MAIN LOOP ================= */
+(function loop(){if(S.view==='dash'&&!document.hidden){drawDrum();drawMap();}requestAnimationFrame(loop);})();
 
-  const avgTrust = stats.avg_trust ? Math.round(stats.avg_trust) : 0;
-  const circumference = 2 * Math.PI * 16;
-  const offset = circumference - (avgTrust / 100) * circumference;
-  const ring = $('trustRingCircle');
-  const ringText = $('trustRingText');
+/* ================= FEED ================= */
+const feed=$('feed');
+function pushFeed(mag){S.events++;$('vEvents').textContent=S.events;
+  const d=new Date(),ts=pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds());
+  const hi=mag>=4,cls=hi?'m-hi':(mag>=2.5?'m-md':'m-lo');
+  const alert=mag>=S.threshold?' <span class="alert-flag">⚠ ALERT</span>':'';
+  const row=document.createElement('div');row.className='ev new';
+  row.innerHTML=`<span>${ts}</span><span class="n">${rnd(NAMES)}</span><span class="m ${cls}">M${mag.toFixed(1)}</span><span class="note">${rnd(hi?NOTES_HI:NOTES_LO)}${alert}</span>`;
+  feed.prepend(row);while(feed.children.length>8)feed.lastChild.remove();}
+[2.1,3.6,1.4,4.8,2.7].forEach(m=>pushFeed(m));
+setInterval(()=>{if(!document.hidden)pushFeed(+(1+Math.random()*5.8).toFixed(1));},3400);
 
-  ring.style.transition = 'stroke-dashoffset 1s ease';
-  ring.style.stroke = trustColor(avgTrust);
-  ring.setAttribute('stroke-dashoffset', offset);
-  ringText.textContent = avgTrust + '%';
+/* ================= SUITES ================= */
+function sparkDraw(cv,data,color){const[c,w,h]=fit(cv);const mn=Math.min(...data),mx=Math.max(...data),rg=(mx-mn)||1;
+  c.beginPath();data.forEach((v,i)=>{const x=i/(data.length-1)*(w-4)+2,y=h-3-((v-mn)/rg)*(h-8);i?c.lineTo(x,y):c.moveTo(x,y);});
+  c.strokeStyle=color;c.lineWidth=1.6;c.stroke();
+  const lx=w-2,ly=h-3-((data[data.length-1]-mn)/rg)*(h-8);
+  c.fillStyle=color;c.beginPath();c.arc(lx,ly,2.4,0,7);c.fill();}
+function buildSuites(){const el=$('suiteList');el.innerHTML='';
+  SUITES.forEach(s=>{const col=s.pass>=95?'var(--green)':(s.pass>=85?'var(--amber)':'var(--red)');
+    const led=s.pass>=95?'':(s.pass>=85?'amber':'red');
+    const row=document.createElement('div');row.className='suite-row';
+    row.innerHTML=`<span class="led ${led}"></span><span class="sname">${s.name}</span><canvas class="spark"></canvas><span class="pass" style="color:${col}">${s.pass}%</span><span class="sp">${s.mean}</span><span class="${s.trend==='up'?'t-up':'t-dn'}">${s.trend==='up'?'▲':'▼'} ${s.trend.toUpperCase()}</span><span class="go">INSPECT →</span>`;
+    row.addEventListener('click',()=>{S.search=s.name;$('repSearch').value=s.name;activate('reports');
+      toast('ARCHIVE FILTERED → suite: '+s.name);});
+    el.appendChild(row);});}
+function drawSuiteSparks(){document.querySelectorAll('.suite-row').forEach((row,i)=>{
+  const s=SUITES[i],col=s.pass>=95?'#3DDC84':(s.pass>=85?'#FFB020':'#FF4B2E');
+  sparkDraw(row.querySelector('.spark'),s.spark,col);});}
+buildSuites();
 
-  $('sFlaky').textContent = allFlakyTests.length;
-}
+/* ================= QUARANTINE ================= */
+function renderQuar(){const el=$('quarList');el.innerHTML='';
+  const qs=T.filter(t=>t.status==='quarantined');
+  $('qCount').textContent=qs.length;S.quar=qs.length;$('vQuar').textContent=qs.length;
+  if(!qs.length){el.innerHTML='<div class="rep-empty">BAY EMPTY — ALL TESTS BEHAVING. SUSPICIOUS.</div>';return;}
+  qs.forEach(t=>{const row=document.createElement('div');row.className='q-row';
+    row.innerHTML=`<span class="qn">${t.name}</span><span class="qs">SUITE · ${t.suite.toUpperCase()}</span><span class="mag-badge m-hi">M${t.mag.toFixed(1)}</span><span class="qd">${t.days} DAYS IN BAY</span>
+      <span class="q-actions"><button class="qbtn rel">RELEASE</button><button class="qbtn term">TERMINATE</button></span>`;
+    const rel=row.querySelector('.rel'),term=row.querySelector('.term');
+    rel.addEventListener('click',()=>{t.status='flaky';row.classList.add('gone');
+      setTimeout(()=>{renderQuar();renderList();},300);
+      toast(t.name+' released from quarantine — under watch','green');});
+    let armed=false;
+    term.addEventListener('click',()=>{if(!armed){armed=true;term.textContent='SURE?';term.style.color='var(--red)';term.style.borderColor='var(--red)';
+        setTimeout(()=>{armed=false;term.textContent='TERMINATE';term.style.color='';term.style.borderColor='';},2200);}
+      else{T.splice(T.indexOf(t),1);row.classList.add('gone');
+        setTimeout(()=>{renderQuar();renderList();},300);
+        toast(t.name+' deleted from suite (simulated)','red');}});
+    el.appendChild(row);});}
 
-function renderDistribution(dist) {
-  const h = dist.high || 0, m = dist.medium || 0, l = dist.low || 0, c = dist.critical || 0;
-  const total = h + m + l + c;
-  if (!total) {
-    $('distBar').innerHTML = '<div style="width:100%;background:var(--bg)"></div>';
-    return;
-  }
-  $('distBar').innerHTML = `
-    <div style="width:0%;background:var(--green)"></div>
-    <div style="width:0%;background:var(--yellow)"></div>
-    <div style="width:0%;background:var(--orange)"></div>
-    <div style="width:0%;background:var(--red)"></div>`;
-  requestAnimationFrame(() => {
-    const s = $('distBar').children;
-    s[0].style.width = (h/total*100)+'%';
-    s[1].style.width = (m/total*100)+'%';
-    s[2].style.width = (l/total*100)+'%';
-    s[3].style.width = (c/total*100)+'%';
-  });
-  $('legHigh').textContent = `High (90+) — ${h}`;
-  $('legMed').textContent = `Medium (70-89) — ${m}`;
-  $('legLow').textContent = `Low (50-69) — ${l}`;
-  $('legCrit').textContent = `Critical (<50) — ${c}`;
-}
+/* ================= REPORTS ================= */
+const magCls=m=>m>=4?'m-hi':(m>=2.5?'m-md':'m-lo');
+function renderList(){const el=$('repList');el.innerHTML='';
+  const q=S.search.toLowerCase();
+  const list=T.map((t,i)=>({t,i})).filter(({t})=>
+    (S.filter==='all'||t.status===S.filter)&&
+    (t.name.toLowerCase().includes(q)||t.suite.toLowerCase().includes(q)));
+  $('repCount').textContent=list.length+' RECORDS';
+  if(!list.length){el.innerHTML='<div class="rep-empty">NO WAVEFORMS MATCH — ADJUST FILTERS</div>';return;}
+  list.forEach(({t,i})=>{const item=document.createElement('div');
+    item.className='ritem'+(i===S.selTest?' sel':'');
+    const led=t.status==='quarantined'?'red':(t.status==='flaky'?'amber':'');
+    item.innerHTML=`<span class="led ${led}"></span><div><div class="rn">${t.name}</div><div class="rm">${t.suite} · <b>${t.pass}% pass</b> · <span class="mag-badge ${magCls(t.mag)}" style="padding:1px 6px">M${t.mag.toFixed(1)}</span></div></div><canvas class="rspark"></canvas>`;
+    item.addEventListener('click',()=>{S.selTest=i;renderList();renderDetail(t);requestAnimationFrame(()=>drawWave(t));});
+    el.appendChild(item);
+    const col=t.status==='quarantined'?'#FF4B2E':(t.status==='flaky'?'#FFB020':'#3DDC84');
+    sparkDraw(item.querySelector('.rspark'),t.runs.map(r=>r==='pass'?90:(r==='retry'?45:10)),col);});
+  renderDetail(T[S.selTest]);}
+function renderDetail(t){if(!t)return;
+  $('detId').textContent='REC-'+String(T.indexOf(t)+1).padStart(4,'0');
+  $('detName').textContent=t.name;$('detSuite').textContent=t.suite.toUpperCase();
+  $('detCause').textContent=t.cause;$('detLast').textContent=pad(Math.floor(Math.random()*24))+':'+pad(Math.floor(Math.random()*60))+' UTC';
+  const st=$('detStamp');st.textContent=t.status.toUpperCase();
+  st.className='stamp '+(t.status==='quarantined'?'st-red':(t.status==='flaky'?'st-amber':'st-green'));
+  const p=$('dsPass');p.textContent=t.pass+'%';p.className=t.pass>=90?'gr':(t.pass>=60?'am':'rd');
+  $('dsMean').textContent=t.mean>=1000?(t.mean/1000).toFixed(1)+'s':t.mean+'ms';
+  $('dsRetry').textContent=t.ret?'retry('+t.ret+')':'none';
+  const m=$('dsMag');m.textContent='M'+t.mag.toFixed(1);m.className=t.mag>=4?'rd':(t.mag>=2.5?'am':'gr');
+  const tl=$('timeline');tl.innerHTML='<span class="tl-label">RUNS →</span>';
+  t.runs.forEach((r,i)=>{const c=document.createElement('span');
+    c.className='rchip rc-'+r;c.title='Run #'+(i+1)+' — '+r.toUpperCase();tl.appendChild(c);});
+  const ev=$('evidence');
+  ev.innerHTML='<div class="ehead">ROOT-CAUSE ANALYSIS — TRIANGULATED EVIDENCE</div><span class="cause-tag">'+t.cause+'</span><br>'+
+    CAUSES[t.cause].map(l=>'<div>'+l+'</div>').join('');
+  $('actQuar').innerHTML=t.status==='quarantined'?'✓ RELEASE FROM BAY':'⛔ QUARANTINE';}
+function drawWave(t){if(!t||S.view!=='reports')return;const cv=$('wave');const[c,w,h]=fit(cv);
+  const seg=w/20,pts=[];
+  for(let r=0;r<20;r++){const res=t.runs[r],base=r*seg;
+    for(let x=0;x<seg;x+=2){const gx=base+x;let v=(Math.random()-.5)*4;
+      const p=x/seg;
+      if(res==='fail'&&p>.25&&p<.75)v+=Math.sin((p-.25)*26)* (h*.34)*Math.exp(-Math.abs(p-.5)*5)+(Math.random()-.5)*10;
+      if(res==='retry'&&((p>.3&&p<.45)||(p>.55&&p<.7)))v+=Math.sin(p*40)*(h*.16)+(Math.random()-.5)*6;
+      pts.push({x:gx,y:h/2-v,res});}}
+  const ticks=t.runs.map((r,i)=>({x:i*seg+seg/2,res:r}));
+  let idx=0;const step=Math.ceil(pts.length/46);
+  (function anim(){idx=Math.min(pts.length,idx+step);
+    c.clearRect(0,0,w,h);
+    c.strokeStyle='rgba(70,110,115,.25)';c.lineWidth=1;
+    for(let i=1;i<20;i++){c.beginPath();c.moveTo(i*seg,0);c.lineTo(i*seg,h);c.stroke();}
+    c.strokeStyle='rgba(120,160,165,.3)';c.beginPath();c.moveTo(0,h/2);c.lineTo(w,h/2);c.stroke();
+    c.beginPath();
+    for(let i=0;i<idx;i++){i?c.lineTo(pts[i].x,pts[i].y):c.moveTo(pts[i].x,pts[i].y);}
+    c.strokeStyle='#3DDC84';c.lineWidth=1.4;c.shadowColor='rgba(61,220,132,.5)';c.shadowBlur=5;c.stroke();c.shadowBlur=0;
+    ticks.forEach(tk=>{if(tk.x<=pts[idx-1].x){c.fillStyle=tk.res==='pass'?'#3DDC84':(tk.res==='retry'?'#FFB020':'#FF4B2E');
+      c.fillRect(tk.x-2,h-7,4,4);}});
+    if(idx<pts.length)requestAnimationFrame(anim);})();}
+$('ftabs').querySelectorAll('.ftab').forEach(b=>b.addEventListener('click',()=>{
+  $('ftabs').querySelectorAll('.ftab').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  S.filter=b.dataset.f;renderList();}));
+$('repSearch').addEventListener('input',e=>{S.search=e.target.value;renderList();});
+$('actQuar').addEventListener('click',()=>{const t=T[S.selTest];
+  t.status=t.status==='quarantined'?'flaky':'quarantined';
+  renderQuar();renderList();requestAnimationFrame(()=>drawWave(t));
+  toast(t.status==='quarantined'?t.name+' moved to quarantine bay':t.name+' released — under watch',
+    t.status==='quarantined'?'red':'green');});
+$('actAssign').addEventListener('click',()=>toast('ASSIGNED → @you · '+T[S.selTest].name));
+$('actExport').addEventListener('click',()=>toast('WAVEFORM EXPORTED → /tmp/'+T[S.selTest].name+'.seis','green'));
 
-function renderFlakyTable() {
-  const filtered = searchFilter
-    ? allFlakyTests.filter(t => (t.test_name||'').toLowerCase().includes(searchFilter))
-    : allFlakyTests;
-  const body = $('flakyBody');
-  const empty = $('flakyEmpty');
+/* ================= SETTINGS ================= */
+$('thrSlider').addEventListener('input',e=>{S.threshold=+e.target.value;
+  $('thrVal').textContent='M '+S.threshold.toFixed(1);
+  $('thrChip').textContent='ALERT ≥ M'+S.threshold.toFixed(1);});
+$('thrSlider').addEventListener('change',()=>toast('ALERT THRESHOLD SET TO M'+S.threshold.toFixed(1)+' — LIVE ON FEED'));
+$('retSlider').addEventListener('input',e=>$('retVal').textContent=e.target.value+' DAYS');
+document.querySelectorAll('.tgl input').forEach(cb=>cb.addEventListener('change',()=>{
+  const st=cb.closest('.tgl').querySelector('.tst');st.textContent=cb.checked?'ON':'OFF';}));
+$('tAutoQ').addEventListener('change',e=>toast(e.target.checked?'AUTO-QUARANTINE ARMED':'AUTO-QUARANTINE DISARMED',e.target.checked?'green':'red'));
+document.querySelectorAll('.runner .rlink').forEach(b=>b.addEventListener('click',()=>{
+  const r=b.closest('.runner'),linked=r.classList.toggle('linked');
+  r.querySelector('.rst').textContent=linked?'LINKED':'STANDBY';
+  r.querySelector('.led').className='led'+(linked?'':' amber');
+  b.textContent=linked?'unlink':'link';
+  toast(r.childNodes[2].textContent.trim()+(linked?' linked to station':' unlinked'),linked?'green':'red');}));
+let purgeArmed=false;
+$('purgeBtn').addEventListener('click',function(){if(!purgeArmed){purgeArmed=true;this.textContent='CONFIRM PURGE?';
+    setTimeout(()=>{purgeArmed=false;this.textContent='PURGE ARCHIVE';},2600);}
+  else{purgeArmed=false;this.textContent='PURGE ARCHIVE';toast('PURGE SIMULATED — archive intact. Nice reflex check.','red');}});
+$('decomBtn').addEventListener('click',()=>toast('REQUEST DENIED — station FLK-01 is load-bearing','red'));
+$('saveBtn').addEventListener('click',function(){const old=this.textContent;
+  this.textContent='✓ CONFIG WRITTEN';toast('CONFIGURATION WRITTEN TO STATION — drum updated','green');
+  setTimeout(()=>this.textContent=old,1800);});
 
-  $('flakyCountBadge').textContent = filtered.length + ' tests';
-
-  if (!filtered.length) { body.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-
-  body.innerHTML = filtered.map(t => {
-    const score = Math.round(t.trust_score || 0);
-    const cat = t.flaky_category || '';
-    const passRate = t.pass_rate != null ? Math.round(t.pass_rate * 100) + '%' : '—';
-    const dots = (t.recent_results || []).slice(0, 10).map(r =>
-      `<div class="run-dot ${r.status}"></div>`).join('');
-    const testName = encodeURIComponent(t.test_name);
-    return `<tr onclick="window.location.href='test-detail.html?repo_name=${encodeURIComponent(currentRepo)}&test_name=${testName}'" title="${t.test_name}">
-      <td class="test-name-cell">${t.test_name}</td>
-      <td><div class="trust-mini"><div class="trust-bar-bg"><div class="trust-bar-fill" style="width:${score}%;background:${trustColor(score)}"></div></div><span class="trust-val" style="color:${trustColor(score)}">${score}</span></div></td>
-      <td>${passRate}</td>
-      <td>${cat ? `<span class="cat-tag ${cat}">${cat.replace(/_/g,' ')}</span>` : '—'}</td>
-      <td><div class="run-dots">${dots||'—'}</div></td>
-      <td><a href="test-detail.html?repo_name=${encodeURIComponent(currentRepo)}&test_name=${testName}" class="view-btn" onclick="event.stopPropagation()">Review</a></td>
-    </tr>`;
-  }).join('');
-}
-
-function renderRuns(runs) {
-  const body = $('runsBody');
-  const empty = $('runsEmpty');
-  if (!runs.length) { body.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-
-  body.innerHTML = runs.map(r => {
-    const isAllPass = (r.failed||0) === 0;
-    const avgTrust = Math.round(r.avg_trust_score || 0);
-    const runId = r.run_id || '';
-    const truncId = runId.length > 24 ? runId.slice(0,24)+'...' : runId;
-    return `<tr>
-      <td class="run-id-cell" title="${runId}">${truncId}</td>
-      <td><span class="branch-tag">${r.branch||'—'}</span></td>
-      <td>${r.total_tests||0}</td>
-      <td>${r.passed||0}</td>
-      <td class="${isAllPass?'run-status-all-pass':'run-status-has-fail'}">${isAllPass?'All passed':r.failed+' failed'}</td>
-      <td style="color:${trustColor(avgTrust)};font-weight:600;font-family:var(--mono)">${avgTrust}%</td>
-      <td class="time-cell">${formatTime(r.timestamp)}</td>
-    </tr>`;
-  }).join('');
-}
-
-async function loadQuarantine() {
-  try {
-    const res = await fetch(`${API}/api/quarantined?repo_name=${encodeURIComponent(currentRepo)}`);
-    const data = await res.json();
-    if (data.quarantined && data.quarantined.length) {
-      $('qBanner').style.display = 'flex';
-      $('qCount').textContent = data.quarantined.length;
-    } else { $('qBanner').style.display = 'none'; }
-  } catch (e) { $('qBanner').style.display = 'none'; }
-}
-
-function updateLiveClock() {
-  const now = new Date();
-  $('liveClock').textContent = [now.getHours(),now.getMinutes(),now.getSeconds()].map(n=>String(n).padStart(2,'0')).join(':');
-}
-setInterval(updateLiveClock, 1000);
-updateLiveClock();
-
-const urlRepo = new URLSearchParams(window.location.search).get('repo');
-if (urlRepo && !currentRepo) {
-  currentRepo = urlRepo;
-  localStorage.setItem('falsky_repo', currentRepo);
-}
-
-loadRepos();
-setInterval(() => { if (currentRepo) loadDashboard(); }, 30000);
+/* ================= INIT ================= */
+renderQuar();renderList();
+requestAnimationFrame(()=>{sizeDrum();sizeMap();$('hist').classList.add('grown');drawSuiteSparks();});
+addEventListener('resize',()=>{if(S.view==='dash'){sizeDrum();sizeMap();drawSuiteSparks();}
+  if(S.view==='reports')drawWave(T[S.selTest]);});
+setTimeout(()=>toast('STATION FLK-01 ONLINE — drum spinning, sensors armed','green'),600);
 </script>
 </body>
 </html>
