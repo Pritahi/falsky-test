@@ -233,7 +233,21 @@ class UserUpdate(BaseModel):
 
 @app.get("/api/health")
 def health_check():
-    return {"status": "ok", "version": "3.0.0", "service": "falsky-core", "auth": "supabase-google" if SUPABASE_URL else "legacy", "db": "supabase-sdk"}
+    supabase_url = os.environ.get("SUPABASE_URL", "")
+    service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+    anon_key = os.environ.get("SUPABASE_ANON_KEY", "")
+    return {
+        "status": "ok",
+        "version": "3.0.0",
+        "service": "falsky-core",
+        "auth": "supabase-google" if supabase_url else "legacy",
+        "db": "supabase-sdk",
+        "env_check": {
+            "SUPABASE_URL": "SET" if supabase_url else "MISSING",
+            "SUPABASE_SERVICE_ROLE_KEY": "SET" if service_key else "MISSING",
+            "SUPABASE_ANON_KEY": "SET" if anon_key else "MISSING",
+        }
+    }
 
 
 # ===================== SUPABASE GOOGLE AUTH =====================
