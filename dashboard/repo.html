@@ -70,7 +70,7 @@
   </div>
 
   <!-- Stats -->
-  <div class="stats-grid">
+  <div class="stats-grid" id="statsGrid" style="display:none">
     <div class="stat-card">
       <div class="label">Total Tests</div>
       <div class="value" id="statTotal">—</div>
@@ -88,6 +88,27 @@
       <div class="value" id="statFailed">—</div>
     </div>
   </div>
+
+  <!-- Last synced -->
+  <div style="text-align:right;margin-bottom:12px;font-family:var(--mono);font-size:10px;color:var(--dim)" id="lastSync">—</div>
+
+  <!-- Empty state: waiting for first run -->
+  <div id="emptyState" style="display:none" class="card">
+    <div class="empty" style="padding:48px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;margin-bottom:16px;opacity:.3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <h3>Waiting for first analysis…</h3>
+      <p style="max-width:400px;margin:12px auto">Add the Falsky Action to your workflow and push. Results will appear here automatically.</p>
+      <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin:20px auto;max-width:500px;text-align:left;font-family:var(--mono);font-size:11px;color:var(--green);white-space:pre">- uses: Pritahi/falsky-action@v1
+  with:
+    junit-xml-path: 'test-results/*.xml'
+    api-url: 'https://poly-core.vercel.app'
+    api-key: ${{ secrets.FALSKY_API_KEY }}</div>
+      <p style="font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:12px">Push to your repository to trigger the first run.</p>
+    </div>
+  </div>
+
+  <!-- Analysis content (hidden until data) -->
+  <div id="analysisContent" style="display:none">
 
   <!-- Trust Gauge + Charts -->
   <div class="chart-row">
@@ -183,6 +204,7 @@
       </div>
     </div>
   </div>
+  </div><!-- end analysisContent -->
 </main>
 
 </div>
@@ -209,6 +231,8 @@ function trustClass(s) { return s >= 80 ? 'high' : s >= 50 ? 'mid' : 'low'; }
   } catch(e) { window.location.href = '/login'; }
 })();
 
+let lastSyncTime = null;
+
 async function loadRepo() {
   const repo = getRepo();
   if (!repo) { window.location.href = '/dashboard/'; return; }
@@ -219,6 +243,20 @@ async function loadRepo() {
     const res = await fetch(API + '/api/dashboard?repo_name=' + encodeURIComponent(repo));
     const data = await res.json();
     allTests = data.tests || [];
+    lastSyncTime = new Date();
+    updateSyncIndicator();
+
+    if (allTests.length === 0) {
+      document.getElementById('emptyState').style.display = 'block';
+      document.getElementById('analysisContent').style.display = 'none';
+      document.getElementById('statsGrid').style.display = 'none';
+      document.getElementById('repoSub').textContent = 'Waiting for first run…';
+      return;
+    }
+
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('analysisContent').style.display = 'block';
+    document.getElementById('statsGrid').style.display = 'grid';
 
     const total = allTests.length;
     const stable = allTests.filter(t => t.trust_score >= 80).length;
@@ -320,6 +358,17 @@ async function doLogout() {
   await fetch(API + '/api/auth/logout', {method: 'POST'});
   window.location.href = '/';
 }
+
+function updateSyncIndicator() {
+  if (!lastSyncTime) return;
+  const sec = Math.floor((Date.now() - lastSyncTime.getTime()) / 1000);
+  const text = sec < 60 ? `${sec}s ago` : `${Math.floor(sec/60)}m ago`;
+  document.getElementById('lastSync').textContent = `Last synced ${text}`;
+}
+
+// Auto-refresh every 30s
+setInterval(() => { loadRepo(); }, 30000);
+setInterval(() => { updateSyncIndicator(); }, 5000);
 </script>
 </body>
 </html>

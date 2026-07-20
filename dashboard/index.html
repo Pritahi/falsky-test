@@ -80,8 +80,26 @@
     </div>
   </div>
 
+  <!-- Last synced -->
+  <div style="text-align:right;margin-bottom:12px;font-family:var(--mono);font-size:10px;color:var(--dim)" id="lastSync">—</div>
+
+  <!-- Empty state: no repos -->
+  <div id="emptyState" style="display:none" class="card">
+    <div class="empty" style="padding:48px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;margin-bottom:16px;opacity:.3"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      <h3>Connect your first repository</h3>
+      <p style="max-width:400px;margin:12px auto">Install the Falsky GitHub App or add the Action to your workflow. Push code and results will appear here automatically.</p>
+      <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin:20px auto;max-width:500px;text-align:left;font-family:var(--mono);font-size:11px;color:var(--green);white-space:pre">- uses: Pritahi/falsky-action@v1
+  with:
+    junit-xml-path: 'test-results/*.xml'
+    api-url: 'https://poly-core.vercel.app'
+    api-key: ${{ secrets.FALSKY_API_KEY }}</div>
+      <a href="https://github.com/Pritahi/falsky-action" target="_blank" class="btn btn-primary" style="margin-top:12px">Install GitHub Action →</a>
+    </div>
+  </div>
+
   <!-- Connected Repos -->
-  <div class="card" style="margin-bottom:24px">
+  <div class="card" id="reposCard" style="display:none;margin-bottom:24px">
     <div class="card-header">
       <span class="card-title">Connected Repositories</span>
     </div>
@@ -97,15 +115,13 @@
             <th></th>
           </tr>
         </thead>
-        <tbody id="reposTable">
-          <tr><td colspan="6" style="text-align:center;color:var(--dim);padding:32px"><div class="spinner"></div></td></tr>
-        </tbody>
+        <tbody id="reposTable"></tbody>
       </table>
     </div>
   </div>
 
   <!-- Recent Activity -->
-  <div class="card">
+  <div class="card" id="activityCard" style="display:none">
     <div class="card-header">
       <span class="card-title">Recent Test Runs</span>
     </div>
@@ -121,9 +137,7 @@
             <th>Time</th>
           </tr>
         </thead>
-        <tbody id="activityTable">
-          <tr><td colspan="6" style="text-align:center;color:var(--dim);padding:32px"><div class="spinner"></div></td></tr>
-        </tbody>
+        <tbody id="activityTable"></tbody>
       </table>
     </div>
   </div>
@@ -147,6 +161,8 @@ const API = '';
   } catch(e) { window.location.href = '/login'; }
 })();
 
+let lastSyncTime = null;
+
 async function loadDashboard() {
   try {
     // Load repos
@@ -154,17 +170,23 @@ async function loadDashboard() {
     const reposData = await reposRes.json();
     const repos = reposData.repos || [];
     document.getElementById('statRepos').textContent = repos.length;
+    lastSyncTime = new Date();
+    updateSyncIndicator();
 
     if (repos.length === 0) {
-      document.getElementById('reposTable').innerHTML = '<tr><td colspan="6"><div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg><h3>No repositories yet</h3><p>Connect your first repo to start detecting flaky tests</p></div></td></tr>';
-      document.getElementById('activityTable').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:24px">No runs yet</td></tr>';
+      document.getElementById('emptyState').style.display = 'block';
+      document.getElementById('reposCard').style.display = 'none';
+      document.getElementById('activityCard').style.display = 'none';
       return;
     }
+
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('reposCard').style.display = 'block';
+    document.getElementById('activityCard').style.display = 'block';
 
     // Load dashboard for each repo
     let totalTests = 0, totalFlaky = 0, totalFailed = 0, totalTrust = 0, trustCount = 0;
     let repoRows = '';
-    let runRows = '';
 
     for (const repo of repos) {
       try {
@@ -200,6 +222,17 @@ async function loadDashboard() {
     console.error('Dashboard error:', e);
   }
 }
+
+function updateSyncIndicator() {
+  if (!lastSyncTime) return;
+  const sec = Math.floor((Date.now() - lastSyncTime.getTime()) / 1000);
+  const text = sec < 60 ? `${sec}s ago` : `${Math.floor(sec/60)}m ago`;
+  document.getElementById('lastSync').textContent = `Last synced ${text}`;
+}
+
+// Auto-refresh every 30s
+setInterval(() => { loadDashboard(); }, 30000);
+setInterval(() => { updateSyncIndicator(); }, 5000);
 
 async function doLogout() {
   await fetch(API + '/api/auth/logout', {method: 'POST'});
