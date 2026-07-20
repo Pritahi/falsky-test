@@ -782,18 +782,41 @@ def trust_badge(repo_name: str):
         return HTMLResponse(content=_badge_svg(100, "no data"), media_type="image/svg+xml")
 
 
+# ===================== AUTH MIDDLEWARE =====================
+
+def _check_user_auth(request: Request):
+    """Check if user is authenticated via cookie."""
+    token = request.cookies.get("falsky_user_token")
+    if token and token in _user_sessions:
+        return True
+    # Also check admin token
+    admin_token = request.cookies.get("falsky_admin_token")
+    if admin_token:
+        try:
+            if _get_admin_session(request):
+                return True
+        except:
+            pass
+    return False
+
 # ===================== PAGE ROUTES =====================
 
 @app.get("/dashboard/", response_class=HTMLResponse)
-def serve_dashboard():
+def serve_dashboard(request: Request):
+    if not _check_user_auth(request):
+        return RedirectResponse(url="/login", status_code=302)
     return _serve_html(os.path.join("dashboard", "index.html"), "Falsky Dashboard")
 
 @app.get("/dashboard/test-detail.html", response_class=HTMLResponse)
-def serve_test_detail():
+def serve_test_detail(request: Request):
+    if not _check_user_auth(request):
+        return RedirectResponse(url="/login", status_code=302)
     return _serve_html(os.path.join("dashboard", "test-detail.html"), "Test Detail")
 
 @app.get("/dashboard/guide.html", response_class=HTMLResponse)
-def serve_guide():
+def serve_guide(request: Request):
+    if not _check_user_auth(request):
+        return RedirectResponse(url="/login", status_code=302)
     return _serve_html(os.path.join("dashboard", "guide.html"), "Falsky Guide")
 
 @app.get("/analytics", response_class=HTMLResponse)
