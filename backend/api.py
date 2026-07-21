@@ -883,10 +883,30 @@ def list_tests(repo_name: str = Query(...)):
         repo = select_one("repositories", "id", {"name": repo_name})
         if not repo:
             raise HTTPException(status_code=404, detail="Repository not found")
-        tests = select("test_results", 
-                       "test_name, avg(trust_score) as trust_score, count(*) as runs, flaky_category, avg(case when status='passed' then 1.0 else 0.0 end) as pass_rate, avg(duration) as avg_duration",
-                       filters={"repo_id": repo["id"]})
-        return {"repo": repo_name, "tests": tests, "total": len(tests)}
+        rows = select("test_results", "test_name, trust_score, status, duration, flaky_category", filters={"repo_id": repo["id"]})
+        from collections import defaultdict
+        agg = defaultdict(lambda: {"scores": [], "passes": 0, "total": 0, "category": None, "durations": []})
+        for r in rows:
+            name = r.get("test_name", "unknown")
+            agg[name]["scores"].append(r.get("trust_score", 100))
+            agg[name]["total"] += 1
+            if r.get("status") == "passed":
+                agg[name]["passes"] += 1
+            if r.get("flaky_category"):
+                agg[name]["category"] = r["flaky_category"]
+            if r.get("duration"):
+                agg[name]["durations"].append(r["duration"])
+        result = []
+        for name, d in agg.items():
+            result.append({
+                "test_name": name,
+                "trust_score": round(sum(d["scores"]) / len(d["scores"]), 1),
+                "runs": d["total"],
+                "flaky_category": d["category"],
+                "pass_rate": round(d["passes"] / d["total"], 3) if d["total"] > 0 else 0,
+                "avg_duration": round(sum(d["durations"]) / len(d["durations"]), 1) if d["durations"] else 0,
+            })
+        return {"repo": repo_name, "tests": result, "total": len(result)}
     except HTTPException:
         raise
     except Exception as e:
@@ -1008,7 +1028,7 @@ def _badge_svg(score: float, label: str = "falsky trust") -> str:
             f'<text x="120" y="20" fill="#fff" font-family="system-ui,sans-serif" font-size="11" font-weight="700">{int(score)}%</text></svg>')
 
 
-@app.get("/badge/{repo_name}")
+@app.get("/badge/{repo_name:path}")
 def trust_badge(repo_name: str):
     try:
         repo = select_one("repositories", "id", {"name": repo_name})
@@ -1051,47 +1071,23 @@ def _check_user_auth(request: Request):
 
 # ===================== PAGE ROUTES =====================
 
-def _auth_page(request: Request):
-    """Redirect to login if not authenticated."""
-    if not _check_user_auth(request):
-        return RedirectResponse(url="/login", status_code=302)
-    return None
-
 @app.get("/dashboard/", response_class=HTMLResponse)
 def serve_dashboard(request: Request):
-    redirect = _auth_page(request)
-    if redirect: return redirect
+    if not _check_user_auth(request):
+        return RedirectResponse(url="/login", status_code=302)
     return _serve_html(os.path.join("dashboard", "index.html"), "Falsky Dashboard")
-
-@app.get("/dashboard/repos.html", response_class=HTMLResponse)
-def serve_repos(request: Request):
-    redirect = _auth_page(request)
-    if redirect: return redirect
-    return _serve_html(os.path.join("dashboard", "repos.html"), "Falsky — Repositories")
-
-@app.get("/dashboard/repo.html", response_class=HTMLResponse)
-def serve_repo(request: Request):
-    redirect = _auth_page(request)
-    if redirect: return redirect
-    return _serve_html(os.path.join("dashboard", "repo.html"), "Falsky — Repository")
-
-@app.get("/dashboard/test.html", response_class=HTMLResponse)
-def serve_test_page(request: Request):
-    redirect = _auth_page(request)
-    if redirect: return redirect
-    return _serve_html(os.path.join("dashboard", "test-detail.html"), "Falsky — Test Detail")
 
 @app.get("/dashboard/test-detail.html", response_class=HTMLResponse)
 def serve_test_detail(request: Request):
-    redirect = _auth_page(request)
-    if redirect: return redirect
+    if not _check_user_auth(request):
+        return RedirectResponse(url="/login", status_code=302)
     return _serve_html(os.path.join("dashboard", "test-detail.html"), "Test Detail")
 
-@app.get("/dashboard/settings.html", response_class=HTMLResponse)
-def serve_settings(request: Request):
-    redirect = _auth_page(request)
-    if redirect: return redirect
-    return _serve_html(os.path.join("dashboard", "settings.html"), "Falsky — Settings")
+@app.get("/dashboard/guide.html", response_class=HTMLResponse)
+def serve_guide(request: Request):
+    if not _check_user_auth(request):
+        return RedirectResponse(url="/login", status_code=302)
+    return _serve_html(os.path.join("dashboard", "guide.html"), "Falsky Guide")
 
 @app.get("/analytics", response_class=HTMLResponse)
 def serve_admin():
