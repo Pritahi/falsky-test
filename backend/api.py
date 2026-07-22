@@ -269,7 +269,7 @@ def health_check():
 
 @app.get("/api/debug/outbound-test")
 def outbound_test():
-    result = _supabase_rest("users", columns="id", limit=1)
+    result = _supabase_rest("users", columns="id")
     return {"result": result, "type": type(result).__name__}
 
 
