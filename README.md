@@ -295,6 +295,41 @@ In your users' GitHub repos, they set up falsky-action with:
 | `FALSKY_ADMIN_PASSWORD` | No | `admin123` | Admin panel login password |
 | `FALSKY_DB_PATH` | No | `backend/falsky.db` | SQLite database path |
 
+### Google Sign-In (Supabase)
+
+To enable "Sign in with Google", set these **and make sure they point at the real
+public URL — not localhost** (a `localhost` value here is the usual cause of
+`ERR_CONNECTION_REFUSED` after picking a Google account):
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SUPABASE_URL` | Yes | Your Supabase project URL (e.g. `https://xxxx.supabase.co`) |
+| `SUPABASE_ANON_KEY` | Yes | Supabase anon/public key |
+| `SUPABASE_JWT_SECRET` | Yes | Supabase JWT secret (used to verify the returned token) |
+| `SITE_URL` | Yes | Public base URL of THIS app, e.g. `https://poly-core-vercel.vercel.app` (must match where users open the admin panel) |
+| `ALLOWED_ADMIN_EMAILS` | No | Comma-separated emails permitted to admin (empty = any verified Google email) |
+
+In the **Supabase dashboard → Authentication → Providers → Google**, add the
+authorized redirect URI:
+
+```
+<SITE_URL>/api/auth/callback
+```
+
+Example (production):
+
+```bash
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_ANON_KEY=public-xxxx
+SUPABASE_JWT_SECRET=xxxx
+SITE_URL=https://poly-core-vercel.vercel.app
+ALLOWED_ADMIN_EMAILS=you@example.com
+```
+
+> ⚠️ If `SITE_URL` is left empty or set to `http://localhost:8000`, Supabase will
+> redirect users back to localhost after Google login — which fails with
+> `ERR_CONNECTION_REFUSED` unless a server is running there.
+
 ---
 
 ## Local Development
