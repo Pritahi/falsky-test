@@ -95,7 +95,7 @@ const API = '';
 
 (async () => {
   try {
-    const res = await fetch(API + '/api/auth/me');
+    const res = await fetch(API + '/api/user/me');
     if (!res.ok) { window.location.href = '/login'; return; }
     const user = await res.json();
     document.getElementById('userName').textContent = user.name || user.email;

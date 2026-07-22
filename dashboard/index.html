@@ -149,7 +149,7 @@ const API = '';
 // Auth check
 (async () => {
   try {
-    const res = await fetch(API + '/api/auth/me');
+    const res = await fetch(API + '/api/user/me');
     if (!res.ok) { window.location.href = '/login'; return; }
     const user = await res.json();
     document.getElementById('userName').textContent = user.name || user.email;
@@ -234,7 +234,7 @@ setInterval(() => { loadDashboard(); }, 30000);
 setInterval(() => { updateSyncIndicator(); }, 5000);
 
 async function doLogout() {
-  await fetch(API + '/api/auth/logout', {method: 'POST'});
+  await fetch(API + '/api/user/logout', {method: 'POST'});
   window.location.href = '/';
 }
 </script>

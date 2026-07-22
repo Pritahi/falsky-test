@@ -147,29 +147,15 @@ body{
 </div>
 
 <script>
-// Handle OAuth callback — token in URL fragment
+// Check if already logged in
 (async () => {
-  const hash = window.location.hash;
-  if (hash && hash.includes('access_token=')) {
-    const params = new URLSearchParams(hash.substring(1));
-    const accessToken = params.get('access_token');
-    if (accessToken) {
-      try {
-        const res = await fetch('/api/user/callback?access_token=' + encodeURIComponent(accessToken));
-        if (res.redirected) {
-          window.location.href = res.url;
-          return;
-        }
-      } catch(e) {}
-    }
-  }
-
-  // Check if already logged in
   try {
     const res = await fetch('/api/user/me');
     if (res.ok) {
       const data = await res.json();
-      document.getElementById('googleBtn').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('toggleAuth').style.display = 'none';
       document.querySelector('.info').style.display = 'none';
       document.querySelector('.seismo').style.display = 'none';
       document.getElementById('apikeyValue').textContent = data.api_key || 'No API key';
@@ -251,7 +237,7 @@ function copyKey() {
 }
 
 async function doLogout() {
-  await fetch('/api/auth/logout', {method: 'POST'});
+  await fetch('/api/user/logout', {method: 'POST'});
   location.reload();
 }
 </script>
