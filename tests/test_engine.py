@@ -1,5 +1,5 @@
 """
-Poly — Seed 20 CI runs with realistic flaky/stable/broken test data.
+Falsky — Seed 20 CI runs with realistic flaky/stable/broken test data.
 """
 import sys, os, random, xml.etree.ElementTree as ET
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
