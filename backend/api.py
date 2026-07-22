@@ -873,17 +873,30 @@ def serve_login():
 # ===================== EXISTING API ROUTES =====================
 
 @app.post("/api/junit", dependencies=[Depends(verify_api_key)])
-def ingest_junit(data: JUnitUpload):
+async def ingest_junit(request: Request, repo_name: str = Query(...), branch: str = Query("main"), commit_sha: Optional[str] = Query(None), environment: Optional[str] = Query(None)):
     try:
+        content_type = request.headers.get("content-type", "")
+        body_bytes = await request.body()
+        if "application/xml" in content_type or "text/xml" in content_type:
+            xml_content = body_bytes.decode("utf-8")
+        else:
+            data = JUnitUpload.parse_raw(body_bytes)
+            xml_content = data.xml_content
+            repo_name = data.repo_name or repo_name
+            branch = data.branch or branch
+            commit_sha = data.commit_sha or commit_sha
+            environment = data.environment or environment
         result = process_test_run(
-            xml_content=data.xml_content,
-            repo_name=data.repo_name,
-            branch=data.branch,
-            commit_sha=data.commit_sha,
-            environment=data.environment,
+            xml_content=xml_content,
+            repo_name=repo_name,
+            branch=branch,
+            commit_sha=commit_sha,
+            environment=environment,
         )
         logger.info(f"Processed JUnit: {data.repo_name}, {result.get('total', 0)} tests")
         return result
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"JUnit ingest error: {e}")
         raise HTTPException(status_code=500, detail=f"Processing error: {str(e)}")
@@ -916,12 +929,65 @@ def create_run(data: RunInput):
 @app.get("/api/dashboard")
 def dashboard(repo_name: str = Query(...), threshold: float = Query(50)):
     try:
+<<<<<<< ours
         result = get_dashboard_data(repo_name, quarantine_threshold=threshold)
         logger.info(f"Dashboard fetched: {repo_name}")
         return result
     except Exception as e:
         logger.error(f"Dashboard error for {repo_name}: {e}")
         raise HTTPException(status_code=500, detail=f"Error fetching dashboard: {str(e)}")
+=======
+        # Get repo
+        repos = _supabase_rest("repositories", filters={"name": repo_name}, columns="id,name")
+        if not repos or len(repos) == 0:
+            return {"repo": repo_name, "tests": [], "total": 0}
+        repo_id = repos[0]["id"]
+        # Get test results
+        tests = _supabase_rest("test_results", filters={"repo_id": str(repo_id)}, columns="test_name,status,trust_score,flaky_category,duration,run_id")
+        if not tests:
+            return {"repo": repo_name, "tests": [], "total": 0}
+        # Aggregate by test name
+        from collections import defaultdict
+        agg = defaultdict(lambda: {"scores": [], "passes": 0, "total": 0, "category": None, "durations": []})
+        for t in tests:
+            name = t.get("test_name", "unknown")
+            agg[name]["scores"].append(t.get("trust_score", 100))
+            agg[name]["total"] += 1
+            if t.get("status") == "passed":
+                agg[name]["passes"] += 1
+            if t.get("flaky_category"):
+                agg[name]["category"] = t["flaky_category"]
+            if t.get("duration"):
+                agg[name]["durations"].append(t["duration"])
+        result = []
+        flaky_count = 0
+        total_trust = 0
+        for name, d in agg.items():
+            trust = round(sum(d["scores"]) / len(d["scores"]), 1)
+            total_trust += trust
+            if d["category"]:
+                flaky_count += 1
+            result.append({
+                "test_name": name,
+                "trust_score": trust,
+                "pass_rate": round(d["passes"] / d["total"], 3) if d["total"] > 0 else 0,
+                "runs": d["total"],
+                "flaky_category": d["category"],
+                "avg_duration": round(sum(d["durations"]) / len(d["durations"]), 1) if d["durations"] else 0,
+            })
+        avg_trust = round(total_trust / len(result), 1) if result else 0
+        return {
+            "repo": repo_name,
+            "tests": result,
+            "total": len(result),
+            "avg_trust": avg_trust,
+            "flaky_count": flaky_count,
+            "total_tests": len(result),
+        }
+    except Exception as e:
+        logger.error(f"Dashboard error: {e}")
+        return {"repo": repo_name, "tests": [], "total": 0, "avg_trust": 0, "flaky_count": 0, "total_tests": 0}
+>>>>>>> theirs
 
 
 @app.get("/api/tests")
