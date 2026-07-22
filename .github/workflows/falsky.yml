@@ -1,0 +1,38 @@
+name: Falsky Test Analysis
+on: pull_request
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate demo JUnit XML
+        run: |
+          cat > /tmp/demo-results.xml << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <testsuites>
+            <testsuite name="demo-suite" tests="3" failures="1" errors="0" skipped="1">
+              <testcase name="test_homepage_loads" classname="DemoTest" time="0.12"/>
+              <testcase name="test_api_returns_200" classname="DemoTest" time="0.35">
+                <failure message="500 Server Error">Unexpected error</failure>
+              </testcase>
+              <testcase name="test_user_can_login" classname="DemoTest" time="0.08">
+                <skipped/>
+              </testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+
+      - name: Analyze with Falsky
+        uses: Pritahi/falsky-action@v1
+        with:
+          junit-xml-path: '/tmp/demo-results.xml'
+          api-url: 'https://poly-core-vercel.vercel.app'
+          api-key: ${{ secrets.FALSKY_API_KEY }}
+          repo-name: '${{ github.repository }}'
+          comment-on-pr: 'true'
+          fail-on-flaky: 'false'
+          flaky-threshold: '50'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
