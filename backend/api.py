@@ -654,7 +654,7 @@ def _supabase_rest(table, method="GET", data=None, filters=None, columns="*"):
     key = _SUPABASE_SERVICE_KEY or _SUPABASE_ANON
     if not key:
         logger.error("No Supabase credentials configured — set SUPABASE_SERVICE_ROLE_KEY")
-        return None
+        return {"_error": "no_key"}
     url = f"{_SUPABASE_URL}/rest/v1/{table}"
     params = []
     if columns:
@@ -674,12 +674,29 @@ def _supabase_rest(table, method="GET", data=None, filters=None, columns="*"):
     if data:
         req.data = _json.dumps(data).encode()
     try:
-        import ssl
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-        with urllib.request.urlopen(req, timeout=10, context=ctx) as resp:
+        with urllib.request.urlopen(req, timeout=10) as resp:
             return _json.loads(resp.read().decode())
+    except Exception as e:
+        logger.error(f"Supabase REST error: {e}")
+        return {"_error": str(e)}
+    url = f"{_SUPABASE_URL}/rest/v1/{table}"
+    params = []
+    if columns:
+        params.append(f"select={columns}")
+    if filters:
+        for k,v in filters.items():
+            params.append(f"{k}=eq.{v}")
+    if params:
+        url += "?" + "&".join(params)
+    headers = {
+        "apikey": key,
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    }
+    req = urllib.request.Request(url, headers=headers, method=method)
+    if data:
+        req.data = _json.dumps(data).encode()
     except Exception as e:
         logger.error(f"Supabase REST error: {e}")
         return None
@@ -743,8 +760,9 @@ def user_register(data: UserRegister, request: Request, response: Response):
             "is_active": True,
             "signup_source": data.signup_source or "direct",
         })
-        if not result or len(result) == 0:
-            raise HTTPException(status_code=500, detail="Failed to create user")
+        if not result or len(result) == 0 or "_error" in (result if isinstance(result, dict) else {}):
+            detail = result.get("_error", "Failed to create user") if isinstance(result, dict) else "Failed to create user"
+            raise HTTPException(status_code=500, detail=detail)
         user = result[0]
         # Create JWT session (survives cold starts)
         token = _create_user_token(user["id"], data.email, data.name)
