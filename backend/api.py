@@ -180,16 +180,11 @@ def verify_api_key(x_poly_api_key: Optional[str] = Header(None)):
     env_key = os.environ.get("POLY_API_KEY", "")
     if x_poly_api_key and x_poly_api_key == env_key:
         return x_poly_api_key
-    # Also check DB user API keys
+    # Check user API keys via Supabase SDK
     if x_poly_api_key:
-        try:
-            with _get_db() as conn:
-                with _cursor(conn) as c:
-                    c.execute("SELECT id FROM users WHERE api_key=%s AND is_active=TRUE", (x_poly_api_key,))
-                    if c.fetchone():
-                        return x_poly_api_key
-        except Exception:
-            pass
+        rows = _supabase_rest("users", filters={"api_key": x_poly_api_key, "is_active": True}, columns="id")
+        if rows:
+            return x_poly_api_key
     raise HTTPException(status_code=401, detail="Invalid API key")
 
 
@@ -712,46 +707,6 @@ def admin_stats(request: Request):
         logger.error(f"Admin stats error: {e}")
         raise HTTPException(status_code=500, detail=f"Error fetching stats: {str(e)}")
 
-<<<<<<< ours
-=======
-import urllib.request
-import json as _json
-
-_SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
-_SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
-_SUPABASE_ANON = os.environ.get("SUPABASE_ANON_KEY", "")
-
-def _supabase_rest(table, method="GET", data=None, filters=None, columns="*"):
-    """Direct Supabase REST API call — bypasses db module."""
-    key = _SUPABASE_SERVICE_KEY or _SUPABASE_ANON
-    if not key:
-        logger.error("No Supabase credentials configured — set SUPABASE_SERVICE_ROLE_KEY")
-        return None
-    url = f"{_SUPABASE_URL}/rest/v1/{table}"
-    params = []
-    if columns:
-        params.append(f"select={columns}")
-    if filters:
-        for k,v in filters.items():
-            params.append(f"{k}=eq.{v}")
-    if params:
-        url += "?" + "&".join(params)
-    headers = {
-        "apikey": key,
-        "Authorization": f"Bearer {key}",
-        "Content-Type": "application/json",
-        "Prefer": "return=representation"
-    }
-    req = urllib.request.Request(url, headers=headers, method=method)
-    if data:
-        req.data = _json.dumps(data).encode()
-    try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            return _json.loads(resp.read().decode())
-    except Exception as e:
-        logger.error(f"Supabase REST error: {_SUPABASE_URL}: {e}")
-        return None
-
 # ===================== USER AUTH =====================
 
 class UserRegister(BaseModel):
@@ -868,7 +823,7 @@ def user_logout(request: Request, response: Response):
 @app.get("/login", response_class=HTMLResponse)
 def serve_login():
     return _serve_html(os.path.join("dashboard", "auth.html"), "Falsky — Sign In")
->>>>>>> theirs
+
 
 # ===================== EXISTING API ROUTES =====================
 
