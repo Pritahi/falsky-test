@@ -674,7 +674,11 @@ def _supabase_rest(table, method="GET", data=None, filters=None, columns="*"):
     if data:
         req.data = _json.dumps(data).encode()
     try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        import ssl
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        with urllib.request.urlopen(req, timeout=10, context=ctx) as resp:
             return _json.loads(resp.read().decode())
     except Exception as e:
         logger.error(f"Supabase REST error: {e}")
