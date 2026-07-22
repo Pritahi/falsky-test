@@ -679,27 +679,6 @@ def _supabase_rest(table, method="GET", data=None, filters=None, columns="*"):
     except Exception as e:
         logger.error(f"Supabase REST error: {e}")
         return {"_error": str(e)}
-    url = f"{_SUPABASE_URL}/rest/v1/{table}"
-    params = []
-    if columns:
-        params.append(f"select={columns}")
-    if filters:
-        for k,v in filters.items():
-            params.append(f"{k}=eq.{v}")
-    if params:
-        url += "?" + "&".join(params)
-    headers = {
-        "apikey": key,
-        "Authorization": f"Bearer {key}",
-        "Content-Type": "application/json",
-        "Prefer": "return=representation"
-    }
-    req = urllib.request.Request(url, headers=headers, method=method)
-    if data:
-        req.data = _json.dumps(data).encode()
-    except Exception as e:
-        logger.error(f"Supabase REST error: {e}")
-        return None
 
 # ===================== USER AUTH =====================
 
