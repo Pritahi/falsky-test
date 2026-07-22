@@ -269,8 +269,28 @@ def health_check():
 
 @app.get("/api/debug/outbound-test")
 def outbound_test():
-    result = _supabase_rest("users", columns="id")
-    return {"result": result, "type": type(result).__name__}
+    import ssl, urllib.request, json as _json, traceback
+    key = _SUPABASE_SERVICE_KEY or _SUPABASE_ANON
+    url = f"{_SUPABASE_URL}/rest/v1/users?select=id&limit=1"
+    headers = {
+        "apikey": key,
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    }
+    req = urllib.request.Request(url, headers=headers, method="GET")
+    try:
+        ctx = ssl.create_default_context()
+        with urllib.request.urlopen(req, timeout=10, context=ctx) as resp:
+            body = resp.read().decode()
+            return {"status": resp.status, "headers": dict(resp.headers), "body": _json.loads(body)[:100] if body else ""}
+    except ssl.SSLError as e:
+        return {"error": f"SSL Error: {e}", "traceback": traceback.format_exc()}
+    except urllib.error.HTTPError as e:
+        body = e.read().decode()[:500]
+        return {"error": f"HTTP {e.code}: {e.reason}", "body": body}
+    except Exception as e:
+        return {"error": str(e), "type": type(e).__name__, "traceback": traceback.format_exc()}
 
 
 # ===================== SUPABASE GOOGLE AUTH =====================
