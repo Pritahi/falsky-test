@@ -712,8 +712,6 @@ def admin_stats(request: Request):
         logger.error(f"Admin stats error: {e}")
         raise HTTPException(status_code=500, detail=f"Error fetching stats: {str(e)}")
 
-<<<<<<< ours
-=======
 import urllib.request
 import json as _json
 
@@ -868,7 +866,6 @@ def user_logout(request: Request, response: Response):
 @app.get("/login", response_class=HTMLResponse)
 def serve_login():
     return _serve_html(os.path.join("dashboard", "auth.html"), "Falsky — Sign In")
->>>>>>> theirs
 
 # ===================== EXISTING API ROUTES =====================
 
@@ -929,14 +926,6 @@ def create_run(data: RunInput):
 @app.get("/api/dashboard")
 def dashboard(repo_name: str = Query(...), threshold: float = Query(50)):
     try:
-<<<<<<< ours
-        result = get_dashboard_data(repo_name, quarantine_threshold=threshold)
-        logger.info(f"Dashboard fetched: {repo_name}")
-        return result
-    except Exception as e:
-        logger.error(f"Dashboard error for {repo_name}: {e}")
-        raise HTTPException(status_code=500, detail=f"Error fetching dashboard: {str(e)}")
-=======
         # Get repo
         repos = _supabase_rest("repositories", filters={"name": repo_name}, columns="id,name")
         if not repos or len(repos) == 0:
@@ -987,7 +976,6 @@ def dashboard(repo_name: str = Query(...), threshold: float = Query(50)):
     except Exception as e:
         logger.error(f"Dashboard error: {e}")
         return {"repo": repo_name, "tests": [], "total": 0, "avg_trust": 0, "flaky_count": 0, "total_tests": 0}
->>>>>>> theirs
 
 
 @app.get("/api/tests")

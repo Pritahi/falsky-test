@@ -3,232 +3,198 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FLK-01 · Poly Console — Station Entry</title>
+<title>Falsky — AI Flaky Test Detector</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
 <style>
-:root{--void:#06090f;--deep:#0a0f1a;--panel:#0d1420;--panel2:#111927;--border:#1c2a3a;--border2:#243447;--orbit:#00d4ff;--orbit2:rgba(0,212,255,.15);--seismic:#ff6b2b;--seismic2:rgba(255,107,43,.15);--green:#00ff88;--green2:rgba(0,255,136,.12);--amber:#ffb000;--amber2:rgba(255,176,0,.12);--red:#ff3344;--red2:rgba(255,51,68,.12);--purple:#a855f7;--text:#e2eaf5;--text2:#8ba3bf;--text3:#4a6380;--mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;--r:4px;--r-sm:3px}
-*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%}
-body{background:var(--void);color:var(--text);font-family:var(--sans);font-size:14px;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);pointer-events:none;z-index:9999}
-.radar-bg{position:fixed;inset:0;background-image:radial-gradient(circle at 50% 50%,rgba(0,212,255,.04) 0%,transparent 70%),linear-gradient(rgba(0,212,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.03) 1px,transparent 1px);background-size:100% 100%,40px 40px,40px 40px;pointer-events:none}
-.top-bar{position:relative;background:var(--deep);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:16px;z-index:10}
-.top-bar-left{display:flex;align-items:center;gap:12px}
-.orbit-sm{width:22px;height:22px;border:2px solid var(--orbit);border-radius:50%;position:relative;animation:spin 4s linear infinite}
-.orbit-sm::before{content:'';position:absolute;top:-4px;left:50%;width:7px;height:7px;background:var(--seismic);border-radius:50%;box-shadow:0 0 8px var(--seismic);transform:translateX(-50%)}
-@keyframes spin{to{transform:rotate(360deg)}}
-.top-bar-brand{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--orbit);text-transform:uppercase}
-.top-bar-right{margin-left:auto;display:flex;gap:16px;align-items:center}
-.top-bar-meta{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase}
-.top-bar-sep{width:1px;height:20px;background:var(--border)}
-.status-pill{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--green);background:var(--green2);border:1px solid rgba(0,255,136,.2);padding:3px 10px}
-.main{position:relative;max-width:1200px;margin:0 auto;padding:48px 24px 80px;z-index:5}
-.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-bottom:80px}
-.hero-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--seismic);background:var(--seismic2);border:1px solid rgba(255,107,43,.3);padding:4px 12px;margin-bottom:20px;text-transform:uppercase}
-.hero-h1{font-family:var(--sans);font-size:52px;font-weight:900;letter-spacing:-.04em;line-height:.95;text-transform:uppercase;margin-bottom:20px;color:var(--text)}
-.hero-h1 em{font-style:italic;font-weight:300;color:var(--orbit)}
-.hero-desc{font-family:var(--mono);font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:28px;max-width:460px}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;border-radius:var(--r);text-decoration:none;cursor:pointer;transition:all .15s;border:1px solid}
-.btn-primary{background:var(--orbit);color:var(--void);border-color:var(--orbit)}.btn-primary:hover{background:var(--void);color:var(--orbit)}
-.btn-ghost{background:transparent;color:var(--text);border-color:var(--border)}.btn-ghost:hover{border-color:var(--orbit);color:var(--orbit);background:var(--orbit2)}
-.docket-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;position:relative}
-.docket-header{background:var(--deep);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
-.docket-title{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text2)}
-.docket-badge{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--seismic);background:var(--seismic2);border:1px solid rgba(255,107,43,.2);padding:2px 8px;text-transform:uppercase}
-.docket-list{border-top:1px solid var(--border)}
-.docket-row{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid rgba(28,42,58,.6);transition:background .15s;cursor:pointer;text-decoration:none;color:var(--text)}
-.docket-row:last-child{border-bottom:none}.docket-row:hover{background:var(--panel2)}
-.docket-left{display:flex;align-items:center;gap:12px}
-.docket-num{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.1em}
-.docket-name{font-family:var(--mono);font-size:12px;font-weight:600}
-.docket-right{display:flex;align-items:center;gap:12px}
-.docket-trust{font-family:var(--mono);font-size:11px;color:var(--text2)}
-.stamp{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border:1px solid}
-.stamp-guilty{color:var(--red);border-color:rgba(255,51,68,.3);background:var(--red2)}.stamp-acquitted{color:var(--green);border-color:rgba(0,255,136,.3);background:var(--green2)}.stamp-quarantined{color:var(--amber);border-color:rgba(255,176,0,.3);background:var(--amber2)}
-.stats-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);margin-bottom:64px;overflow:hidden}
-.stat-pill{background:var(--panel);padding:20px;position:relative;transition:background .2s}.stat-pill:hover{background:var(--panel2)}
-.stat-pill::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.stat-pill.s-orbit::before{background:var(--orbit)}.stat-pill.s-seismic::before{background:var(--seismic)}.stat-pill.s-amber::before{background:var(--amber)}.stat-pill.s-green::before{background:var(--green)}
-.stat-pill-label{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;margin-bottom:8px}
-.stat-pill-value{font-family:var(--mono);font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1;margin-bottom:6px}
-.stat-pill-sub{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase}
-.features{margin-bottom:80px}
-.section-header-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:32px;flex-wrap:wrap}
-.section-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--seismic);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.section-label::before{content:'◆';color:var(--seismic)}
-.section-h2{font-family:var(--sans);font-size:36px;font-weight:800;letter-spacing:-.03em;text-transform:uppercase;line-height:.95}
-.section-h2 em{font-style:italic;font-weight:300}
-.section-right{max-width:340px;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.7;padding-bottom:8px}
-.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.feat-card{background:var(--panel);padding:28px;position:relative;transition:background .2s}.feat-card:hover{background:var(--panel2)}
-.feat-card::before{content:attr(data-exhibit);position:absolute;top:0;right:0;background:var(--deep);color:var(--text3);font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:3px 10px;border-bottom:1px solid var(--border);border-left:1px solid var(--border)}
-.feat-icon{width:40px;height:40px;border:2px solid var(--border);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--orbit);margin-bottom:16px;margin-top:4px}
-.feat-tag{font-family:var(--mono);font-size:9px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:8px}
-.feat-title{font-family:var(--sans);font-size:18px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
-.feat-desc{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:16px}
-.feat-tags{display:flex;gap:6px;flex-wrap:wrap}
-.feat-tag-pill{font-family:var(--mono);font-size:10px;padding:2px 8px;border:1px solid var(--border);color:var(--text3);border-radius:var(--r-sm);letter-spacing:.08em;text-transform:uppercase}
-.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:80px}
-.how-card{background:var(--panel);padding:28px;position:relative}
-.how-num{font-family:var(--mono);font-size:48px;font-weight:800;color:var(--deep);letter-spacing:-.04em;line-height:1;margin-bottom:16px;-webkit-text-stroke:1px var(--border2)}
-.how-title{font-family:var(--sans);font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
-.how-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px}
-.how-meta{display:flex;gap:8px;flex-wrap:wrap}
-.how-chip{font-family:var(--mono);font-size:10px;padding:3px 10px;background:var(--deep);border:1px solid var(--border);color:var(--text3);border-radius:var(--r-sm);letter-spacing:.08em;text-transform:uppercase}
-.install-block{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:80px}
-.install-header{background:var(--deep);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
-.install-title{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--text2);text-transform:uppercase}
-.install-dots{display:flex;gap:6px}
-.install-dot{width:10px;height:10px;border-radius:50%}
-.install-dot:nth-child(1){background:var(--red)}.install-dot:nth-child(2){background:var(--amber)}.install-dot:nth-child(3){background:var(--green)}
-.install-body{padding:24px;font-family:var(--mono);font-size:13px;line-height:1.8;color:var(--text2);overflow-x:auto}
-.install-body .kw{color:var(--orbit);font-weight:600}.install-body .str{color:var(--green)}.install-body .val{color:var(--amber)}.install-body .cmt{color:var(--text3);font-style:italic}.install-body .bl{color:var(--red)}
-.footer{border-top:1px solid var(--border);padding:32px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;position:relative;z-index:5}
-.footer-brand{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--orbit);text-transform:uppercase;font-weight:700}
-.footer-meta{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase}
-.footer-seal{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.15em;text-transform:uppercase}
-.bottom-bar{position:relative;height:6px;background:linear-gradient(90deg,var(--orbit),var(--seismic),var(--purple),var(--green),var(--orbit));background-size:200% 100%;animation:shift 4s linear infinite;z-index:5}
-@keyframes shift{0%{background-position:0% 0%}100%{background-position:200% 0%}}
-@media(max-width:900px){.hero-grid{grid-template-columns:1fr}.features-grid,.how-grid{grid-template-columns:1fr}.hero-h1{font-size:36px}.stats-strip{grid-template-columns:1fr 1fr}}
-@media(max-width:500px){.stats-strip{grid-template-columns:1fr}}
+:root{--ink:#0C1517;--ink2:#0F1B1E;--ink3:#0A1315;--line:#1E3237;--line2:#2C464B;--paper:#F2E8D5;--red:#FF4B2E;--amber:#FFB020;--green:#3DDC84;--text:#D7E4E2;--muted:#8AA0A2;--dim:#5E767A;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--disp:'Anton',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+::selection{background:var(--amber);color:#171310}
+body{font-family:var(--sans);color:var(--text);background:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--amber);text-decoration:none}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;background:rgba(12,21,23,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav .logo{display:flex;align-items:center;gap:8px;font-family:var(--disp);font-size:1.3rem;letter-spacing:.08em;color:var(--paper)}
+.nav .logo em{font-style:normal;color:var(--red)}
+.nav .links{display:flex;gap:24px}
+.nav .links a{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.nav .links a:hover{color:var(--paper)}
+.nav .cta{padding:8px 16px;background:var(--amber);color:#171310;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;border-radius:2px;display:inline-flex;align-items:center;gap:6px}
+.nav .cta:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--red)}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;position:relative}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(255,75,46,.06) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-family:var(--disp);font-size:clamp(2.5rem,6vw,4.5rem);letter-spacing:.04em;color:var(--paper);text-transform:uppercase;line-height:1.1;margin-bottom:16px}
+.hero h1 span{color:var(--red)}
+.hero p{font-family:var(--mono);font-size:14px;letter-spacing:.06em;color:var(--muted);max-width:520px;line-height:1.7;margin-bottom:32px}
+.hero .actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.hero .btn{padding:14px 28px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;transition:all .15s;border-radius:2px;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.hero .btn-primary{background:var(--amber);color:#171310;box-shadow:4px 4px 0 var(--red)}
+.hero .btn-primary:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--red)}
+.hero .btn-ghost{background:none;color:var(--muted);border:1px solid var(--line2)}
+.hero .btn-ghost:hover{color:var(--text);border-color:var(--muted)}
+
+/* Seismo animation */
+.seismo{margin:40px 0;opacity:.5;width:100%;max-width:600px}
+.seismo svg{width:100%;height:50px}
+
+/* Features */
+.features{padding:80px 40px;max-width:1000px;margin:0 auto}
+.features h2{font-family:var(--disp);font-size:1.6rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase;text-align:center;margin-bottom:48px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.feature{background:var(--ink2);border:1px solid var(--line2);padding:24px;border-radius:2px}
+.feature .icon{font-size:24px;margin-bottom:12px}
+.feature h3{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--paper);text-transform:uppercase;margin-bottom:8px}
+.feature p{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7}
+
+/* How it works */
+.how{padding:80px 40px;max-width:800px;margin:0 auto}
+.how h2{font-family:var(--disp);font-size:1.6rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase;text-align:center;margin-bottom:48px}
+.steps{display:flex;flex-direction:column;gap:24px}
+.step{display:flex;gap:16px;align-items:flex-start}
+.step .num{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--ink2);border:1px solid var(--amber);color:var(--amber);font-family:var(--mono);font-size:13px;font-weight:600;flex-shrink:0;border-radius:2px}
+.step .text h4{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--paper);text-transform:uppercase;margin-bottom:4px}
+.step .text p{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.6}
+
+/* CTA */
+.cta-section{padding:80px 40px;text-align:center}
+.cta-section h2{font-family:var(--disp);font-size:1.6rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase;margin-bottom:16px}
+.cta-section p{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:24px}
+
+/* Footer */
+.footer{padding:32px 40px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em}
+.footer a{color:var(--muted)}
+
+@media(max-width:768px){
+  .nav{padding:12px 20px}
+  .nav .links{display:none}
+  .hero{padding:100px 20px 60px}
+  .features,.how,.cta-section{padding:40px 20px}
+  .footer{flex-direction:column;gap:8px}
+}
 </style>
 </head>
 <body>
-<div class="radar-bg"></div>
-<div class="top-bar">
-  <div class="top-bar-left"><div class="orbit-sm"></div><div class="top-bar-brand">FLK-01 · Poly Console</div></div>
-  <div class="top-bar-right"><div class="top-bar-meta">Tremor Station · Build 2026.07</div><div class="top-bar-sep"></div><div class="status-pill"><span style="width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite"></span>Systems Nominal</div></div>
-</div>
-<main class="main">
-  <div class="hero-grid">
-    <div>
-      <div class="hero-tag">⛁ AI Flaky Test · Trust Layer</div>
-      <h1 class="hero-h1">The <em>Seismic</em> Test Justice System</h1>
-      <p class="hero-desc">Poly is Judge, Jury, and Executioner for your CI. It scores trust, prosecutes flakes, and delivers verdicts before you merge. No more re-runs. No more doubt.</p>
-      <div class="hero-btns">
-        <a href="/dashboard/" class="btn btn-primary">Enter Station →</a>
-        <a href="/dashboard/guide.html" class="btn btn-ghost">Read Protocol</a>
-      </div>
-    </div>
-    <div>
-      <div class="docket-card">
-        <div class="docket-header"><div class="docket-title">Today's Docket</div><div class="docket-badge">Trials Active</div></div>
-        <div class="docket-list">
-          <a href="/dashboard/test-detail.html?repo_name=demo-repo&test_name=auth.login.spec.ts" class="docket-row">
-            <div class="docket-left"><div class="docket-num">#482</div><div class="docket-name">auth.login.spec.ts:42</div></div>
-            <div class="docket-right"><div class="docket-trust">Trust: 23%</div><div class="stamp stamp-guilty">Flaky</div></div>
-          </a>
-          <a href="/dashboard/test-detail.html?repo_name=demo-repo&test_name=cart.checkout.spec.ts" class="docket-row" style="background:var(--seismic2)">
-            <div class="docket-left"><div class="docket-num">#481</div><div class="docket-name">cart.checkout.spec.ts:117</div></div>
-            <div class="docket-right"><div class="docket-trust">Trust: 41%</div><div class="stamp stamp-quarantined">Quarantined</div></div>
-          </a>
-          <a href="/dashboard/test-detail.html?repo_name=demo-repo&test_name=payments.webhook.spec.ts" class="docket-row">
-            <div class="docket-left"><div class="docket-num">#479</div><div class="docket-name">payments.webhook.spec.ts</div></div>
-            <div class="docket-right"><div class="docket-trust">Trust: 88%</div><div class="stamp stamp-acquitted">Acquitted</div></div>
-          </a>
-          <a href="/dashboard/test-detail.html?repo_name=demo-repo&test_name=inventory.sync.spec.ts" class="docket-row">
-            <div class="docket-left"><div class="docket-num">#476</div><div class="docket-name">inventory.sync.spec.ts</div></div>
-            <div class="docket-right"><div class="docket-trust">Trust: 94%</div><div class="stamp stamp-acquitted">Acquitted</div></div>
-          </a>
-        </div>
-        <div style="background:var(--deep);border-top:1px solid var(--border);padding:14px 20px;font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:8px"><span style="color:var(--amber)">⚠</span> 142 anomalies flagged today — quarantine protocols active</div>
-      </div>
-    </div>
-  </div>
-  <div class="stats-strip">
-    <div class="stat-pill s-orbit"><div class="stat-pill-label">Total Circuit Tests</div><div class="stat-pill-value" style="color:var(--orbit)">2,847</div><div class="stat-pill-sub">under monitoring</div></div>
-    <div class="stat-pill s-seismic"><div class="stat-pill-label">Seismic Anomalies</div><div class="stat-pill-value" style="color:var(--seismic)">142</div><div class="stat-pill-sub">flaky · flagged</div></div>
-    <div class="stat-pill s-amber"><div class="stat-pill-label">Quarantined</div><div class="stat-pill-value" style="color:var(--amber)">23</div><div class="stat-pill-sub">isolated from circuit</div></div>
-    <div class="stat-pill s-green"><div class="stat-pill-label">Avg Circuit Integrity</div><div class="stat-pill-value" style="color:var(--green)">89%</div><div class="stat-pill-sub">trust index</div></div>
-  </div>
-  <div class="features">
-    <div class="section-header-row">
-      <div><div class="section-label">Exhibits A-C · Core Capabilities</div><div class="section-h2">Evidence of<br><em>Trustworthiness</em></div></div>
-      <div class="section-right">Every feature is a piece of evidence. We prosecute with data, pattern, and precedent.</div>
-    </div>
-    <div class="features-grid">
-      <div class="feat-card" data-exhibit="A">
-        <div class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
-        <div class="feat-tag">Reliability — Primary Signal</div>
-        <div class="feat-title">Trust Scoring</div>
-        <div class="feat-desc">Every test gets a 0-100 trust score from 50+ signals. History, variance, timing, error patterns. No perjury.</div>
-        <div class="feat-tags"><span class="feat-tag-pill" style="color:var(--green);border-color:rgba(0,255,136,.2)">0-100 Range</span><span class="feat-tag-pill" style="color:var(--amber);border-color:rgba(255,176,0,.2)">50+ Signals</span></div>
-      </div>
-      <div class="feat-card" data-exhibit="B">
-        <div class="feat-icon" style="color:var(--red);border-color:rgba(255,51,68,.3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-        <div class="feat-tag">Cross-Examination Engine</div>
-        <div class="feat-title">Flaky Detection</div>
-        <div class="feat-desc">Real bug or flaky witness? Pattern recognition across the docket quarantines unreliable testimony automatically.</div>
-        <div class="feat-tags"><span class="feat-tag-pill" style="color:var(--red);border-color:rgba(255,51,68,.2)">14 Patterns</span><span class="feat-tag-pill" style="color:var(--seismic);border-color:rgba(255,107,43,.2)">Auto Quarantine</span></div>
-      </div>
-      <div class="feat-card" data-exhibit="C">
-        <div class="feat-icon" style="color:var(--amber);border-color:rgba(255,176,0,.3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-        <div class="feat-tag">Court Reporter · Real-Time</div>
-        <div class="feat-title">Smart Alerts</div>
-        <div class="feat-desc">Only when it matters. Poly files a motion only when trust drops below threshold. No spam, no false alarms.</div>
-        <div class="feat-tags"><span class="feat-tag-pill" style="color:var(--amber);border-color:rgba(255,176,0,.2)">Discord</span><span class="feat-tag-pill" style="color:var(--purple);border-color:rgba(168,85,247,.2)">Slack</span></div>
-      </div>
-    </div>
-  </div>
-  <div class="section-header-row" style="margin-bottom:32px">
-    <div><div class="section-label">Court Procedure · Three Acts</div><div class="section-h2">How the<br><em>Trial</em> Works</div></div>
-    <div class="section-right">Arraignment to verdict in under 90 seconds. Automated justice for automated tests.</div>
-  </div>
-  <div class="how-grid">
-    <div class="how-card">
-      <div class="how-num">01</div>
-      <div class="how-title">Instrument &amp; Collect Evidence</div>
-      <div class="how-desc">Drop the GitHub Action into your workflow. Every test run is logged and added to the docket. No code changes required.</div>
-      <div class="how-meta"><span class="how-chip" style="color:var(--green);border-color:rgba(0,255,136,.2)">Zero Config</span><span class="how-chip" style="color:var(--orbit);border-color:rgba(0,212,255,.2)">JUnit XML</span></div>
-    </div>
-    <div class="how-card">
-      <div class="how-num">02</div>
-      <div class="how-title">AI Jury Deliberates</div>
-      <div class="how-desc">Cross-examines duration variance, exit codes, stack trace entropy. Separates real bugs from lying witnesses in milliseconds.</div>
-      <div class="how-meta"><span class="how-chip" style="color:var(--red);border-color:rgba(255,51,68,.2)">142 Anomalies</span><span class="how-chip" style="color:var(--green);border-color:rgba(0,255,136,.2)">2,705 Stable</span></div>
-    </div>
-    <div class="how-card">
-      <div class="how-num">03</div>
-      <div class="how-title">Deliver Verdict</div>
-      <div class="how-desc">Guilty tests quarantined, not failed. PRs continue. Dashboard updates. Justice without blocking velocity.</div>
-      <div class="how-meta"><span class="how-chip" style="color:var(--green);border-color:rgba(0,255,136,.2)">CI Passes</span><span class="how-chip" style="color:var(--amber);border-color:rgba(255,176,0,.2)">Docket Updated</span></div>
-    </div>
-  </div>
-  <div style="margin-bottom:80px">
-    <div class="section-label" style="margin-bottom:16px">Affidavit · Installation</div>
-    <div class="install-block">
-      <div class="install-header"><div class="install-title">.github/workflows/poly.yml</div><div class="install-dots"><div class="install-dot"></div><div class="install-dot"></div><div class="install-dot"></div></div></div>
-      <div class="install-body">
-<span class="cmt"># .github/workflows/ci.yml</span>
-<span class="kw">name</span><span class="key">:</span> <span class="str">poly-trust-layer</span>
-<span class="kw">on</span><span class="key">:</span> <span class="val">[push, pull_request]</span>
 
-<span class="kw">jobs</span><span class="key">:</span>
-  <span class="key">test</span><span class="key">:</span>
-    <span class="kw">runs-on</span><span class="key">:</span> <span class="str">ubuntu-latest</span>
-    <span class="kw">steps</span><span class="key">:</span>
-    <span class="bl">- uses: actions/checkout@v4</span>
-    <span class="bl">- run: npm test</span>
+<!-- Nav -->
+<nav class="nav">
+  <a href="/" class="logo">
+    <svg width="34" height="16" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
+    FALS<em>KY</em>
+  </a>
+  <div class="links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="https://github.com/Pritahi/falsky-core" target="_blank">GitHub</a>
+  </div>
+  <a href="/login" class="cta">Sign In</a>
+</nav>
 
-    <span class="kw"># ↳ THE COURT ARRIVES</span>
-    <span class="kw">- name</span><span class="key">:</span> <span class="str">Poly AI Flaky Test Trust Layer</span>
-      <span class="kw">uses</span><span class="key">:</span> <span class="str">Pritahi/falsky-action@v1</span>
-      <span class="kw">with</span><span class="key">:</span>
-        <span class="kw">api_key</span><span class="key">:</span> <span class="val">${{ secrets.POLY_KEY }}</span>
-        <span class="kw">quarantine</span><span class="key">:</span> <span class="val">true</span>
-        <span class="kw">trust_threshold</span><span class="key">:</span> <span class="val">75</span>
-        <span class="kw">fail_on_new_flake</span><span class="key">:</span> <span class="val">false</span></div>
-      <div style="background:var(--deep);border-top:1px solid var(--border);padding:10px 24px;font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase">◆ Verdicts delivered in PR comments · Dashboard: app.poly.dev/case/482</div>
+<!-- Hero -->
+<section class="hero">
+  <div class="seismo">
+    <svg viewBox="0 0 600 50" fill="none">
+      <polyline points="0,25 60,25 90,25 110,8 130,42 150,15 170,35 190,25 240,25 280,25 300,10 320,40 340,18 360,32 380,25 440,25 480,25 500,12 520,38 540,25 600,25" stroke="#FF4B2E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <animate attributeName="stroke-dasharray" values="0,1200;1200,0" dur="4s" repeatCount="indefinite"/>
+      </polyline>
+    </svg>
+  </div>
+  <h1>Your CI has <span>tremors</span></h1>
+  <p>Detect flaky tests before they break your pipeline. Bayesian-powered trust scores for every test in your suite.</p>
+  <div class="actions">
+    <a href="/login" class="btn btn-primary">Get Started Free</a>
+    <a href="#features" class="btn btn-ghost">Learn More ↓</a>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features" id="features">
+  <h2>What Falsky Detects</h2>
+  <div class="features-grid">
+    <div class="feature">
+      <div class="icon">⏱️</div>
+      <h3>Timing Flakes</h3>
+      <p>Tests that fail due to timeouts, slow responses, or race conditions. Detected via z-score anomaly detection on duration data.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🔗</div>
+      <h3>Order Dependency</h3>
+      <p>Tests that pass or fail depending on execution order. Sequential pattern analysis catches alternating and periodic failures.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🤝</div>
+      <h3>Shared State</h3>
+      <p>Tests that contaminate each other through shared databases, files, or services. Clustered failure patterns reveal the culprit.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🎲</div>
+      <h3>Non-Deterministic Data</h3>
+      <p>Tests that fail randomly due to unstable test data, UUIDs, or timestamps. High error diversity is the signal.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🌐</div>
+      <h3>Environment Specific</h3>
+      <p>Tests that pass locally but fail in CI (or vice versa). Cross-environment pass rate comparison catches these.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">📊</div>
+      <h3>Bayesian Scoring</h3>
+      <p>Every test gets a trust score (0-100) using Beta-Binomial conjugate priors. Better than naive pass/total, especially with small samples.</p>
     </div>
   </div>
-</main>
-<div class="bottom-bar"></div>
-<div class="footer">
-  <div class="footer-brand">◉ Poly Console</div>
-  <div class="footer-meta">FLK-01 Station · Tremor Mode Active · Build 2026.07 · No flaky tests were harmed, only quarantined.</div>
-  <div class="footer-seal">Sealed · Exhibit A · Public Record</div>
-</div>
+</section>
+
+<!-- How it works -->
+<section class="how" id="how">
+  <h2>How It Works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="num">1</div>
+      <div class="text">
+        <h4>Connect your repo</h4>
+        <p>Sign in, connect your GitHub repository. Falsky automatically detects your test framework.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <div class="text">
+        <h4>Run your tests</h4>
+        <p>Install the GitHub Action in your workflow. It reads JUnit XML output and sends it to Falsky's Trust Engine.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <div class="text">
+        <h4>Get trust scores</h4>
+        <p>Every test gets a Bayesian trust score. Flaky tests are categorized and flagged with confidence levels.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="num">4</div>
+      <div class="text">
+        <h4>Fix before it breaks</h4>
+        <p>See trends, catch degrading tests early, and quarantine unreliable tests before they block your pipeline.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Start detecting flaky tests</h2>
+  <p>Free forever for open source. No credit card required.</p>
+  <a href="/login" class="btn btn-primary" style="margin-top:8px">Sign In</a>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <span>© 2026 Falsky · MIT License</span>
+  <span><a href="https://github.com/Pritahi/falsky-core">GitHub</a> · <a href="/docs">API Docs</a></span>
+</footer>
+
 </body>
 </html>
