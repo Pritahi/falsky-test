@@ -7,6 +7,14 @@
   ],
   "routes": [
     {
+      "src": "/dashboard/design-system.css",
+      "dest": "/backend/api.py"
+    },
+    {
+      "src": "/dashboard/api-keys.html",
+      "dest": "/backend/api.py"
+    },
+    {
       "src": "/(.*)",
       "dest": "/backend/api.py"
     }

@@ -1165,7 +1165,11 @@ def _check_user_auth(request: Request):
 
 @app.get("/dashboard/design-system.css")
 def serve_css():
-    return _serve_html(os.path.join("dashboard", "design-system.css"))
+    css_path = os.path.join(base_path, "dashboard", "design-system.css")
+    try:
+        return FileResponse(css_path, media_type="text/css")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="CSS file not found")
 
 @app.get("/dashboard/", response_class=HTMLResponse)
 def serve_dashboard(request: Request):
