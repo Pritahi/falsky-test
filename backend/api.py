@@ -1164,8 +1164,12 @@ def _check_user_auth(request: Request):
 # ===================== PAGE ROUTES =====================
 
 @app.get("/dashboard/design-system.css")
-def serve_css():
-    return _serve_html(os.path.join("dashboard", "design-system.css"))
+async def serve_css():
+    from fastapi.responses import FileResponse
+    return FileResponse(
+        os.path.join(base_path, "dashboard", "design-system.css"),
+        media_type="text/css",
+    )
 
 @app.get("/dashboard/", response_class=HTMLResponse)
 def serve_dashboard(request: Request):
