@@ -6,32 +6,32 @@
 <title>Falsky — Repository</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%232563eb' stroke-width='2.4'/></svg>">
 <link rel="stylesheet" href="design-system.css">
 <style>
 .trust-gauge{width:140px;height:140px;position:relative;margin:0 auto 12px}
 .trust-gauge svg{width:100%;height:100%}
-.trust-gauge .score{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:2.4rem;color:var(--paper)}
-.trust-gauge .label{position:absolute;bottom:-4px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.trust-gauge .score{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:2.4rem;font-weight:700;color:var(--text)}
+.trust-gauge .label{position:absolute;bottom:-4px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--text-muted);text-transform:uppercase}
 .chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
 @media(max-width:900px){.chart-row{grid-template-columns:1fr}}
 .filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .filter-bar .input{max-width:240px}
-.filter-bar select{padding:8px 10px;background:var(--ink3);border:1px solid var(--line2);color:var(--text);font-family:var(--mono);font-size:11px;border-radius:var(--radius);outline:none}
+.filter-bar select{padding:8px 10px;background:var(--bg-input);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:12px;border-radius:var(--radius);outline:none;transition:border-color .2s}
+.filter-bar select:focus{border-color:var(--primary)}
 .issue-list{list-style:none}
-.issue-list li{padding:10px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px}
+.issue-list li{padding:10px 0;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px}
 .issue-list li:last-child{border-bottom:none}
 </style>
 </head>
 <body>
-<div class="grain"></div>
 <div class="app">
 
 <!-- Sidebar -->
 <aside class="sidebar">
   <a href="./" class="logo">
-    <svg width="28" height="13" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
+    <svg width="28" height="13" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="var(--primary)" stroke-width="2.4"/></svg>
     FALS<em>KY</em>
   </a>
   <nav>
@@ -90,7 +90,7 @@
   </div>
 
   <!-- Last synced -->
-  <div style="text-align:right;margin-bottom:12px;font-family:var(--mono);font-size:10px;color:var(--dim)" id="lastSync">—</div>
+  <div style="text-align:right;margin-bottom:12px;font-family:var(--mono);font-size:11px;color:var(--text-muted)" id="lastSync">—</div>
 
   <!-- Empty state: waiting for first run -->
   <div id="emptyState" style="display:none" class="card">
@@ -115,7 +115,7 @@
       <span class="card-title">Overall Trust Score</span>
       <div class="trust-gauge" id="trustGauge">
         <svg viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--line2)" stroke-width="8"/>
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--border)" stroke-width="8"/>
           <circle cx="60" cy="60" r="52" fill="none" stroke="var(--green)" stroke-width="8" stroke-dasharray="327" stroke-dashoffset="327" stroke-linecap="round" transform="rotate(-90 60 60)" id="gaugeArc"/>
         </svg>
         <div class="score" id="gaugeScore">—</div>
@@ -162,7 +162,7 @@
             </tr>
           </thead>
           <tbody id="flakyTable">
-            <tr><td colspan="6" style="text-align:center;color:var(--dim);padding:32px"><div class="spinner"></div></td></tr>
+            <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px"><div class="spinner"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -282,12 +282,12 @@ async function loadRepo() {
     const buckets = [0,0,0,0,0,0,0,0,0,0]; // 0-10, 10-20, ..., 90-100
     allTests.forEach(t => { buckets[Math.min(Math.floor(t.trust_score / 10), 9)]++; });
     const maxB = Math.max(...buckets, 1);
-    const colors = ['#ef4444','#ef4444','#f97316','#f97316','#eab308','#eab308','#22c55e','#22c55e','#3DDC84','#3DDC84'];
+    const colors = ['#ef4444','#ef4444','#f97316','#f97316','#eab308','#eab308','#22c55e','#22c55e','#22c55e','#22c55e'];
     let distHTML = '', labelHTML = '';
     buckets.forEach((count, i) => {
       const h = Math.max(4, (count / maxB) * 100);
       distHTML += `<div style="flex:1;height:${h}px;background:${colors[i]};border-radius:2px 2px 0 0;opacity:${count > 0 ? 1 : 0.2};transition:height .3s"></div>`;
-      labelHTML += `<div style="flex:1;text-align:center;font-family:var(--mono);font-size:8px;color:var(--dim)">${i*10}</div>`;
+      labelHTML += `<div style="flex:1;text-align:center;font-family:var(--mono);font-size:8px;color:var(--text-muted)">${i*10}</div>`;
     });
     document.getElementById('trustDist').innerHTML = distHTML;
     document.getElementById('trustLabels').innerHTML = labelHTML;
@@ -316,7 +316,7 @@ function renderFlaky() {
     const cat = t.flaky_category;
     const catHtml = cat ? `<span class="cat-pill ${catClasses[cat] || ''}">${catNames[cat] || cat}</span>` : '—';
     return `<tr>
-      <td><a href="./test.html?repo=${encodeURIComponent(getRepo())}&test=${encodeURIComponent(t.test_name)}" style="color:var(--paper);text-decoration:none">${t.test_name}</a></td>
+      <td><a href="./test.html?repo=${encodeURIComponent(getRepo())}&test=${encodeURIComponent(t.test_name)}" style="color:var(--text);text-decoration:none">${t.test_name}</a></td>
       <td><span class="trust-badge ${trustClass(t.trust_score)}">${Math.round(t.trust_score)}</span></td>
       <td>${catHtml}</td>
       <td>${Math.round(t.pass_rate * 100)}%</td>
@@ -331,7 +331,7 @@ function renderAll() {
   document.getElementById('allTable').innerHTML = sorted.map(t => {
     const status = t.trust_score >= 80 ? '✅' : t.trust_score >= 50 ? '⚠️' : '🔴';
     return `<tr>
-      <td><a href="./test.html?repo=${encodeURIComponent(getRepo())}&test=${encodeURIComponent(t.test_name)}" style="color:var(--paper);text-decoration:none">${t.test_name}</a></td>
+      <td><a href="./test.html?repo=${encodeURIComponent(getRepo())}&test=${encodeURIComponent(t.test_name)}" style="color:var(--text);text-decoration:none">${t.test_name}</a></td>
       <td><span class="trust-badge ${trustClass(t.trust_score)}">${Math.round(t.trust_score)}</span></td>
       <td>${status}</td>
       <td>${Math.round(t.pass_rate * 100)}%</td>
@@ -345,9 +345,9 @@ function renderIssues() {
   const unstable = [...allTests].sort((a,b) => a.trust_score - b.trust_score).slice(0,5);
   document.getElementById('unstableList').innerHTML = unstable.map(t =>
     `<li><span class="trust-badge ${trustClass(t.trust_score)}">${Math.round(t.trust_score)}</span> <a href="./test.html?repo=${encodeURIComponent(getRepo())}&test=${encodeURIComponent(t.test_name)}" style="color:var(--text)">${t.test_name}</a></li>`
-  ).join('') || '<li style="color:var(--dim)">No issues</li>';
+  ).join('') || '<li style="color:var(--text-muted)">No issues</li>';
 
-  document.getElementById('degradedList').innerHTML = '<li style="color:var(--dim)">Connect more runs to see trends</li>';
+  document.getElementById('degradedList').innerHTML = '<li style="color:var(--text-muted)">Connect more runs to see trends</li>';
 }
 
 function filterTests() { renderFlaky(); }

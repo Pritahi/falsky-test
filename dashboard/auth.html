@@ -6,77 +6,83 @@
 <title>Falsky — Sign In</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%232563eb' stroke-width='2.4'/></svg>">
 <style>
 :root{
-  --ink:#0C1517;--ink2:#0F1B1E;--ink3:#0A1315;--ink4:#122024;
-  --line:#1E3237;--line2:#2C464B;
-  --paper:#F2E8D5;--red:#FF4B2E;--amber:#FFB020;--green:#3DDC84;
-  --text:#D7E4E2;--muted:#8AA0A2;--dim:#5E767A;
-  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--disp:'Anton',sans-serif;
+  --bg:#ffffff;--bg-card:#f8f9fa;--bg-hover:#f1f5f9;--bg-input:#ffffff;
+  --sidebar-bg:#f8f9fa;
+  --border:#e2e8f0;--border-subtle:#f1f5f9;
+  --text:#1e293b;--text-secondary:#475569;--text-muted:#94a3b8;
+  --primary:#2563eb;--primary-hover:#1d4ed8;--primary-soft:rgba(37,99,235,0.08);
+  --amber:#f59e0b;--amber-soft:rgba(245,158,11,0.08);
+  --green:#22c55e;--green-soft:rgba(34,197,94,0.08);
+  --red:#ef4444;--red-soft:rgba(239,68,68,0.08);
+  --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Fira Code',monospace;
+  --radius:8px;--radius-sm:6px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08);--shadow-md:0 4px 12px rgba(0,0,0,0.08);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-::selection{background:var(--amber);color:#171310}
+::selection{background:var(--primary);color:#fff}
 body{
-  font-family:var(--sans);color:var(--text);background:var(--ink);min-height:100vh;
+  font-family:var(--font);color:var(--text);background:var(--bg);min-height:100vh;
   display:flex;align-items:center;justify-content:center;
-  background-image:
-    radial-gradient(1100px 560px at 88% -8%,rgba(61,220,132,.05),transparent 60%),
-    radial-gradient(900px 520px at -8% 40%,rgba(255,75,46,.045),transparent 55%),
-    linear-gradient(rgba(120,160,165,.045) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(120,160,165,.045) 1px,transparent 1px);
-  background-size:auto,auto,46px 46px,46px 46px;
-  background-attachment:fixed;-webkit-font-smoothing:antialiased;
+  -webkit-font-smoothing:antialiased;line-height:1.6;
 }
-.grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
-  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2"/></filter><rect width="140" height="140" filter="url(%23n)"/></svg>');}
 
 .auth-wrap{position:relative;z-index:1;width:100%;max-width:440px;padding:20px}
 
 /* Logo */
-.logo{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-size:1.4rem;letter-spacing:.08em;color:var(--paper);margin-bottom:32px;justify-content:center}
-.logo em{font-style:normal;color:var(--red)}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font);font-size:20px;font-weight:700;color:var(--text);margin-bottom:32px;justify-content:center;text-decoration:none}
+.logo em{font-style:normal;color:var(--primary)}
 
 /* Card */
-.card{background:var(--ink2);border:1px solid var(--line2);box-shadow:10px 10px 0 rgba(0,0,0,.5);position:relative;overflow:hidden}
-.card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:repeating-linear-gradient(-45deg,var(--amber) 0 10px,#171310 10px 20px)}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-md);position:relative;overflow:hidden}
 .card-head{padding:28px 32px 0;text-align:center}
-.card-head h1{font-family:var(--disp);font-weight:400;font-size:1.8rem;letter-spacing:.03em;color:var(--paper);text-transform:uppercase;margin-bottom:6px}
-.card-head p{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--dim)}
+.card-head h1{font-family:var(--font);font-weight:700;font-size:1.6rem;color:var(--text);margin-bottom:6px}
+.card-head p{font-family:var(--mono);font-size:12px;color:var(--text-muted)}
 .card-body{padding:28px 32px 32px}
 
 /* Google Button */
-.google-btn{width:100%;padding:14px;background:var(--ink3);color:var(--text);border:1px solid var(--line2);font-family:var(--mono);font-size:13px;letter-spacing:.06em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;transition:all .18s;text-decoration:none;border-radius:2px}
-.google-btn:hover{border-color:var(--amber);color:var(--amber);transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(255,176,32,.15)}
+.google-btn{width:100%;padding:14px;background:var(--bg-input);color:var(--text-secondary);border:1px solid var(--border);font-family:var(--mono);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;transition:all .18s;text-decoration:none;border-radius:var(--radius)}
+.google-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
 .google-btn svg{width:20px;height:20px;flex-shrink:0}
 
+/* Inputs */
+.auth-input{width:100%;padding:12px 14px;background:var(--bg-input);color:var(--text);border:1px solid var(--border);font-family:var(--mono);font-size:13px;margin-bottom:10px;border-radius:var(--radius);outline:none;transition:border-color .2s}
+.auth-input:focus{border-color:var(--primary)}
+.auth-input::placeholder{color:var(--text-muted)}
+
 /* Info */
-.info{margin-top:20px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim);line-height:1.7}
-.info a{color:var(--amber);text-decoration:none}
+.info{margin-top:20px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--text-muted);line-height:1.7}
+.info a{color:var(--primary);text-decoration:none}
 .info a:hover{text-decoration:underline}
 
 /* API Key display (after login) */
-.apikey-box{display:none;margin-top:24px;padding:16px;background:var(--ink3);border:1px solid var(--line2)}
+.apikey-box{display:none;margin-top:24px;padding:16px;background:var(--bg-hover);border:1px solid var(--border);border-radius:var(--radius)}
 .apikey-box.show{display:block}
-.apikey-box .label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--dim);margin-bottom:8px;text-transform:uppercase}
-.apikey-box .key{font-family:var(--mono);font-size:13px;color:var(--green);word-break:break-all;padding:10px;background:var(--ink);border:1px solid var(--line);cursor:pointer;transition:all .2s;user-select:all}
+.apikey-box .label{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase}
+.apikey-box .key{font-family:var(--mono);font-size:13px;color:var(--green);word-break:break-all;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;user-select:all}
 .apikey-box .key:hover{border-color:var(--green)}
-.apikey-box .hint{font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:8px;letter-spacing:.1em}
+.apikey-box .hint{font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-top:8px}
 .apikey-box .actions{display:flex;gap:8px;margin-top:12px}
-.apikey-box .actions a{flex:1;text-align:center;padding:10px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-decoration:none;transition:all .18s;border:1px solid var(--line2);color:var(--muted)}
-.apikey-box .actions a:hover{border-color:var(--amber);color:var(--amber)}
-.apikey-box .actions a.primary{background:var(--amber);color:#171310;border-color:var(--amber);font-weight:600}
-.apikey-box .actions a.primary:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--red)}
+.apikey-box .actions a{flex:1;text-align:center;padding:10px;font-family:var(--font);font-size:12px;font-weight:500;text-decoration:none;transition:all .18s;border:1px solid var(--border);color:var(--text-secondary);border-radius:var(--radius-sm)}
+.apikey-box .actions a:hover{border-color:var(--primary);color:var(--primary)}
+.apikey-box .actions a.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.apikey-box .actions a.primary:hover{background:var(--primary-hover)}
+
+/* Divider */
+.divider{text-align:center;margin:14px 0;font-family:var(--mono);font-size:12px;color:var(--text-muted)}
+
+/* Toggle */
+.toggle-link{text-align:center;margin-top:14px;font-family:var(--font);font-size:13px;color:var(--text-muted);cursor:pointer}
+.toggle-link span{color:var(--primary);font-weight:500}
 
 /* Footer */
-.footer{margin-top:24px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim)}
-.footer a{color:var(--amber);text-decoration:none}
+.footer{margin-top:24px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--text-muted)}
+.footer a{color:var(--primary);text-decoration:none}
 .footer a:hover{text-decoration:underline}
-
-/* Seismo line animation */
-.seismo{margin:20px 0 8px;opacity:.4}
-.seismo svg{width:100%;height:40px}
 
 @media(max-width:480px){
   .auth-wrap{padding:12px}
@@ -85,11 +91,10 @@ body{
 </style>
 </head>
 <body>
-<div class="grain"></div>
 
 <div class="auth-wrap">
   <div class="logo">
-    <svg width="34" height="16" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
+    <svg width="34" height="16" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="var(--primary)" stroke-width="2.4"/></svg>
     FALS<em>KY</em>
   </div>
 
@@ -99,29 +104,24 @@ body{
       <p>Access your trust layer</p>
     </div>
     <div class="card-body">
-      <!-- Seismo line -->
-      <div class="seismo">
-        <svg viewBox="0 0 300 40" fill="none"><polyline points="0,20 30,20 45,20 55,5 65,35 75,10 85,28 95,20 120,20 140,20 150,8 160,32 170,15 180,25 190,20 220,20 250,20 260,12 270,28 280,20 300,20" stroke="#FF4B2E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><animate attributeName="stroke-dasharray" values="0,600;600,0" dur="3s" repeatCount="indefinite"/></polyline></svg>
-      </div>
-
       <!-- Email/Password Login -->
       <form id="loginForm" onsubmit="doLogin(event)">
-        <input type="email" id="loginEmail" placeholder="Email" required style="width:100%;padding:12px 14px;background:var(--ink3);color:var(--text);border:1px solid var(--line2);font-family:var(--mono);font-size:13px;margin-bottom:10px;border-radius:2px;outline:none">
-        <input type="password" id="loginPass" placeholder="Password" required style="width:100%;padding:12px 14px;background:var(--ink3);color:var(--text);border:1px solid var(--line2);font-family:var(--mono);font-size:13px;margin-bottom:14px;border-radius:2px;outline:none">
-        <button type="submit" class="google-btn" style="border-color:var(--amber);color:var(--amber)">Sign In</button>
+        <input type="email" id="loginEmail" class="auth-input" placeholder="Email" required>
+        <input type="password" id="loginPass" class="auth-input" placeholder="Password" required style="margin-bottom:14px">
+        <button type="submit" class="google-btn" style="border-color:var(--primary);color:var(--primary)">Sign In</button>
       </form>
 
-      <div style="text-align:center;margin:14px 0;font-family:var(--mono);font-size:11px;color:var(--dim)">or</div>
+      <div class="divider">or</div>
 
       <form id="registerForm" onsubmit="doRegister(event)" style="display:none">
-        <input type="text" id="regName" placeholder="Name" required style="width:100%;padding:12px 14px;background:var(--ink3);color:var(--text);border:1px solid var(--line2);font-family:var(--mono);font-size:13px;margin-bottom:10px;border-radius:2px;outline:none">
-        <input type="email" id="regEmail" placeholder="Email" required style="width:100%;padding:12px 14px;background:var(--ink3);color:var(--text);border:1px solid var(--line2);font-family:var(--mono);font-size:13px;margin-bottom:10px;border-radius:2px;outline:none">
-        <input type="password" id="regPass" placeholder="Password" required style="width:100%;padding:12px 14px;background:var(--ink3);color:var(--text);border:1px solid var(--line2);font-family:var(--mono);font-size:13px;margin-bottom:14px;border-radius:2px;outline:none">
+        <input type="text" id="regName" class="auth-input" placeholder="Name" required>
+        <input type="email" id="regEmail" class="auth-input" placeholder="Email" required>
+        <input type="password" id="regPass" class="auth-input" placeholder="Password" required style="margin-bottom:14px">
         <button type="submit" class="google-btn" style="border-color:var(--green);color:var(--green)">Create Account</button>
       </form>
 
-      <div id="toggleAuth" style="text-align:center;margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--dim);cursor:pointer" onclick="toggleForms()">
-        Don't have an account? <span style="color:var(--amber)">Sign Up</span>
+      <div id="toggleAuth" class="toggle-link" onclick="toggleForms()">
+        Don't have an account? <span>Sign Up</span>
       </div>
 
       <div class="info">
@@ -157,7 +157,6 @@ body{
       document.getElementById('registerForm').style.display = 'none';
       document.getElementById('toggleAuth').style.display = 'none';
       document.querySelector('.info').style.display = 'none';
-      document.querySelector('.seismo').style.display = 'none';
       document.getElementById('apikeyValue').textContent = data.api_key || 'No API key';
       document.getElementById('apikeyBox').classList.add('show');
       document.querySelector('.card-head h1').textContent = 'Welcome Back';
@@ -172,8 +171,8 @@ function toggleForms() {
   document.getElementById('loginForm').style.display = isLogin ? 'block' : 'none';
   document.getElementById('registerForm').style.display = isLogin ? 'none' : 'block';
   document.getElementById('toggleAuth').innerHTML = isLogin
-    ? 'Don\'t have an account? <span style="color:var(--amber)">Sign Up</span>'
-    : 'Already have an account? <span style="color:var(--amber)">Sign In</span>';
+    ? 'Don\'t have an account? <span style="color:var(--primary)">Sign Up</span>'
+    : 'Already have an account? <span style="color:var(--primary)">Sign In</span>';
 }
 
 async function doLogin(e) {

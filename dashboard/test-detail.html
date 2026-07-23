@@ -6,29 +6,28 @@
 <title>Falsky — Test Detail</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%232563eb' stroke-width='2.4'/></svg>">
 <link rel="stylesheet" href="design-system.css">
 <style>
 .score-big{text-align:center;padding:24px}
-.score-big .value{font-family:var(--disp);font-size:4rem;color:var(--paper)}
-.score-big .label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-top:4px}
+.score-big .value{font-family:var(--font);font-size:4rem;font-weight:700;color:var(--text)}
+.score-big .label{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--text-muted);text-transform:uppercase;margin-top:4px}
 .breakdown{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-.breakdown-item{background:var(--ink3);padding:12px;border:1px solid var(--line);border-radius:var(--radius)}
-.breakdown-item .bl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:4px}
+.breakdown-item{background:var(--bg);padding:12px;border:1px solid var(--border);border-radius:var(--radius)}
+.breakdown-item .bl{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px}
 .breakdown-item .bv{font-family:var(--mono);font-size:14px;font-weight:600}
-.confidence-bar{height:6px;background:var(--line2);border-radius:3px;overflow:hidden;margin-top:8px}
+.confidence-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:8px}
 .confidence-fill{height:100%;border-radius:3px;transition:width .5s}
 </style>
 </head>
 <body>
-<div class="grain"></div>
 <div class="app">
 
 <!-- Sidebar -->
 <aside class="sidebar">
   <a href="./" class="logo">
-    <svg width="28" height="13" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
+    <svg width="28" height="13" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="var(--primary)" stroke-width="2.4"/></svg>
     FALS<em>KY</em>
   </a>
   <nav>
@@ -67,7 +66,7 @@
   </div>
 
   <!-- Score + Breakdown -->
-  <div class="chart-row">
+  <div class="chart-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
     <div class="card score-big">
       <div class="value" id="trustScore">—</div>
       <div class="label">Trust Score</div>
@@ -81,7 +80,7 @@
       <div style="margin-top:16px">
         <div class="label">Confidence</div>
         <div class="confidence-bar"><div class="confidence-fill" id="confBar" style="width:0%"></div></div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:4px" id="confVal">—</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text-muted);margin-top:4px" id="confVal">—</div>
       </div>
     </div>
 
@@ -105,8 +104,8 @@
           <div class="bv" id="bdError">—</div>
         </div>
       </div>
-      <div style="margin-top:12px;padding:12px;background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius)">
-        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:4px">Flaky Category</div>
+      <div style="margin-top:12px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius)">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">Flaky Category</div>
         <div id="bdCategory" style="font-family:var(--mono);font-size:13px">—</div>
       </div>
     </div>
@@ -133,7 +132,7 @@
             </tr>
           </thead>
           <tbody id="historyTable">
-            <tr><td colspan="5" style="text-align:center;color:var(--dim);padding:32px"><div class="spinner"></div></td></tr>
+            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px"><div class="spinner"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -144,7 +143,7 @@
   <div class="tab-content" id="tab-errors">
     <div class="card">
       <span class="card-title">Unique Error Patterns</span>
-      <div id="errorPatterns" style="margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--muted)">Loading…</div>
+      <div id="errorPatterns" style="margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--text-secondary)">Loading…</div>
     </div>
   </div>
 </main>
@@ -232,17 +231,17 @@ async function loadTest() {
     // History
     const history = data.history || [];
     if (history.length === 0) {
-      document.getElementById('historyTable').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--dim);padding:24px">No history yet</td></tr>';
+      document.getElementById('historyTable').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px">No history yet</td></tr>';
     } else {
       document.getElementById('historyTable').innerHTML = history.map(h => {
         const status = h.status === 'passed' ? '✅' : h.status === 'failed' ? '❌' : '⏭️';
         const time = h.run_timestamp ? new Date(h.run_timestamp).toLocaleString() : '—';
         return `<tr>
-          <td style="color:var(--dim)">${time}</td>
+          <td style="color:var(--text-muted)">${time}</td>
           <td>${status} ${h.status}</td>
           <td>${h.duration ? h.duration.toFixed(3)+'s' : '—'}</td>
           <td>${h.trust_score !== undefined ? Math.round(h.trust_score) : '—'}</td>
-          <td style="color:var(--dim)">${h.environment || '—'}</td>
+          <td style="color:var(--text-muted)">${h.environment || '—'}</td>
         </tr>`;
       }).join('');
     }
@@ -250,10 +249,10 @@ async function loadTest() {
     // Error patterns
     const patterns = bd.error_patterns || [];
     if (patterns.length === 0) {
-      document.getElementById('errorPatterns').innerHTML = '<div style="color:var(--dim)">No error patterns detected</div>';
+      document.getElementById('errorPatterns').innerHTML = '<div style="color:var(--text-muted)">No error patterns detected</div>';
     } else {
       document.getElementById('errorPatterns').innerHTML = patterns.map(p =>
-        `<div style="padding:10px;background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:8px">
+        `<div style="padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px">
           <div style="color:var(--red);font-size:11px;margin-bottom:4px">${p.count}x (${p.percentage}%)</div>
           <div style="color:var(--text);font-size:11px;word-break:break-all">${p.pattern}</div>
         </div>`
