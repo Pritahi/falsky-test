@@ -84,13 +84,13 @@ tr:hover td{background:#FAFAF5}
 .cat-pill.random{background:rgba(168,85,247,.12);color:#a855f7;border:1px solid rgba(168,85,247,.2)}
 
 /* Buttons — landing page style */
-.btn{display:inline-flex;align-items:center;gap:8px;font:700 14px var(--disp);padding:11px 20px;border-radius:7px;border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer;transition:transform .15s,box-shadow .15s;text-decoration:none}
+.btn{display:inline-flex;align-items:center;gap:8px;font:700 14px var(--disp);padding:11px 20px;border-radius:7px;border:1.5px solid var(--ink);background:var(--ink);color:#FFFFFF;cursor:pointer;transition:transform .15s,box-shadow .15s;text-decoration:none}
 .btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(22,24,29,.22)}
 .btn:active{transform:scale(.97)}
 .btn-primary{background:var(--warn);border-color:var(--warn);color:var(--ink)}
 .btn-primary:hover{box-shadow:0 10px 24px rgba(245,165,36,.35)}
-.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-.btn-ghost:hover{background:var(--ink);color:var(--bg)}
+.btn-ghost{background:transparent;color:var(--warnB);border:1.5px solid var(--warnB)}
+.btn-ghost:hover{background:var(--warnB);color:var(--ink);border-color:var(--warnB)}
 .btn-sm{padding:8px 15px;font-size:13px}
 
 /* Inputs */
@@ -209,10 +209,10 @@ html.light tr:hover td{background:#F7F6F1}
 /* Trust badges in light mode — already fine since they use rgba + named colors */
 
 /* Buttons in light mode */
-html.light .btn{background:#16181D;color:#F2F1EC;border-color:#16181D}
+html.light .btn{background:#16181D;color:#FFFFFF;border-color:#16181D}
 html.light .btn:hover{box-shadow:0 8px 18px rgba(22,24,29,.22)}
-html.light .btn-ghost{color:#16181D;border-color:#DFDED6}
-html.light .btn-ghost:hover{background:#16181D;color:#F2F1EC}
+html.light .btn-ghost{color:var(--warnB);border-color:var(--warnB)}
+html.light .btn-ghost:hover{background:var(--warnB);color:var(--ink);border-color:var(--warnB)}
 
 /* Inputs in light mode */
 html.light .input{background:#fff;border-color:#DFDED6;color:#16181D}

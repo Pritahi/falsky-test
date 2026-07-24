@@ -88,7 +88,8 @@
         Your Falsky API key authenticates your CI workflow. Copy this key — you'll add it to GitHub as a secret in Step 2.
       </p>
       <div style="display:flex;align-items:center;gap:12px;padding:8px 0">
-        <code id="apiKeyValue" style="flex:1;font-family:var(--mono);font-size:13px;color:var(--okB);word-break:break-all;background:var(--panel);border:1px solid var(--hair);padding:12px 16px;user-select:all;border-radius:var(--radius)">Loading…</code>
+        <code id="apiKeyValue" style="flex:1;font-family:var(--mono);font-size:13px;color:var(--okB);word-break:break-all;background:var(--panel);border:1px solid var(--hair);padding:12px 16px;border-radius:var(--radius)">Loading…</code>
+        <button onclick="toggleKeyVisibility()" id="toggleBtn" class="btn btn-ghost btn-sm" style="white-space:nowrap">Reveal</button>
         <button onclick="copyKey()" id="copyBtn" class="btn btn-ghost btn-sm" style="white-space:nowrap">Copy Key</button>
       </div>
       <p style="font-family:var(--mono);font-size:10px;color:#5A616B;letter-spacing:.1em;margin-top:8px">Keep this secret — don't commit it to your repo</p>
@@ -353,13 +354,31 @@ const API = '';
     document.getElementById('userName').textContent = user.name || user.email;
     document.getElementById('userEmail').textContent = user.email;
     if (user.avatar) document.getElementById('userAvatar').src = user.avatar;
-    document.getElementById('apiKeyValue').textContent = user.api_key || 'No key found';
+    realApiKey = user.api_key || '';
+    maskApiKey();
   } catch(e) { window.location.href = '/login'; }
 })();
 
+let realApiKey = '';
+let keyVisible = false;
+
+function maskApiKey() {
+  if (!realApiKey) { document.getElementById('apiKeyValue').textContent = 'No key found'; return; }
+  // Show prefix + dots, e.g. fsk_••••••••••••
+  const prefix = realApiKey.substring(0, 4);
+  const masked = prefix + '••••••••••••••••';
+  document.getElementById('apiKeyValue').textContent = masked;
+}
+
+function toggleKeyVisibility() {
+  keyVisible = !keyVisible;
+  document.getElementById('apiKeyValue').textContent = keyVisible ? realApiKey : (realApiKey ? realApiKey.substring(0, 4) + '••••••••••••••••' : 'No key found');
+  document.getElementById('toggleBtn').textContent = keyVisible ? 'Hide' : 'Reveal';
+}
+
 function copyKey() {
-  const key = document.getElementById('apiKeyValue').textContent;
-  navigator.clipboard.writeText(key).then(() => {
+  if (!realApiKey) { alert('No key available'); return; }
+  navigator.clipboard.writeText(realApiKey).then(() => {
     const btn = document.getElementById('copyBtn');
     btn.textContent = 'Copied!';
     btn.style.borderColor = 'var(--okB)';
@@ -435,7 +454,10 @@ async function regenerateKey() {
     const res = await fetch(API + '/api/user/regenerate-key', { method: 'POST' });
     if (res.ok) {
       const data = await res.json();
-      document.getElementById('apiKeyValue').textContent = data.api_key;
+      realApiKey = data.api_key;
+      maskApiKey();
+      // If key was revealed, keep revealed
+      if (keyVisible) document.getElementById('apiKeyValue').textContent = realApiKey;
     } else {
       const data = await res.json();
       alert(data.detail || 'Failed to regenerate key');
