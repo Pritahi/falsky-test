@@ -6,31 +6,27 @@
 <title>Falsky — Test Detail</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FFB224' stroke-width='2.4'/></svg>">
 <link rel="stylesheet" href="design-system.css">
 <style>
 .score-big{text-align:center;padding:24px}
-.score-big .value{font-family:var(--disp);font-size:4rem;color:var(--paper)}
-.score-big .label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-top:4px}
+.score-big .value{font-family:var(--disp);font-size:4rem;color:#F4F3EE}
+.score-big .label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:#5A616B;text-transform:uppercase;margin-top:4px}
 .breakdown{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-.breakdown-item{background:var(--ink3);padding:12px;border:1px solid var(--line);border-radius:var(--radius)}
-.breakdown-item .bl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:4px}
+.breakdown-item{background:var(--tile);padding:12px;border:1px solid var(--hair);border-radius:var(--radius)}
+.breakdown-item .bl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:#5A616B;text-transform:uppercase;margin-bottom:4px}
 .breakdown-item .bv{font-family:var(--mono);font-size:14px;font-weight:600}
-.confidence-bar{height:6px;background:var(--line2);border-radius:3px;overflow:hidden;margin-top:8px}
+.confidence-bar{height:6px;background:var(--hair);border-radius:3px;overflow:hidden;margin-top:8px}
 .confidence-fill{height:100%;border-radius:3px;transition:width .5s}
 </style>
 </head>
 <body>
-<div class="grain"></div>
 <div class="app">
 
 <!-- Sidebar -->
 <aside class="sidebar">
-  <a href="./" class="logo">
-    <svg width="28" height="13" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
-    FALS<em>KY</em>
-  </a>
+  <a href="./" class="logo"><i></i>Falsky</a>
   <nav>
     <a href="./">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -59,8 +55,8 @@
     </div>
   </div>
   <div class="theme-toggle">
-    <button onclick="setTheme('dark')" id="btnDark">🌙 DARK</button>
-    <button onclick="setTheme('light')" id="btnLight">☀️ LIGHT</button>
+    <button onclick="setTheme('dark')" id="btnDark">DARK</button>
+    <button onclick="setTheme('light')" id="btnLight">LIGHT</button>
   </div>
 </aside>
 
@@ -89,7 +85,7 @@
       <div style="margin-top:16px">
         <div class="label">Confidence</div>
         <div class="confidence-bar"><div class="confidence-fill" id="confBar" style="width:0%"></div></div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:4px" id="confVal">—</div>
+        <div style="font-family:var(--mono);font-size:10px;color:#5A616B;margin-top:4px" id="confVal">—</div>
       </div>
     </div>
 
@@ -98,7 +94,7 @@
       <div class="breakdown">
         <div class="breakdown-item">
           <div class="bl">Bayesian Pass Rate</div>
-          <div class="bv" id="bdPass" style="color:var(--green)">—</div>
+          <div class="bv" id="bdPass" style="color:var(--okB)">—</div>
         </div>
         <div class="breakdown-item">
           <div class="bl">Recent Trend</div>
@@ -113,8 +109,8 @@
           <div class="bv" id="bdError">—</div>
         </div>
       </div>
-      <div style="margin-top:12px;padding:12px;background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius)">
-        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:4px">Flaky Category</div>
+      <div style="margin-top:12px;padding:12px;background:var(--tile);border:1px solid var(--hair);border-radius:var(--radius)">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:#5A616B;text-transform:uppercase;margin-bottom:4px">Flaky Category</div>
         <div id="bdCategory" style="font-family:var(--mono);font-size:13px">—</div>
       </div>
     </div>
@@ -141,7 +137,7 @@
             </tr>
           </thead>
           <tbody id="historyTable">
-            <tr><td colspan="5" style="text-align:center;color:var(--dim);padding:32px"><div class="spinner"></div></td></tr>
+            <tr><td colspan="5" style="text-align:center;color:#5A616B;padding:32px"><div class="spinner"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -152,7 +148,7 @@
   <div class="tab-content" id="tab-errors">
     <div class="card">
       <span class="card-title">Unique Error Patterns</span>
-      <div id="errorPatterns" style="margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--muted)">Loading…</div>
+      <div id="errorPatterns" style="margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--mut)">Loading…</div>
     </div>
   </div>
 </main>
@@ -218,23 +214,23 @@ async function loadTest() {
     // Flaky probability
     const prob = data.flaky_probability || 0;
     document.getElementById('flakyProb').textContent = Math.round(prob * 100) + '%';
-    document.getElementById('flakyProb').style.color = prob > 0.7 ? 'var(--red)' : prob > 0.3 ? 'var(--amber)' : 'var(--green)';
+    document.getElementById('flakyProb').style.color = prob > 0.7 ? 'var(--badB)' : prob > 0.3 ? 'var(--warnB)' : 'var(--okB)';
 
     // Confidence
     const conf = data.breakdown?.confidence || 0;
     document.getElementById('confBar').style.width = (conf * 100) + '%';
-    document.getElementById('confBar').style.background = conf > 0.7 ? 'var(--green)' : conf > 0.4 ? 'var(--amber)' : 'var(--red)';
+    document.getElementById('confBar').style.background = conf > 0.7 ? 'var(--okB)' : conf > 0.4 ? 'var(--warnB)' : 'var(--badB)';
     document.getElementById('confVal').textContent = Math.round(conf * 100) + '% confident';
 
     // Breakdown
     const bd = data.breakdown || {};
     const passRate = bd.pass_rate?.value || 0;
     document.getElementById('bdPass').textContent = Math.round(passRate * 100) + '%';
-    document.getElementById('bdPass').style.color = passRate >= 0.8 ? 'var(--green)' : passRate >= 0.5 ? 'var(--amber)' : 'var(--red)';
+    document.getElementById('bdPass').style.color = passRate >= 0.8 ? 'var(--okB)' : passRate >= 0.5 ? 'var(--warnB)' : 'var(--badB)';
 
     const trend = bd.recent_trend?.value || 0;
     document.getElementById('bdTrend').textContent = (trend >= 0 ? '+' : '') + Math.round(trend);
-    document.getElementById('bdTrend').style.color = trend >= 0 ? 'var(--green)' : 'var(--red)';
+    document.getElementById('bdTrend').style.color = trend >= 0 ? 'var(--okB)' : 'var(--badB)';
 
     const dur = bd.duration_stability?.value || 100;
     document.getElementById('bdDuration').textContent = Math.round(dur) + '%';
@@ -249,23 +245,23 @@ async function loadTest() {
       catEl.innerHTML = `<span class="cat-pill ${catClasses[cat] || ''}">${catNames[cat] || cat}</span>`;
     } else {
       catEl.textContent = 'None detected';
-      catEl.style.color = 'var(--green)';
+      catEl.style.color = 'var(--okB)';
     }
 
     // History
     const history = data.history || [];
     if (history.length === 0) {
-      document.getElementById('historyTable').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--dim);padding:24px">No history yet</td></tr>';
+      document.getElementById('historyTable').innerHTML = '<tr><td colspan="5" style="text-align:center;color:#5A616B;padding:24px">No history yet</td></tr>';
     } else {
       document.getElementById('historyTable').innerHTML = history.map(h => {
         const status = h.status === 'passed' ? '✅' : h.status === 'failed' ? '❌' : '⏭️';
         const time = h.run_timestamp ? new Date(h.run_timestamp).toLocaleString() : '—';
         return `<tr>
-          <td style="color:var(--dim)">${time}</td>
+          <td style="color:#5A616B">${time}</td>
           <td>${status} ${h.status}</td>
           <td>${h.duration ? h.duration.toFixed(3)+'s' : '—'}</td>
           <td>${h.trust_score !== undefined ? Math.round(h.trust_score) : '—'}</td>
-          <td style="color:var(--dim)">${h.environment || '—'}</td>
+          <td style="color:#5A616B">${h.environment || '—'}</td>
         </tr>`;
       }).join('');
     }
@@ -273,12 +269,12 @@ async function loadTest() {
     // Error patterns
     const patterns = bd.error_patterns || [];
     if (patterns.length === 0) {
-      document.getElementById('errorPatterns').innerHTML = '<div style="color:var(--dim)">No error patterns detected</div>';
+      document.getElementById('errorPatterns').innerHTML = '<div style="color:#5A616B">No error patterns detected</div>';
     } else {
       document.getElementById('errorPatterns').innerHTML = patterns.map(p =>
-        `<div style="padding:10px;background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:8px">
-          <div style="color:var(--red);font-size:11px;margin-bottom:4px">${p.count}x (${p.percentage}%)</div>
-          <div style="color:var(--text);font-size:11px;word-break:break-all">${p.pattern}</div>
+        `<div style="padding:10px;background:var(--tile);border:1px solid var(--hair);border-radius:var(--radius);margin-bottom:8px">
+          <div style="color:var(--badB);font-size:11px;margin-bottom:4px">${p.count}x (${p.percentage}%)</div>
+          <div style="color:#D7DCE3;font-size:11px;word-break:break-all">${p.pattern}</div>
         </div>`
       ).join('');
     }

@@ -6,67 +6,70 @@
 <title>Falsky — Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#09090b;--bg-card:#18181b;--bg-hover:#27272a;--bg-input:#27272a;
-  --border:#27272a;--border-subtle:#1e1e22;
-  --text:#fafafa;--text-secondary:#a1a1aa;--text-muted:#71717a;
-  --accent:#8b5cf6;--accent-hover:#7c3aed;--accent-soft:rgba(139,92,246,0.12);
-  --green:#22c55e;--green-soft:rgba(34,197,94,0.12);
-  --yellow:#eab308;--yellow-soft:rgba(234,179,8,0.12);
-  --orange:#f97316;--orange-soft:rgba(249,115,22,0.12);
-  --red:#ef4444;--red-soft:rgba(239,68,68,0.12);
-  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
-  --mono:'JetBrains Mono','Fira Code',monospace;
-  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+  --bg:#F2F1EC;--bg-card:#fff;--bg-hover:#E8E7E0;--bg-input:#fff;
+  --border:#DFDED6;--border-subtle:#E8E7E0;
+  --text:#16181D;--text-secondary:#6B6F76;--text-muted:#5A616B;
+  --accent:#FFB224;--accent-hover:#F5A524;--accent-soft:rgba(255,178,36,0.12);
+  --green:#2FBF71;--green-soft:rgba(47,191,113,0.12);
+  --yellow:#F5A524;--yellow-soft:rgba(245,165,36,0.12);
+  --orange:#F97316;--orange-soft:rgba(249,115,22,0.12);
+  --red:#E5484D;--red-soft:rgba(229,72,77,0.12);
+  --panel:#191C22;--tile:#23272F;--hair:#262B33;
+  --panel-text:#D7DCE3;--panel-muted:#8A9099;--panel-dim:#5A616B;
+  --font:'Archivo',sans-serif;
+  --mono:'Space Mono',monospace;
+  --radius:7px;--radius-sm:7px;--radius-xs:4px;
 }
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;-webkit-font-smoothing:antialiased}
 
 /* Sidebar */
-.sidebar{width:240px;position:fixed;height:100vh;z-index:10;display:flex;flex-direction:column;background:var(--bg);border-right:1px solid var(--border)}
-.sidebar .logo{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.sidebar .logo .icon{width:32px;height:32px;border-radius:8px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--accent)}
-.sidebar .logo span{font-weight:700;font-size:18px;color:var(--accent);letter-spacing:-0.02em}
-.sidebar nav a{display:flex;align-items:center;gap:10px;padding:8px 20px;color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:500;transition:all .15s}
-.sidebar nav a:hover{color:var(--text);background:var(--bg-hover)}
-.sidebar nav a.active{color:var(--accent);background:var(--accent-soft)}
-.sidebar nav a svg{width:18px;height:18px;opacity:.7}
+.sidebar{width:220px;position:fixed;height:100vh;z-index:10;display:flex;flex-direction:column;background:var(--panel);border-right:1px solid var(--hair);padding:16px}
+.sidebar .logo{display:flex;align-items:center;gap:9px;font:800 20px var(--font);letter-spacing:-.03em;color:#F4F3EE;text-decoration:none;margin-bottom:28px}
+.sidebar .logo i{width:10px;height:10px;background:#F4F3EE;transition:transform .35s,background .35s;display:inline-block;border-radius:2px}
+.sidebar .logo:hover i{transform:rotate(180deg);background:var(--accent)}
+.sidebar nav{flex:1;display:flex;flex-direction:column;gap:2px}
+.sidebar nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:var(--panel-muted);text-decoration:none;font-family:var(--mono);font-size:11px;letter-spacing:.08em;transition:all .15s;border-radius:var(--radius)}
+.sidebar nav a:hover{color:#D7DCE3;background:var(--tile)}
+.sidebar nav a.active{color:var(--accent);background:var(--tile);border-left:2px solid var(--accent)}
+.sidebar nav a svg{width:16px;height:16px;flex-shrink:0;opacity:.7}
 
 /* Main */
-.main{margin-left:240px;flex:1;padding:32px 40px;max-width:1200px}
-.main h1{font-size:24px;font-weight:700;letter-spacing:-0.02em;margin-bottom:4px}
-.main .subtitle{color:var(--text-muted);font-size:13px;margin-bottom:24px}
+.main{margin-left:220px;flex:1;padding:24px 32px;max-width:1200px;background:var(--bg)}
+.main h1{font:800 24px var(--font);letter-spacing:-.03em;margin-bottom:4px}
+.main .subtitle{color:var(--text-secondary);font-family:var(--mono);font-size:12px;margin-bottom:24px}
 
 /* Login */
-#login-screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--bg)}
-.login-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);width:380px;overflow:hidden}
-.login-box .login-header{padding:24px;border-bottom:1px solid var(--border);text-align:center}
-.login-box .login-header h2{font-size:20px;font-weight:700;margin-bottom:4px}
-.login-box .login-header .sub{color:var(--text-muted);font-size:12px}
+#login-screen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--panel)}
+.login-box{background:var(--tile);border:1px solid var(--hair);border-radius:var(--radius);width:380px;overflow:hidden}
+.login-box .login-header{padding:24px;border-bottom:1px solid var(--hair);text-align:center}
+.login-box .login-header h2{font-size:20px;font-weight:800;color:#F4F3EE;margin-bottom:4px}
+.login-box .login-header .sub{color:var(--panel-muted);font-family:var(--mono);font-size:12px}
 .login-box .login-body{padding:24px}
 .login-box .seal-row{display:flex;justify-content:center;margin-bottom:16px}
-.login-box .seal{width:48px;height:48px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:var(--accent)}
-.login-box input{width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-xs);font-family:var(--font);font-size:13px;margin-bottom:10px;outline:none;transition:border .15s}
+.login-box .seal{width:48px;height:48px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:var(--accent)}
+.login-box input{width:100%;padding:10px 14px;background:var(--tile);border:1px solid var(--hair);color:var(--panel-text);border-radius:var(--radius-xs);font-family:var(--mono);font-size:13px;margin-bottom:10px;outline:none;transition:border .15s}
 .login-box input:focus{border-color:var(--accent)}
-.login-box input::placeholder{color:var(--text-muted)}
-.login-box button{width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-xs);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.login-box input::placeholder{color:var(--panel-dim)}
+.login-box button{width:100%;padding:10px;background:var(--accent);color:var(--text);border:none;border-radius:var(--radius-xs);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
 .login-box button:hover{background:var(--accent-hover)}
-.login-box .error{color:var(--red);font-size:12px;text-align:center;margin-top:8px;display:none}
-.login-box .stamp-filing{text-align:center;margin-top:12px;color:var(--text-muted);font-size:11px}
-.google-btn{width:100%;padding:10px 14px;background:var(--bg-input);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-xs);font-family:var(--font);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;margin-bottom:12px}
+.login-box .error{color:var(--red);font-family:var(--mono);font-size:12px;text-align:center;margin-top:8px;display:none}
+.login-box .stamp-filing{text-align:center;margin-top:12px;color:var(--panel-muted);font-family:var(--mono);font-size:11px;letter-spacing:.1em}
+.google-btn{width:100%;padding:10px 14px;background:var(--tile);color:var(--panel-text);border:1px solid var(--hair);border-radius:var(--radius-xs);font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;margin-bottom:12px}
 .google-btn:hover{border-color:var(--accent)}
 .google-btn svg{width:18px;height:18px}
 .divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:0.06em}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--hair)}
 
 /* Stats grid */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:24px}
-.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:all .15s}
-.stat-card:hover{border-color:var(--text-muted)}
-.stat-card .label{color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:6px}
-.stat-card .value{font-size:28px;font-weight:700;letter-spacing:-0.02em}
+.stat-card{background:var(--panel);border:1px solid var(--hair);border-radius:var(--radius);padding:16px;transition:all .15s}
+.stat-card:hover{border-color:var(--panel-muted)}
+.stat-card .label{color:var(--panel-muted);font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px}
+.stat-card .value{font-size:28px;font-weight:800;font-family:var(--font);letter-spacing:-0.02em;color:#F4F3EE}
 
 /* Section */
 .section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden}
@@ -76,7 +79,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 /* Toolbar */
 .toolbar{display:flex;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center}
-.toolbar input,.toolbar select{padding:6px 12px;background:var(--bg-input);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-xs);font-family:var(--font);font-size:12px;outline:none;transition:border .15s}
+.toolbar input,.toolbar select{padding:6px 12px;background:var(--bg-input);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-xs);font-family:var(--mono);font-size:12px;outline:none;transition:border .15s}
 .toolbar input{flex:1;min-width:180px}
 .toolbar input:focus,.toolbar select:focus{border-color:var(--accent)}
 .toolbar select{cursor:pointer}
@@ -95,19 +98,19 @@ tr:hover td{background:var(--bg-hover)}
 .tag-enterprise{background:var(--red-soft);color:var(--red)}
 .tag-active{background:var(--green-soft);color:var(--green)}
 .tag-inactive{background:var(--red-soft);color:var(--red)}
-.tag-source{background:var(--bg);color:var(--text-muted);border:1px solid var(--border)}
+.tag-source{background:var(--bg-hover);color:var(--text-secondary);border:1px solid var(--border)}
 
 /* Buttons */
 .btn{padding:6px 12px;font-family:var(--font);font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg-card);color:var(--text);border-radius:var(--radius-xs);transition:all .15s;display:inline-flex;align-items:center;gap:4px}
 .btn:hover{background:var(--bg-hover);border-color:var(--text-muted)}
-.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary{background:var(--accent);color:var(--text);border-color:var(--accent)}
 .btn-primary:hover{background:var(--accent-hover)}
-.btn-danger{color:var(--red);border-color:rgba(239,68,68,0.3)}
+.btn-danger{color:var(--red);border-color:rgba(229,72,77,0.3)}
 .btn-danger:hover{background:var(--red-soft)}
 .btn-sm{padding:4px 8px;font-size:10px}
 
 /* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:50;display:none;align-items:center;justify-content:center}
+.modal-overlay{position:fixed;inset:0;background:rgba(22,24,29,.6);backdrop-filter:blur(4px);z-index:50;display:none;align-items:center;justify-content:center}
 .modal-overlay.show{display:flex}
 .modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);width:460px;max-width:90vw;overflow:hidden}
 .modal .modal-header{padding:16px 20px;border-bottom:1px solid var(--border)}
@@ -132,7 +135,7 @@ tr:hover td{background:var(--bg-hover)}
 .referral-bars{padding:16px}
 .ref-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .ref-bar .name{width:100px;font-family:var(--mono);font-size:11px;color:var(--text-muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ref-bar .bar-bg{flex:1;height:24px;background:var(--bg);border-radius:4px;overflow:hidden}
+.ref-bar .bar-bg{flex:1;height:24px;background:var(--bg-hover);border-radius:4px;overflow:hidden}
 .ref-bar .bar-fill{height:100%;display:flex;align-items:center;padding:0 8px;font-family:var(--mono);font-size:10px;font-weight:600;color:#fff;min-width:fit-content;border-radius:4px}
 
 /* Activity */
@@ -159,15 +162,14 @@ tr:hover td{background:var(--bg-hover)}
 /* Toast */
 .toast{position:fixed;bottom:20px;right:20px;background:var(--bg-card);border:1px solid var(--border);padding:10px 16px;font-family:var(--font);font-size:12px;z-index:200;transform:translateY(80px);opacity:0;transition:all .3s;border-radius:var(--radius-sm)}
 .toast.show{transform:translateY(0);opacity:1}
-.toast.success{border-color:rgba(34,197,94,0.3);color:var(--green)}
-.toast.error{border-color:rgba(239,68,68,0.3);color:var(--red)}
+.toast.success{border-color:rgba(47,191,113,0.3);color:var(--green)}
+.toast.error{border-color:rgba(229,72,77,0.3);color:var(--red)}
 
 .hidden{display:none!important}
 
 @media(max-width:768px){
-  .sidebar{width:60px}
-  .sidebar .logo span,.sidebar nav a span{display:none}
-  .sidebar .logo .icon{width:28px;height:28px;font-size:12px}
+  .sidebar{width:60px;padding:8px}
+  .sidebar .logo i,.sidebar nav a span{display:none}
   .sidebar nav a{justify-content:center;padding:12px 0}
   .main{margin-left:60px;padding:16px}
   .stats-grid{grid-template-columns:repeat(2,1fr)}
@@ -186,7 +188,7 @@ tr:hover td{background:var(--bg-hover)}
     </div>
     <div class="login-body">
       <div class="seal-row"><div class="seal">F</div></div>
-      <div style="text-align:center;margin-bottom:20px;color:var(--text-muted);font-size:11px;letter-spacing:.14em;text-transform:uppercase">Station Admin Access</div>
+      <div style="text-align:center;margin-bottom:20px;color:var(--panel-muted);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase">Station Admin Access</div>
       <input type="text" id="adminUser" placeholder="Username" autocomplete="username">
       <input type="password" id="adminPass" placeholder="Password" autocomplete="current-password">
       <button onclick="doAdminLogin()">Sign In</button>
@@ -203,10 +205,7 @@ tr:hover td{background:var(--bg-hover)}
 
 <!-- Sidebar -->
 <aside class="sidebar">
-  <div class="logo">
-    <div class="icon">F</div>
-    <span>Falsky</span>
-  </div>
+  <a href="./" class="logo"><i></i>Falsky</a>
   <nav>
     <a href="#stats" class="active" onclick="showTab('stats')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -224,7 +223,7 @@ tr:hover td{background:var(--bg-hover)}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
       <span>Dashboard</span>
     </a>
-    <a href="#" onclick="doLogout()" style="margin-top:auto;border-top:1px solid var(--border);padding-top:12px">
+    <a href="#" onclick="doLogout()" style="margin-top:auto;border-top:1px solid var(--hair);padding-top:12px">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       <span>Sign Out</span>
     </a>

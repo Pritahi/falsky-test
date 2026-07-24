@@ -6,20 +6,16 @@
 <title>Falsky — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FFB224' stroke-width='2.4'/></svg>">
 <link rel="stylesheet" href="design-system.css">
 </head>
 <body>
-<div class="grain"></div>
 <div class="app">
 
 <!-- Sidebar -->
 <aside class="sidebar">
-  <a href="./" class="logo">
-    <svg width="28" height="13" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
-    FALS<em>KY</em>
-  </a>
+  <a href="./" class="logo"><i></i>Falsky</a>
   <nav>
     <a href="./" class="active">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -46,11 +42,11 @@
         <div class="email" id="userEmail"></div>
       </div>
     </div>
-    <a href="#" onclick="doLogout()" style="display:block;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;text-decoration:none">SIGN OUT →</a>
+    <a href="#" onclick="doLogout()" style="display:block;margin-top:8px;font-family:var(--mono);font-size:10px;color:#5A616B;letter-spacing:.1em;text-decoration:none">SIGN OUT →</a>
   </div>
   <div class="theme-toggle">
-    <button onclick="setTheme('dark')" id="btnDark">🌙 DARK</button>
-    <button onclick="setTheme('light')" id="btnLight">☀️ LIGHT</button>
+    <button onclick="setTheme('dark')" id="btnDark">DARK</button>
+    <button onclick="setTheme('light')" id="btnLight">LIGHT</button>
   </div>
 </aside>
 
@@ -89,7 +85,7 @@
   </div>
 
   <!-- Last synced -->
-  <div style="text-align:right;margin-bottom:12px;font-family:var(--mono);font-size:10px;color:var(--dim)" id="lastSync">—</div>
+  <div style="text-align:right;margin-bottom:12px;font-family:var(--mono);font-size:10px;color:#5A616B" id="lastSync">—</div>
 
   <!-- Empty state: no repos -->
   <div id="emptyState" style="display:none" class="card">
@@ -224,22 +220,22 @@ async function loadDashboard() {
         const trustClass = avgTrust >= 80 ? 'high' : avgTrust >= 50 ? 'mid' : 'low';
 
         repoRows += `<tr>
-          <td><a href="./repo.html?repo=${encodeURIComponent(repo.name)}" style="color:var(--paper);text-decoration:none;font-weight:600">${repo.name}</a></td>
+          <td><a href="./repo.html?repo=${encodeURIComponent(repo.name)}" style="color:#F4F3EE;text-decoration:none;font-weight:600">${repo.name}</a></td>
           <td>${tests.length}</td>
           <td><span class="trust-badge ${trustClass}">${avgTrust}</span></td>
-          <td>${flaky > 0 ? '<span style="color:var(--amber)">'+flaky+'</span>' : '<span style="color:var(--green)">0</span>'}</td>
-          <td style="color:var(--dim)">—</td>
+          <td>${flaky > 0 ? '<span style="color:var(--warnB)">'+flaky+'</span>' : '<span style="color:var(--okB)">0</span>'}</td>
+          <td style="color:#5A616B">—</td>
           <td><a href="./repo.html?repo=${encodeURIComponent(repo.name)}" class="btn btn-ghost btn-sm">View →</a></td>
         </tr>`;
       } catch(e) {}
     }
 
-    document.getElementById('reposTable').innerHTML = repoRows || '<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:24px">No data</td></tr>';
+    document.getElementById('reposTable').innerHTML = repoRows || '<tr><td colspan="6" style="text-align:center;color:#5A616B;padding:24px">No data</td></tr>';
     document.getElementById('statTrust').textContent = trustCount > 0 ? Math.round(totalTrust / trustCount) : '—';
     document.getElementById('statFlaky').textContent = totalFlaky;
     document.getElementById('statLatest').textContent = repos.length > 0 ? '✅ Active' : '—';
     document.getElementById('statLatestSub').textContent = repos.length > 0 ? 'receiving data' : 'no repos yet';
-    document.getElementById('activityTable').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:24px">Connect a repo to see runs</td></tr>';
+    document.getElementById('activityTable').innerHTML = '<tr><td colspan="6" style="text-align:center;color:#5A616B;padding:24px">Connect a repo to see runs</td></tr>';
   } catch(e) {
     console.error('Dashboard error:', e);
   }

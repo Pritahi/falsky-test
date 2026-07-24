@@ -6,20 +6,16 @@
 <title>Falsky — Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FFB224' stroke-width='2.4'/></svg>">
 <link rel="stylesheet" href="design-system.css">
 </head>
 <body>
-<div class="grain"></div>
 <div class="app">
 
 <!-- Sidebar -->
 <aside class="sidebar">
-  <a href="./" class="logo">
-    <svg width="28" height="13" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
-    FALS<em>KY</em>
-  </a>
+  <a href="./" class="logo"><i></i>Falsky</a>
   <nav>
     <a href="./">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -50,11 +46,11 @@
         <div class="email" id="userEmail"></div>
       </div>
     </div>
-    <a href="#" onclick="doLogout()" style="display:block;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;text-decoration:none">SIGN OUT →</a>
+    <a href="#" onclick="doLogout()" style="display:block;margin-top:8px;font-family:var(--mono);font-size:10px;color:#5A616B;letter-spacing:.1em;text-decoration:none">SIGN OUT →</a>
   </div>
   <div class="theme-toggle">
-    <button onclick="setTheme('dark')" id="btnDark">🌙 DARK</button>
-    <button onclick="setTheme('light')" id="btnLight">☀️ LIGHT</button>
+    <button onclick="setTheme('dark')" id="btnDark">DARK</button>
+    <button onclick="setTheme('light')" id="btnLight">LIGHT</button>
   </div>
 </aside>
 
@@ -68,45 +64,45 @@
   </div>
 
   <!-- ====== SECTION 1: How It Works ====== -->
-  <div class="card" style="margin-bottom:24px;border-left:3px solid var(--amber)">
+  <div class="card" style="margin-bottom:24px;border-left:3px solid var(--warnB)">
     <div class="card-header">
-      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:var(--amber);font-weight:700">01</span> — HOW FALSKY WORKS</span>
+      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:var(--warnB);font-weight:700">01</span> — HOW FALSKY WORKS</span>
     </div>
     <div style="padding:4px 0">
-      <p style="font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px">
-        Falsky is an AI-powered flaky test detector. It uses Bayesian statistics (Beta-Binomial conjugate prior) to calculate a trust score for each test — 0 to 100. The more consistently a test passes, the higher its trust score. When a test's pass rate fluctuates, Falsky detects it as <em style="color:var(--amber)">flaky</em> and categorizes the root cause.
+      <p style="font-family:var(--sans);font-size:13px;color:var(--mut);line-height:1.6;margin-bottom:16px">
+        Falsky is an AI-powered flaky test detector. It uses Bayesian statistics (Beta-Binomial conjugate prior) to calculate a trust score for each test — 0 to 100. The more consistently a test passes, the higher its trust score. When a test's pass rate fluctuates, Falsky detects it as <em style="color:var(--warnB)">flaky</em> and categorizes the root cause.
       </p>
 
       <!-- Flow diagram -->
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px">
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
-          <div style="font-family:var(--mono);font-size:18px;color:var(--green)">①</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em">YOUR TESTS<br>RUN IN CI</div>
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
+          <div style="font-family:var(--mono);font-size:18px;color:var(--okB)">①</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--mut);letter-spacing:.08em">YOUR TESTS<br>RUN IN CI</div>
         </div>
-        <div style="color:var(--dim);font-family:var(--mono)">→</div>
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
-          <div style="font-family:var(--mono);font-size:18px;color:var(--amber)">②</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em">JUNIT XML<br>GENERATED</div>
+        <div style="color:#5A616B;font-family:var(--mono)">→</div>
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
+          <div style="font-family:var(--mono);font-size:18px;color:var(--warnB)">②</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--mut);letter-spacing:.08em">JUNIT XML<br>GENERATED</div>
         </div>
-        <div style="color:var(--dim);font-family:var(--mono)">→</div>
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
+        <div style="color:#5A616B;font-family:var(--mono)">→</div>
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
           <div style="font-family:var(--mono);font-size:18px;color:#8b5cf6">③</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em">FALSKY ACTION<br>SENDS TO API</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--mut);letter-spacing:.08em">FALSKY ACTION<br>SENDS TO API</div>
         </div>
-        <div style="color:var(--dim);font-family:var(--mono)">→</div>
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
-          <div style="font-family:var(--mono);font-size:18px;color:var(--red)">④</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em">BAYESIAN<br>TRUST SCORE</div>
+        <div style="color:#5A616B;font-family:var(--mono)">→</div>
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
+          <div style="font-family:var(--mono);font-size:18px;color:var(--badB)">④</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--mut);letter-spacing:.08em">BAYESIAN<br>TRUST SCORE</div>
         </div>
-        <div style="color:var(--dim);font-family:var(--mono)">→</div>
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
-          <div style="font-family:var(--mono);font-size:18px;color:var(--text)">⑤</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em">DASHBOARD +<br>PR COMMENT</div>
+        <div style="color:#5A616B;font-family:var(--mono)">→</div>
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
+          <div style="font-family:var(--mono);font-size:18px;color:#D7DCE3">⑤</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--mut);letter-spacing:.08em">DASHBOARD +<br>PR COMMENT</div>
         </div>
       </div>
 
-      <p style="font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.6">
-        <strong style="color:var(--text)">Who decides tests?</strong> You do. Falsky runs whatever tests you already have in your repo and analyzes their results. It doesn't create or modify tests — it observes them over time and calculates reliability patterns.
+      <p style="font-family:var(--sans);font-size:13px;color:var(--mut);line-height:1.6">
+        <strong style="color:var(--ink)">Who decides tests?</strong> You do. Falsky runs whatever tests you already have in your repo and analyzes their results. It doesn't create or modify tests — it observes them over time and calculates reliability patterns.
       </p>
     </div>
   </div>
@@ -117,105 +113,105 @@
       <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:#8b5cf6;font-weight:700">02</span> — TRUST SCORE ALGORITHM</span>
     </div>
     <div style="padding:4px 0">
-      <p style="font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px">
+      <p style="font-family:var(--sans);font-size:13px;color:var(--mut);line-height:1.6;margin-bottom:16px">
         Each test gets a score from 0–100 based on four weighted components plus an optional flaky penalty. The core is Bayesian — Beta-Binomial conjugate prior with MAP (Maximum A Posteriori) estimation.
       </p>
 
       <!-- Algorithm weights -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px">
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:14px">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <span style="font-family:var(--mono);font-size:10px;color:var(--green);background:rgba(0,255,100,.1);padding:2px 6px;border-radius:2px;font-weight:600">55%</span>
-            <span style="font-family:var(--sans);font-size:14px;color:var(--text);font-weight:600">Pass Rate</span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--okB);background:rgba(0,255,100,.1);padding:2px 6px;border-radius:2px;font-weight:600">55%</span>
+            <span style="font-family:var(--sans);font-size:14px;color:#D7DCE3;font-weight:600">Pass Rate</span>
           </div>
-          <p style="font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.5">Bayesian pass rate with Beta(2,2) prior. Primary reliability signal — MAP estimate adjusts for small sample sizes.</p>
-          <div style="height:4px;background:var(--ink);border-radius:2px;margin-top:8px"><div style="height:100%;width:55%;background:var(--green);border-radius:2px"></div></div>
+          <p style="font-family:var(--sans);font-size:12px;color:var(--mut);line-height:1.5">Bayesian pass rate with Beta(2,2) prior. Primary reliability signal — MAP estimate adjusts for small sample sizes.</p>
+          <div style="height:4px;background:var(--panel);border-radius:2px;margin-top:8px"><div style="height:100%;width:55%;background:var(--okB);border-radius:2px"></div></div>
         </div>
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px">
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:14px">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <span style="font-family:var(--mono);font-size:10px;color:var(--amber);background:rgba(255,180,0,.15);padding:2px 6px;border-radius:2px;font-weight:600">20%</span>
-            <span style="font-family:var(--sans);font-size:14px;color:var(--text);font-weight:600">Recent Trend</span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--warnB);background:rgba(255,180,0,.15);padding:2px 6px;border-radius:2px;font-weight:600">20%</span>
+            <span style="font-family:var(--sans);font-size:14px;color:#D7DCE3;font-weight:600">Recent Trend</span>
           </div>
-          <p style="font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.5">Compares last 5 runs vs previous 5. Improving tests get bonus points, degrading tests get penalized.</p>
-          <div style="height:4px;background:var(--ink);border-radius:2px;margin-top:8px"><div style="height:100%;width:20%;background:var(--amber);border-radius:2px"></div></div>
+          <p style="font-family:var(--sans);font-size:12px;color:var(--mut);line-height:1.5">Compares last 5 runs vs previous 5. Improving tests get bonus points, degrading tests get penalized.</p>
+          <div style="height:4px;background:var(--panel);border-radius:2px;margin-top:8px"><div style="height:100%;width:20%;background:var(--warnB);border-radius:2px"></div></div>
         </div>
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px">
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:14px">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <span style="font-family:var(--mono);font-size:10px;color:var(--red);background:rgba(255,75,46,.1);padding:2px 6px;border-radius:2px;font-weight:600">10%</span>
-            <span style="font-family:var(--sans);font-size:14px;color:var(--text);font-weight:600">Duration Stability</span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--badB);background:rgba(255,75,46,.1);padding:2px 6px;border-radius:2px;font-weight:600">10%</span>
+            <span style="font-family:var(--sans);font-size:14px;color:#D7DCE3;font-weight:600">Duration Stability</span>
           </div>
-          <p style="font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.5">Z-score anomaly detection on execution times. Consistent timing = stable. High variance = suspicious.</p>
-          <div style="height:4px;background:var(--ink);border-radius:2px;margin-top:8px"><div style="height:100%;width:10%;background:var(--red);border-radius:2px"></div></div>
+          <p style="font-family:var(--sans);font-size:12px;color:var(--mut);line-height:1.5">Z-score anomaly detection on execution times. Consistent timing = stable. High variance = suspicious.</p>
+          <div style="height:4px;background:var(--panel);border-radius:2px;margin-top:8px"><div style="height:100%;width:10%;background:var(--badB);border-radius:2px"></div></div>
         </div>
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px">
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:14px">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <span style="font-family:var(--mono);font-size:10px;color:var(--dim);background:rgba(255,255,255,.05);padding:2px 6px;border-radius:2px;font-weight:600">10%</span>
-            <span style="font-family:var(--sans);font-size:14px;color:var(--text);font-weight:600">Error Consistency</span>
+            <span style="font-family:var(--mono);font-size:10px;color:#5A616B;background:rgba(255,255,255,.05);padding:2px 6px;border-radius:2px;font-weight:600">10%</span>
+            <span style="font-family:var(--sans);font-size:14px;color:#D7DCE3;font-weight:600">Error Consistency</span>
           </div>
-          <p style="font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.5">Consistent error messages = real bug. Varied/random errors = flaky behavior. Pattern hashing tracks this.</p>
-          <div style="height:4px;background:var(--ink);border-radius:2px;margin-top:8px"><div style="height:100%;width:10%;background:var(--dim);border-radius:2px"></div></div>
+          <p style="font-family:var(--sans);font-size:12px;color:var(--mut);line-height:1.5">Consistent error messages = real bug. Varied/random errors = flaky behavior. Pattern hashing tracks this.</p>
+          <div style="height:4px;background:var(--panel);border-radius:2px;margin-top:8px"><div style="height:100%;width:10%;background:#5A616B;border-radius:2px"></div></div>
         </div>
       </div>
 
       <!-- Flaky Penalty -->
-      <div style="background:var(--ink3);border:1px solid var(--red);border-left:3px solid var(--red);border-radius:var(--radius);padding:14px">
+      <div style="background:var(--tile);border:1px solid var(--badB);border-left:3px solid var(--badB);border-radius:var(--radius);padding:14px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="font-family:var(--mono);font-size:10px;color:var(--red);background:rgba(255,75,46,.1);padding:2px 6px;border-radius:2px;font-weight:600">−5 TO −20</span>
-          <span style="font-family:var(--sans);font-size:14px;color:var(--red);font-weight:600">Flaky Penalty</span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--badB);background:rgba(255,75,46,.1);padding:2px 6px;border-radius:2px;font-weight:600">−5 TO −20</span>
+          <span style="font-family:var(--sans);font-size:14px;color:var(--badB);font-weight:600">Flaky Penalty</span>
         </div>
-        <p style="font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.5">When a flaky category is detected (timing, order dependency, shared state, non-deterministic data, environment-specific), an additional penalty is subtracted from the total score.</p>
+        <p style="font-family:var(--sans);font-size:12px;color:var(--mut);line-height:1.5">When a flaky category is detected (timing, order dependency, shared state, non-deterministic data, environment-specific), an additional penalty is subtracted from the total score.</p>
       </div>
     </div>
   </div>
 
   <!-- ====== SECTION 3: Flaky Categories ====== -->
-  <div class="card" style="margin-bottom:24px;border-left:3px solid var(--red)">
+  <div class="card" style="margin-bottom:24px;border-left:3px solid var(--badB)">
     <div class="card-header">
-      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:var(--red);font-weight:700">03</span> — FLAKY CATEGORIES</span>
+      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:var(--badB);font-weight:700">03</span> — FLAKY CATEGORIES</span>
     </div>
     <div style="padding:4px 0">
-      <p style="font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px">
+      <p style="font-family:var(--sans);font-size:13px;color:var(--mut);line-height:1.6;margin-bottom:16px">
         Falsky analyzes test history patterns to classify why a test is flaky. Each category has a distinct penalty and detection method.
       </p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <!-- Timing -->
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px">
-          <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,180,0,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--amber)">⏱</div>
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,180,0,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--warnB)">⏱</div>
           <div>
-            <div style="font-family:var(--sans);font-size:13px;color:var(--text);font-weight:600;margin-bottom:2px">Timing <span style="font-family:var(--mono);font-size:10px;color:var(--red)">−8pts</span></div>
-            <p style="font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.5">High duration variance or timeout sensitivity. Z-score anomaly detection on execution times.</p>
+            <div style="font-family:var(--sans);font-size:13px;color:#D7DCE3;font-weight:600;margin-bottom:2px">Timing <span style="font-family:var(--mono);font-size:10px;color:var(--badB)">−8pts</span></div>
+            <p style="font-family:var(--sans);font-size:11px;color:var(--mut);line-height:1.5">High duration variance or timeout sensitivity. Z-score anomaly detection on execution times.</p>
           </div>
         </div>
         <!-- Order Dependency -->
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px">
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px">
           <div style="width:32px;height:32px;border-radius:8px;background:rgba(139,92,246,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:#8b5cf6">🔗</div>
           <div>
-            <div style="font-family:var(--sans);font-size:13px;color:var(--text);font-weight:600;margin-bottom:2px">Order Dependency <span style="font-family:var(--mono);font-size:10px;color:var(--red)">−12pts</span></div>
-            <p style="font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.5">Outcome changes based on execution order. Detected via runs test for alternating pass/fail patterns.</p>
+            <div style="font-family:var(--sans);font-size:13px;color:#D7DCE3;font-weight:600;margin-bottom:2px">Order Dependency <span style="font-family:var(--mono);font-size:10px;color:var(--badB)">−12pts</span></div>
+            <p style="font-family:var(--sans);font-size:11px;color:var(--mut);line-height:1.5">Outcome changes based on execution order. Detected via runs test for alternating pass/fail patterns.</p>
           </div>
         </div>
         <!-- Shared State -->
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px">
-          <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,75,46,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--red)">🤝</div>
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,75,46,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--badB)">🤝</div>
           <div>
-            <div style="font-family:var(--sans);font-size:13px;color:var(--text);font-weight:600;margin-bottom:2px">Shared State <span style="font-family:var(--mono);font-size:10px;color:var(--red)">−15pts</span></div>
-            <p style="font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.5">Shares mutable state with other tests. Detected via clustered failure patterns and consistent error messages.</p>
+            <div style="font-family:var(--sans);font-size:13px;color:#D7DCE3;font-weight:600;margin-bottom:2px">Shared State <span style="font-family:var(--mono);font-size:10px;color:var(--badB)">−15pts</span></div>
+            <p style="font-family:var(--sans);font-size:11px;color:var(--mut);line-height:1.5">Shares mutable state with other tests. Detected via clustered failure patterns and consistent error messages.</p>
           </div>
         </div>
         <!-- Non-deterministic -->
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px">
-          <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,180,0,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--amber)">🎲</div>
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,180,0,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--warnB)">🎲</div>
           <div>
-            <div style="font-family:var(--sans);font-size:13px;color:var(--text);font-weight:600;margin-bottom:2px">Non-deterministic <span style="font-family:var(--mono);font-size:10px;color:var(--red)">−20pts</span></div>
-            <p style="font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.5">Unpredictable external data or random values. Detected via high error message diversity ratio.</p>
+            <div style="font-family:var(--sans);font-size:13px;color:#D7DCE3;font-weight:600;margin-bottom:2px">Non-deterministic <span style="font-family:var(--mono);font-size:10px;color:var(--badB)">−20pts</span></div>
+            <p style="font-family:var(--sans);font-size:11px;color:var(--mut);line-height:1.5">Unpredictable external data or random values. Detected via high error message diversity ratio.</p>
           </div>
         </div>
         <!-- Environment -->
-        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px;grid-column:1/-1">
-          <div style="width:32px;height:32px;border-radius:8px;background:rgba(0,255,100,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--green)">🌐</div>
+        <div style="background:var(--tile);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px;grid-column:1/-1">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(0,255,100,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--okB)">🌐</div>
           <div>
-            <div style="font-family:var(--sans);font-size:13px;color:var(--text);font-weight:600;margin-bottom:2px">Environment-specific <span style="font-family:var(--mono);font-size:10px;color:var(--red)">−10pts</span></div>
-            <p style="font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.5">Pass rate differs significantly across environments (e.g. passes locally but fails in CI). Detected via environment correlation analysis.</p>
+            <div style="font-family:var(--sans);font-size:13px;color:#D7DCE3;font-weight:600;margin-bottom:2px">Environment-specific <span style="font-family:var(--mono);font-size:10px;color:var(--badB)">−10pts</span></div>
+            <p style="font-family:var(--sans);font-size:11px;color:var(--mut);line-height:1.5">Pass rate differs significantly across environments (e.g. passes locally but fails in CI). Detected via environment correlation analysis.</p>
           </div>
         </div>
       </div>
@@ -223,13 +219,13 @@
   </div>
 
   <!-- ====== SECTION 4: REST API ====== -->
-  <div class="card" style="margin-bottom:24px;border-left:3px solid var(--text)">
+  <div class="card" style="margin-bottom:24px;border-left:3px solid var(--ink)">
     <div class="card-header">
-      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:var(--text);font-weight:700">04</span> — REST API REFERENCE</span>
+      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:var(--ink);font-weight:700">04</span> — REST API REFERENCE</span>
     </div>
     <div style="padding:4px 0">
-      <p style="font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px">
-        Write operations require the <code style="background:var(--ink);padding:2px 6px;border-radius:2px;color:var(--green);font-family:var(--mono)">X-Poly-API-Key</code> header. Read operations are open.
+      <p style="font-family:var(--sans);font-size:13px;color:var(--mut);line-height:1.6;margin-bottom:16px">
+        Write operations require the <code style="background:var(--panel);padding:2px 6px;border-radius:2px;color:var(--okB);font-family:var(--mono)">X-Poly-API-Key</code> header. Read operations are open.
       </p>
 
       <!-- API Table -->
@@ -237,34 +233,34 @@
         <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px">
           <thead>
             <tr style="border-bottom:1px solid var(--line)">
-              <th style="padding:8px 12px;text-align:left;color:var(--dim);font-size:10px;letter-spacing:.1em;font-weight:600">METHOD</th>
-              <th style="padding:8px 12px;text-align:left;color:var(--dim);font-size:10px;letter-spacing:.1em;font-weight:600">PATH</th>
-              <th style="padding:8px 12px;text-align:left;color:var(--dim);font-size:10px;letter-spacing:.1em;font-weight:600">DESCRIPTION</th>
+              <th style="padding:8px 12px;text-align:left;color:#5A616B;font-size:10px;letter-spacing:.1em;font-weight:600">METHOD</th>
+              <th style="padding:8px 12px;text-align:left;color:#5A616B;font-size:10px;letter-spacing:.1em;font-weight:600">PATH</th>
+              <th style="padding:8px 12px;text-align:left;color:#5A616B;font-size:10px;letter-spacing:.1em;font-weight:600">DESCRIPTION</th>
             </tr>
           </thead>
           <tbody>
-            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(139,92,246,.1);color:#8b5cf6;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">POST</span></td><td style="color:var(--muted)">/api/junit</td><td style="color:var(--muted)">Ingest JUnit XML report</td></tr>
-            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(139,92,246,.1);color:#8b5cf6;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">POST</span></td><td style="color:var(--muted)">/api/runs</td><td style="color:var(--muted)">Create test run from raw results</td></tr>
-            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/api/dashboard?repo_name=X</td><td style="color:var(--muted)">Aggregated dashboard data</td></tr>
-            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/api/tests?repo_name=X</td><td style="color:var(--muted)">List all tests with trust scores</td></tr>
-            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/api/tests/{name}?repo_name=X</td><td style="color:var(--muted)">Test detail + history</td></tr>
-            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/api/quarantined?repo_name=X</td><td style="color:var(--muted)">Quarantined tests (trust below threshold)</td></tr>
-            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/api/runs?repo_name=X</td><td style="color:var(--muted)">Recent CI runs</td></tr>
-            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/api/repos</td><td style="color:var(--muted)">All tracked repositories</td></tr>
-            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/badge/{repo_name}</td><td style="color:var(--muted)">SVG trust score badge</td></tr>
-            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(139,92,246,.1);color:#8b5cf6;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">POST</span></td><td style="color:var(--muted)">/api/alerts/config?repo_name=X</td><td style="color:var(--muted)">Configure webhook alerts</td></tr>
-            <tr><td><span style="background:rgba(255,75,46,.1);color:var(--red);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">DELETE</span></td><td style="color:var(--muted)">/api/tests/{name}?repo_name=X</td><td style="color:var(--muted)">Delete test history</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(139,92,246,.1);color:#8b5cf6;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">POST</span></td><td style="color:var(--mut)">/api/junit</td><td style="color:var(--mut)">Ingest JUnit XML report</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(139,92,246,.1);color:#8b5cf6;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">POST</span></td><td style="color:var(--mut)">/api/runs</td><td style="color:var(--mut)">Create test run from raw results</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--okB);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--mut)">/api/dashboard?repo_name=X</td><td style="color:var(--mut)">Aggregated dashboard data</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--okB);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--mut)">/api/tests?repo_name=X</td><td style="color:var(--mut)">List all tests with trust scores</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--okB);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--mut)">/api/tests/{name}?repo_name=X</td><td style="color:var(--mut)">Test detail + history</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--okB);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--mut)">/api/quarantined?repo_name=X</td><td style="color:var(--mut)">Quarantined tests (trust below threshold)</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--okB);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--mut)">/api/runs?repo_name=X</td><td style="color:var(--mut)">Recent CI runs</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--okB);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--mut)">/api/repos</td><td style="color:var(--mut)">All tracked repositories</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--okB);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--mut)">/badge/{repo_name}</td><td style="color:var(--mut)">SVG trust score badge</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(139,92,246,.1);color:#8b5cf6;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">POST</span></td><td style="color:var(--mut)">/api/alerts/config?repo_name=X</td><td style="color:var(--mut)">Configure webhook alerts</td></tr>
+            <tr><td><span style="background:rgba(255,75,46,.1);color:var(--badB);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">DELETE</span></td><td style="color:var(--mut)">/api/tests/{name}?repo_name=X</td><td style="color:var(--mut)">Delete test history</td></tr>
           </tbody>
         </table>
       </div>
 
       <!-- cURL example -->
-      <div style="background:var(--ink);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:16px">
+      <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:16px">
         <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--line)">
-          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase">cURL — send JUnit XML</span>
+          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--warnB);text-transform:uppercase">cURL — send JUnit XML</span>
           <button onclick="copyCode(this)" class="btn btn-ghost btn-sm" style="white-space:nowrap">📋 Copy</button>
         </div>
-        <pre style="font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.7;padding:14px;margin:0;overflow-x:auto">curl -X POST https://poly-core-vercel.vercel.app/api/junit \
+        <pre style="font-family:var(--mono);font-size:12px;color:var(--mut);line-height:1.7;padding:14px;margin:0;overflow-x:auto">curl -X POST https://poly-core-vercel.vercel.app/api/junit \
   -H "Content-Type: application/xml" \
   -H "X-Poly-API-Key: YOUR_KEY_HERE" \
   --data-binary @test-results.xml</pre>
@@ -273,23 +269,23 @@
   </div>
 
   <!-- ====== SECTION 5: Badge ====== -->
-  <div class="card" style="margin-bottom:24px;border-left:3px solid var(--green)">
+  <div class="card" style="margin-bottom:24px;border-left:3px solid var(--okB)">
     <div class="card-header">
-      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:var(--green);font-weight:700">05</span> — TRUST SCORE BADGE</span>
+      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:var(--okB);font-weight:700">05</span> — TRUST SCORE BADGE</span>
     </div>
     <div style="padding:4px 0">
-      <p style="font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px">
+      <p style="font-family:var(--sans);font-size:13px;color:var(--mut);line-height:1.6;margin-bottom:16px">
         Add a live trust score badge to your README. It updates automatically with every CI run.
       </p>
-      <div style="background:var(--ink);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+      <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
         <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--line)">
-          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--green);text-transform:uppercase">Markdown</span>
+          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--okB);text-transform:uppercase">Markdown</span>
           <button onclick="copyCode(this)" class="btn btn-ghost btn-sm" style="white-space:nowrap">📋 Copy</button>
         </div>
-        <pre style="font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.7;padding:14px;margin:0">![Falsky Trust](https://poly-core-vercel.vercel.app/badge/YOUR-ORG/YOUR-REPO)</pre>
+        <pre style="font-family:var(--mono);font-size:12px;color:var(--mut);line-height:1.7;padding:14px;margin:0">![Falsky Trust](https://poly-core-vercel.vercel.app/badge/YOUR-ORG/YOUR-REPO)</pre>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius)">
-        <span style="font-family:var(--mono);font-size:11px;color:var(--dim)">Preview:</span>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--tile);border:1px solid var(--line);border-radius:var(--radius)">
+        <span style="font-family:var(--mono);font-size:11px;color:#5A616B">Preview:</span>
         <img src="/badge/demo-repo" alt="Trust Badge" height="24" onerror="this.style.display='none'">
       </div>
     </div>

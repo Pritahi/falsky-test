@@ -6,19 +6,15 @@
 <title>Falsky — Repositories</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FFB224' stroke-width='2.4'/></svg>">
 <link rel="stylesheet" href="design-system.css">
 </head>
 <body>
-<div class="grain"></div>
 <div class="app">
 
 <aside class="sidebar">
-  <a href="./" class="logo">
-    <svg width="28" height="13" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
-    FALS<em>KY</em>
-  </a>
+  <a href="./" class="logo"><i></i>Falsky</a>
   <nav>
     <a href="./">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -47,8 +43,8 @@
     </div>
   </div>
   <div class="theme-toggle">
-    <button onclick="setTheme('dark')" id="btnDark">🌙 DARK</button>
-    <button onclick="setTheme('light')" id="btnLight">☀️ LIGHT</button>
+    <button onclick="setTheme('dark')" id="btnDark">DARK</button>
+    <button onclick="setTheme('light')" id="btnLight">LIGHT</button>
   </div>
 </aside>
 
@@ -61,15 +57,15 @@
   </div>
 
   <!-- Setup Guide -->
-  <div class="card" style="margin-bottom:24px;border-color:var(--amber)">
-    <span class="card-title" style="color:var(--amber)">📡 Connect a Repository</span>
-    <p style="font-family:var(--mono);font-size:12px;color:var(--muted);margin:12px 0;line-height:1.7">Add the Falsky GitHub Action to your workflow to start analyzing tests:</p>
-    <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;font-family:var(--mono);font-size:11px;color:var(--green);overflow-x:auto;white-space:pre">- uses: Pritahi/falsky-action@v1
+  <div class="card" style="margin-bottom:24px;border-color:var(--warnB)">
+    <span class="card-title" style="color:var(--warnB)">📡 Connect a Repository</span>
+    <p style="font-family:var(--mono);font-size:12px;color:var(--mut);margin:12px 0;line-height:1.7">Add the Falsky GitHub Action to your workflow to start analyzing tests:</p>
+    <div style="background:var(--tile);border:1px solid var(--hair);border-radius:var(--radius);padding:14px;font-family:var(--mono);font-size:11px;color:var(--okB);overflow-x:auto;white-space:pre">- uses: Pritahi/falsky-action@v1
   with:
     junit-xml-path: 'test-results/*.xml'
     api-url: 'https://poly-core.vercel.app'
     api-key: ${{ secrets.FALSKY_API_KEY }}</div>
-    <p style="font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:8px">Your API key is available in <a href="./settings.html" style="color:var(--amber)">Settings</a></p>
+    <p style="font-family:var(--mono);font-size:10px;color:#5A616B;margin-top:8px">Your API key is available in <a href="./settings.html" style="color:var(--warnB)">Settings</a></p>
   </div>
 
   <!-- Repos List -->
@@ -89,7 +85,7 @@
           </tr>
         </thead>
         <tbody id="reposTable">
-          <tr><td colspan="5" style="text-align:center;color:var(--dim);padding:32px"><div class="spinner"></div></td></tr>
+          <tr><td colspan="5" style="text-align:center;color:#5A616B;padding:32px"><div class="spinner"></div></td></tr>
         </tbody>
       </table>
     </div>
@@ -149,15 +145,15 @@ async function loadRepos() {
         const flaky = tests.filter(t => t.trust_score < 50).length;
         const tc = avgTrust >= 80 ? 'high' : avgTrust >= 50 ? 'mid' : 'low';
         rows += `<tr>
-          <td><a href="./repo.html?repo=${encodeURIComponent(repo.name)}" style="color:var(--paper);text-decoration:none;font-weight:600">${repo.name}</a></td>
+          <td><a href="./repo.html?repo=${encodeURIComponent(repo.name)}" style="color:#F4F3EE;text-decoration:none;font-weight:600">${repo.name}</a></td>
           <td>${tests.length}</td>
           <td><span class="trust-badge ${tc}">${avgTrust}</span></td>
-          <td>${flaky > 0 ? '<span style="color:var(--amber)">'+flaky+'</span>' : '<span style="color:var(--green)">0</span>'}</td>
+          <td>${flaky > 0 ? '<span style="color:var(--warnB)">'+flaky+'</span>' : '<span style="color:var(--okB)">0</span>'}</td>
           <td><a href="./repo.html?repo=${encodeURIComponent(repo.name)}" class="btn btn-ghost btn-sm">View Details →</a></td>
         </tr>`;
       } catch(e) {}
     }
-    document.getElementById('reposTable').innerHTML = rows || '<tr><td colspan="5" style="text-align:center;color:var(--dim);padding:24px">No data</td></tr>';
+    document.getElementById('reposTable').innerHTML = rows || '<tr><td colspan="5" style="text-align:center;color:#5A616B;padding:24px">No data</td></tr>';
   } catch(e) { console.error(e); }
 }
 </script>
