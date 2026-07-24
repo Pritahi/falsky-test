@@ -875,6 +875,20 @@ def regenerate_api_key(request: Request):
         raise HTTPException(status_code=500, detail="Failed to regenerate key")
     return {"status": "ok", "api_key": new_key}
 
+@app.post("/api/user/revoke-key")
+def revoke_api_key(request: Request):
+    """Delete the user's API key entirely. No CI workflows can report results."""
+    token = request.cookies.get("falsky_user_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Not logged in")
+    session = _decode_user_token(token)
+    if not session:
+        raise HTTPException(status_code=401, detail="Session expired")
+    result = _supabase_rest("users", method="PATCH", data={"api_key": ""}, filters={"id": session["user_id"]}, columns="id,api_key")
+    if not result or len(result) == 0:
+        raise HTTPException(status_code=500, detail="Failed to revoke key")
+    return {"status": "ok", "message": "Key deleted"}
+
 @app.get("/login", response_class=HTMLResponse)
 def serve_login():
     return _serve_html(os.path.join("dashboard", "auth.html"), "Falsky — Sign In")

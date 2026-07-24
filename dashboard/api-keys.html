@@ -31,7 +31,6 @@
 <!-- Sidebar -->
 <aside class="sidebar">
   <a href="./" class="logo"><i></i>Falsky</a>
-  <a href="https://github.com/Pritahi/falsky-core" target="_blank" style="display:block;margin:4px 0 20px;font-family:var(--mono);font-size:9px;color:#8A9099;letter-spacing:.08em;text-decoration:none;opacity:.6">GITHUB →</a>
   <nav>
     <a href="./">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -171,7 +170,7 @@
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="font-family:var(--mono);font-size:11px;color:var(--okB);background:rgba(47,191,113,.12);padding:2px 6px;border-radius:2px;font-weight:600">NO CHANGE</span>
-            <span style="font-family:var(--mono);font-size:12px;color:#8A9099"><code style="color:var(--okB)">api-url</code>, <code style="color:var(--okB)">api-key</code>, <code style="color:var(--okB)">repo-name</code> — auto-handled</span>
+            <span style="font-family:var(--mono);font-size:12px;color:#8A9099"><code style="color:var(--okB)">runs-on</code> = GitHub cloud VM (not localhost), <code style="color:var(--okB)">api-url</code>, <code style="color:var(--okB)">api-key</code>, <code style="color:var(--okB)">repo-name</code> — auto-handled</span>
           </div>
         </div>
       </div>
@@ -191,7 +190,7 @@
 
 <span style="color:#D7DCE3;font-weight:600">jobs</span>:
   <span style="color:#D7DCE3;font-weight:600">test-and-analyze</span>:
-    <span style="color:#D7DCE3;font-weight:600">runs-on</span>: <span style="color:var(--okB)">ubuntu-latest</span>
+    <span style="color:#D7DCE3;font-weight:600">runs-on</span>: <span style="color:var(--okB)">ubuntu-latest</span>  <span style="color:#5A616B">← GitHub cloud VM, not your local machine</span>
     <span style="color:#D7DCE3;font-weight:600">env</span>:
       <span style="color:#D7DCE3;font-weight:600">CI</span>: <span style="color:var(--okB)">true</span>
       <span style="color:#D7DCE3;font-weight:600">CI_RUN_NUMBER</span>: <span style="color:#5A616B">${{ github.run_number }}</span>
@@ -312,17 +311,24 @@
     </div>
   </div>
 
-  <!-- Danger Zone -->
+  <!-- Key Management -->
   <div class="card" style="border-color:rgba(229,72,77,.3);margin-bottom:24px">
     <div class="card-header">
-      <span class="card-title" style="color:var(--badB)">Danger Zone</span>
+      <span class="card-title" style="color:var(--badB)">Key Management</span>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)">
+      <div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:.08em">Revoke & Generate New Key</div>
+        <p style="font-family:var(--mono);font-size:10px;color:#5A616B;margin-top:4px;letter-spacing:.1em">This instantly disables your current key and creates a new one. All CI workflows using the old key will fail until you update them with the new key.</p>
+      </div>
+      <button onclick="regenerateKey()" class="btn btn-sm" style="background:none;border:1.5px solid var(--badB);color:var(--badB);cursor:pointer">Revoke & Create New</button>
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
       <div>
-        <div style="font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:.08em">Regenerate API Key</div>
-        <p style="font-family:var(--mono);font-size:10px;color:#5A616B;margin-top:4px;letter-spacing:.1em">Your old key will stop working immediately. Update all CI workflows.</p>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:.08em">Delete Key</div>
+        <p style="font-family:var(--mono);font-size:10px;color:#5A616B;margin-top:4px;letter-spacing:.1em">Remove your API key entirely. No CI workflows will be able to report results.</p>
       </div>
-      <button onclick="regenerateKey()" class="btn btn-sm" style="background:none;border:1px solid var(--badB);color:var(--badB);cursor:pointer">Regenerate</button>
+      <button onclick="revokeKeyOnly()" class="btn btn-sm" style="background:none;border:1.5px solid var(--mut);color:var(--mut);cursor:pointer">Delete Key</button>
     </div>
   </div>
 </main>
@@ -449,7 +455,7 @@ jobs:
 }
 
 async function regenerateKey() {
-  if (!confirm('Are you sure? Your current API key will stop working immediately. You must update all CI workflows.')) return;
+  if (!confirm('Are you sure? Your current API key will be revoked immediately and a new key will be generated. All CI workflows using the old key will fail until you update them.')) return;
   try {
     const res = await fetch(API + '/api/user/regenerate-key', { method: 'POST' });
     if (res.ok) {
@@ -461,6 +467,21 @@ async function regenerateKey() {
     } else {
       const data = await res.json();
       alert(data.detail || 'Failed to regenerate key');
+    }
+  } catch(e) { alert('Network error'); }
+}
+
+async function revokeKeyOnly() {
+  if (!confirm('Are you sure? Your API key will be deleted. No CI workflows will be able to report results until you generate a new key.')) return;
+  try {
+    const res = await fetch(API + '/api/user/revoke-key', { method: 'POST' });
+    if (res.ok) {
+      realApiKey = '';
+      document.getElementById('apiKeyValue').textContent = 'No key — generate one below';
+      document.getElementById('toggleBtn').style.display = 'none';
+    } else {
+      const data = await res.json();
+      alert(data.detail || 'Failed to delete key');
     }
   } catch(e) { alert('Network error'); }
 }
