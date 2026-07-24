@@ -3,618 +3,419 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Falsky — AI Flaky Test Detector</title>
+<title>Falsky — catch the flip</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FFB224' stroke-width='2.4'/></svg>">
 <style>
-/* ── DARK MODE (default) ── */
 :root{
-  --ink:#0C1517;--ink2:#0F1B1E;--ink3:#0A1315;--ink4:#122024;
-  --line:#1E3237;--line2:#2C464B;
-  --paper:#F2E8D5;--red:#FF4B2E;--amber:#FFB020;--green:#3DDC84;--blue:#3B82F6;
-  --text:#D7E4E2;--muted:#8AA0A2;--dim:#5E767A;
-  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--disp:'Anton',sans-serif;
-  --grain-opacity:.04;
-  --hero-glow:rgba(255,75,46,.07);
-  --card-hover-glow:rgba(255,176,32,.06);
+  --bg:#F2F1EC; --ink:#16181D; --mut:#6B6F76; --line:#DFDED6;
+  --panel:#191C22; --tile:#23272F; --tile2:#2B303A; --hair:#262B33;
+  --ok:#2FBF71; --okB:#39D98A; --bad:#E5484D; --badB:#FF6B5E; --warn:#F5A524; --warnB:#FFB224;
+  --disp:"Archivo",sans-serif; --mono:"Space Mono",monospace;
 }
-/* ── LIGHT MODE ── */
-:root.light{
-  --ink:#F5F0E8;--ink2:#EDE8DB;--ink3:#E8E2D4;--ink4:#F0EBE0;
-  --line:#D4CCBB;--line2:#C8BFA9;
-  --paper:#1A1210;--red:#D9321E;--amber:#B8860B;--green:#1A7A42;--blue:#2563EB;
-  --text:#2A2520;--muted:#6B6055;--dim:#9E9585;
-  --grain-opacity:.02;
-  --hero-glow:rgba(185,134,11,.06);
-  --card-hover-glow:rgba(185,134,11,.08);
-}
-
 *{margin:0;padding:0;box-sizing:border-box}
-::selection{background:var(--amber);color:#171310}
 html{scroll-behavior:smooth}
-body{font-family:var(--sans);color:var(--text);background:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{background:var(--bg);color:var(--ink);font-family:var(--disp);line-height:1.6;-webkit-font-smoothing:antialiased}
+::selection{background:var(--warn);color:var(--ink)}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+:focus-visible{outline:2px dashed var(--warn);outline-offset:3px}
 
-/* Grain overlay */
-.grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--grain-opacity);mix-blend-mode:overlay;
-  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2"/></filter><rect width="140" height="140" filter="url(%23n)"/></svg>');}
+/* ===== nav ===== */
+nav{border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:0;z-index:30}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:62px}
+.logo{font:800 20px var(--disp);letter-spacing:-.03em;display:flex;align-items:center;gap:9px}
+.logo i{width:10px;height:10px;background:var(--ink);transition:transform .35s,background .35s}
+.logo:hover i{transform:rotate(180deg);background:var(--warn)}
+.nav-links{display:flex;gap:26px;font:500 14px var(--disp)}
+.nav-links a{color:var(--mut);position:relative;padding:4px 0;transition:color .2s}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--warn);transform:scaleX(0);transform-origin:left;transition:transform .25s}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a.active{color:var(--ink)}
+.nav-links a.active::after{transform:scaleX(1)}
+@media(max-width:680px){.nav-links{display:none}}
 
-a{color:var(--amber);text-decoration:none}
+/* ===== buttons ===== */
+.btn{display:inline-flex;align-items:center;gap:8px;font:700 14px var(--disp);padding:11px 20px;border-radius:7px;border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(22,24,29,.22)}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--bg)}
+.btn.amber{background:var(--warn);border-color:var(--warn);color:var(--ink)}
+.btn.amber:hover{box-shadow:0 10px 24px rgba(245,165,36,.35)}
+.btn-sm{padding:8px 15px;font-size:13px}
+.chip-s{font:700 9.5px var(--mono);letter-spacing:.12em;padding:3.5px 9px;border-radius:4px;display:inline-block}
+.c-ok{background:rgba(47,191,113,.14);color:var(--ok)} .c-bad{background:rgba(229,72,77,.13);color:var(--bad)}
+.c-warn{background:var(--warn);color:var(--ink)} .c-mut{background:rgba(107,111,118,.12);color:var(--mut)}
 
-/* ── NAV ── */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;background:rgba(12,21,23,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);transition:background .3s}
-:root.light .nav{background:rgba(245,240,232,.9)}
-.nav .logo{display:flex;align-items:center;gap:8px;font-family:var(--disp);font-size:1.35rem;letter-spacing:.08em;color:var(--paper)}
-.nav .logo em{font-style:normal;color:var(--red)}
-.nav .links{display:flex;gap:28px;align-items:center}
-.nav .links a{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;transition:color .15s}
-.nav .links a:hover{color:var(--paper)}
-.nav .cta-btn{padding:8px 18px;background:var(--amber);color:#171310;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;border-radius:3px;display:inline-flex;align-items:center;gap:6px;transition:all .15s;border:none;cursor:pointer}
-.nav .cta-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--red)}
+/* ===== flap tile ===== */
+.flap{position:relative;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--tile2) 0 50%,var(--tile) 50% 100%);border-radius:7px;perspective:500px;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 3px 8px rgba(15,17,22,.28)}
+.flap::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(0,0,0,.55);z-index:2}
+.flap-in{display:inline-block;font-family:var(--mono);font-weight:700;backface-visibility:hidden}
+.flap.flipping .flap-in{animation:flap .42s cubic-bezier(.6,.05,.7,.2)}
+@keyframes flap{0%{transform:rotateX(0)}50%{transform:rotateX(88deg)}50.1%{transform:rotateX(-88deg)}100%{transform:rotateX(0)}}
+.ok{color:var(--okB)} .bad{color:var(--badB)} .warn{color:var(--warnB)} .dim{color:#5A616B}
 
-/* Theme toggle in nav */
-.nav .theme-toggle{display:flex;align-items:center;gap:4px;margin-left:12px}
-.nav .theme-toggle button{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--ink3);border:1px solid var(--line);color:var(--dim);cursor:pointer;border-radius:3px;transition:all .15s;font-size:14px}
-.nav .theme-toggle button:hover{color:var(--amber);border-color:var(--amber)}
-.nav .theme-toggle button.active{background:var(--ink4);color:var(--amber);border-color:var(--amber)}
+/* ===== shared sections ===== */
+section{padding:88px 0}
+.sec-label{font:700 11px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center;gap:14px;margin-bottom:46px}
+.sec-label b{color:var(--warn)}
+.sec-label::after{content:"";flex:1;height:1px;background:var(--line)}
+h2{font:800 clamp(1.7rem,3vw,2.3rem)/1.2 var(--disp);letter-spacing:-.03em}
+.p-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin:56px 0 40px}
+.p-head h1{font:800 clamp(1.9rem,3.6vw,2.7rem);letter-spacing:-.03em}
+.p-sub{font:400 12px var(--mono);color:var(--mut);letter-spacing:.08em}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px}
+.card.dark{background:var(--panel);border-color:var(--hair);color:#D7DCE3}
+.card h4{font:700 11px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mut);margin-bottom:18px}
+.card.dark h4{color:#8A9099}
+.block{margin-bottom:52px}
+.rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;transition-delay:var(--d,0s)}
+.rv.in{opacity:1;transform:none}
 
-/* Hamburger */
-.hamburger{display:none;width:32px;height:32px;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;background:none;border:none}
-.hamburger span{width:22px;height:2px;background:var(--muted);transition:all .3s;border-radius:1px}
-.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
-.hamburger.open span:nth-child(2){opacity:0}
-.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+/* ===== HOME hero ===== */
+.hero{padding:92px 0 84px}
+.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:60px;align-items:center}
+.eyebrow{font:700 11px var(--mono);letter-spacing:.2em;color:var(--warn);text-transform:uppercase;margin-bottom:24px}
+.flap-line{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.flap.big{font-size:clamp(1.4rem,3.3vw,2.2rem);padding:.42em .55em}
+h1 .tail{display:block;font:800 clamp(2rem,4.4vw,3.1rem)/1.1 var(--disp);letter-spacing:-.035em;margin-top:16px}
+.tail-wave{display:flex;gap:5px;margin-top:18px}
+.tail-wave i{width:11px;height:19px;background:var(--ink);border-radius:2px;opacity:.8}
+.tail-wave i.wv{animation:tilewave .5s ease}
+@keyframes tilewave{0%{transform:rotateX(0)}50%{transform:rotateX(90deg);background:var(--warn)}100%{transform:rotateX(0)}}
+.hero-sub{color:var(--mut);font-size:16.5px;max-width:430px;margin:20px 0 30px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+.hero-meta{font:400 11px var(--mono);letter-spacing:.1em;color:var(--mut);margin-top:26px;text-transform:uppercase}
 
-/* Mobile menu overlay */
-.mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99;background:var(--ink);padding:80px 24px 40px;flex-direction:column;gap:20px;opacity:0;transition:opacity .3s}
-.mobile-menu.show{display:flex;opacity:1}
-.mobile-menu a{font-family:var(--mono);font-size:14px;letter-spacing:.08em;color:var(--muted);padding:12px 0;border-bottom:1px solid var(--line);text-transform:uppercase}
-.mobile-menu a:hover{color:var(--paper)}
-.mobile-menu .cta-btn{margin-top:16px;padding:14px 28px;text-align:center;font-size:13px}
+/* run board */
+.board{background:var(--panel);border:1px solid var(--hair);border-radius:14px;overflow:hidden;box-shadow:0 34px 80px -34px rgba(15,17,22,.55)}
+.b-head{display:flex;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--hair);font:400 11px var(--mono);letter-spacing:.12em;color:#8A9099;text-transform:uppercase}
+.b-live{display:flex;align-items:center;gap:7px;color:var(--okB)}
+.b-live i{width:6px;height:6px;border-radius:50%;background:var(--okB);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.2}}
+.row{display:grid;grid-template-columns:38px 1fr auto 88px;gap:12px;align-items:center;padding:11px 16px;border-bottom:1px solid #20242C;position:relative;overflow:hidden;transition:opacity .45s,background .3s}
+.sflap{width:32px;height:32px;font-size:15px}
+.sflap .flap-in.running{animation:blink 1s infinite}
+.r-name{font:700 12.5px var(--mono);color:#D7DCE3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .3s}
+.r-ms{font:400 11px var(--mono);color:#5A616B}
+.r-tag{justify-self:end;display:flex;gap:6px}
+.r-prog{position:absolute;left:0;bottom:0;height:2px;background:var(--warn);width:0}
+.retry{font:700 9px var(--mono);letter-spacing:.1em;color:var(--warnB);border:1px solid rgba(255,178,36,.5);padding:2.5px 7px;border-radius:4px;opacity:0;transform:scale(.6);transition:all .25s}
+.retry.on{opacity:1;transform:scale(1)}
+.flaky-chip{font:700 9.5px var(--mono);letter-spacing:.12em;background:var(--warn);color:var(--ink);padding:3.5px 9px;border-radius:4px;display:none}
+.flaky-chip.on{display:inline-block;animation:stamp .35s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes stamp{from{transform:scale(2.4) rotate(-12deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.row.scan::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(245,165,36,.3),transparent);transform:translateX(-100%);animation:sweep .7s ease both}
+@keyframes sweep{to{transform:translateX(100%)}}
+.row.flagged{background:rgba(245,165,36,.06);box-shadow:inset 3px 0 0 var(--warn)}
+.row.flagged .r-name{color:#8A8F98}
+.board.fade .row{opacity:.22}
+.result{display:flex;align-items:center;gap:14px;padding:13px 18px;background:#1B1F26}
+.res-label{font:700 11px var(--mono);letter-spacing:.18em;color:#8A9099}
+.res{width:82px;height:36px;font-size:14px}
+.res-note{font:400 11px var(--mono);color:#8A9099}
+.b-foot{padding:10px 18px;font:400 10.5px var(--mono);letter-spacing:.08em;color:#5A616B;border-top:1px solid #20242C}
+.b-foot b{color:var(--warnB)}
 
-/* ── HERO ── */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:140px 20px 100px;position:relative;z-index:1}
-.hero::before{content:'';position:absolute;top:20%;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,var(--hero-glow) 0%,transparent 60%);pointer-events:none}
-.hero::after{content:'';position:absolute;bottom:10%;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(circle,rgba(255,176,32,.04) 0%,transparent 60%);pointer-events:none}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:44px}
+.ic-box{width:58px;height:58px;border:1.5px solid var(--line);border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:20px;transition:border-color .25s,transform .25s}
+.step:hover .ic-box{border-color:var(--ink);transform:translateY(-4px)}
+.ic-box svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.sweep-line{transform-origin:24px 24px;animation:spin 3.4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.step:hover .flip-ic{animation:flipic .6s ease}
+@keyframes flipic{to{transform:rotateY(360deg)}}
+.lid{transform-origin:10px 22px;transform:rotate(-32deg);transition:transform .35s cubic-bezier(.2,1.2,.4,1)}
+.step:hover .lid{transform:rotate(0)}
+.step h3{font:800 18px var(--disp);letter-spacing:-.02em;margin-bottom:8px}
+.step p{font-size:14.5px;color:var(--mut)}
+.step .num{font:700 11px var(--mono);letter-spacing:.16em;color:var(--warn);display:block;margin-bottom:8px}
 
-/* Seismo animation */
-.seismo{margin:0 0 32px;opacity:.6;width:100%;max-width:700px}
-.seismo svg{width:100%;height:60px}
+/* cascade strip */
+.strip-tiles{display:flex;gap:6px;flex-wrap:wrap}
+.strip-tiles i{width:26px;height:40px;border-radius:4px;opacity:0;transform:rotateX(90deg);transform-origin:top;transition:transform .45s cubic-bezier(.2,.9,.3,1) var(--d),opacity .45s var(--d),translate .15s;box-shadow:inset 0 -8px 12px rgba(0,0,0,.28)}
+.strip-tiles.in i{opacity:1;transform:rotateX(0)}
+.strip-tiles i:hover{translate:0 -5px}
+.t-g{background:var(--ok)} .t-a{background:var(--warn)} .t-r{background:var(--bad)}
+.strip-cap{font:400 11px var(--mono);letter-spacing:.1em;color:var(--mut);margin-top:18px;text-transform:uppercase}
 
-.hero .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--ink2);border:1px solid var(--line2);border-radius:3px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--amber);margin-bottom:20px}
-.hero .badge .pulse{width:8px;height:8px;background:var(--amber);border-radius:50%;animation:pulse-glow 2s ease-in-out infinite}
-@keyframes pulse-glow{0%,100%{box-shadow:0 0 0 0 rgba(255,176,32,.4)}50%{box-shadow:0 0 0 6px rgba(255,176,32,0)}}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.stat .flap{width:100%;height:88px;font-size:clamp(1.8rem,3.4vw,2.5rem);border-radius:10px}
+.stat p{font:400 11.5px var(--mono);letter-spacing:.1em;color:var(--mut);text-transform:uppercase;margin-top:14px;text-align:center}
 
-.hero h1{font-family:var(--disp);font-size:clamp(3rem,7vw,5.5rem);letter-spacing:.04em;color:var(--paper);text-transform:uppercase;line-height:1.05;margin-bottom:20px}
-.hero h1 .highlight{color:var(--red);position:relative}
-.hero h1 .highlight::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:3px;background:var(--red);opacity:.3;border-radius:1px}
+/* cta band */
+.cta-band{background:var(--panel);border-radius:16px;padding:54px;display:grid;grid-template-columns:1.4fr auto;gap:36px;align-items:center;box-shadow:0 30px 70px -30px rgba(15,17,22,.5)}
+.cta-band .mini-line{display:flex;gap:8px;margin-bottom:18px}
+.cta-band .flap{font-size:13px;padding:.4em .55em}
+.cta-band h2{color:#F4F3EE}
+.cta-band p{color:#8A9099;font-size:15px;margin-top:10px;max-width:400px}
+.cta-note{font:400 10.5px var(--mono);letter-spacing:.12em;color:#5A616B;margin-top:12px;text-transform:uppercase}
 
-.hero .sub{font-family:var(--sans);font-size:clamp(15px,2vw,18px);color:var(--muted);max-width:600px;line-height:1.65;margin-bottom:12px;font-weight:500}
-.hero .mono-sub{font-family:var(--mono);font-size:13px;color:var(--dim);max-width:500px;line-height:1.7;margin-bottom:36px;letter-spacing:.04em}
+/* footer */
+footer{border-top:1px solid var(--line);padding:34px 0;margin-top:40px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font:400 12px var(--mono);color:var(--mut);letter-spacing:.06em}
+.foot-links{display:flex;gap:22px}
+.foot a:hover{color:var(--ink)}
 
-.hero .actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-.btn{padding:14px 28px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;transition:all .15s;border-radius:3px;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-.btn-primary{background:var(--amber);color:#171310;box-shadow:4px 4px 0 var(--red)}
-.btn-primary:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--red)}
-.btn-ghost{background:none;color:var(--muted);border:1px solid var(--line2)}
-.btn-ghost:hover{color:var(--text);border-color:var(--muted)}
+/* toast */
+#toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,20px);background:var(--panel);color:#D7DCE3;font:700 12px var(--mono);padding:13px 22px;border-radius:9px;border:1px solid var(--hair);box-shadow:0 16px 40px rgba(15,17,22,.4);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:300}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast b{color:var(--warnB)}
 
-/* ── LIVE DEMO SECTION ── */
-.live-demo{padding:80px 40px;max-width:1100px;margin:0 auto;position:relative;z-index:1}
-.live-demo .section-header{text-align:center;margin-bottom:48px}
-.live-demo .section-header h2{font-family:var(--disp);font-size:1.8rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase}
-.live-demo .section-header p{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:.06em}
-
-.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.demo-card{background:var(--ink2);border:1px solid var(--line2);border-radius:4px;padding:28px;transition:all .3s}
-.demo-card:hover{border-color:var(--amber);box-shadow:0 0 20px var(--card-hover-glow)}
-
-.demo-card .demo-label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-bottom:16px}
-.demo-card .demo-title{font-family:var(--disp);font-size:1.2rem;color:var(--paper);letter-spacing:.03em;margin-bottom:16px}
-
-/* Trust score meter */
-.trust-meter{position:relative;height:8px;background:var(--ink3);border-radius:4px;margin:16px 0 8px;overflow:hidden}
-.trust-meter .fill{height:100%;border-radius:4px;transition:width 1.5s ease-out}
-.trust-meter .fill.high{background:var(--green)}
-.trust-meter .fill.mid{background:var(--amber)}
-.trust-meter .fill.low{background:var(--red)}
-
-.trust-score-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.trust-score-row .score{font-family:var(--disp);font-size:2.2rem;color:var(--paper)}
-.trust-score-row .score.green{color:var(--green)}
-.trust-score-row .score.amber{color:var(--amber)}
-.trust-score-row .score.red{color:var(--red)}
-.trust-score-row .label{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
-
-.demo-card .meta{display:flex;gap:16px;margin-top:12px;font-family:var(--mono);font-size:10px;color:var(--dim)}
-.demo-card .meta span{display:flex;align-items:center;gap:4px}
-
-/* Run history mini chart */
-.run-history{display:flex;align-items:flex-end;gap:3px;height:40px;margin-top:16px}
-.run-history .bar{width:6px;border-radius:1px 1px 0 0;transition:height .5s ease-out}
-.run-history .bar.pass{background:var(--green);opacity:.7}
-.run-history .bar.fail{background:var(--red);opacity:.8}
-
-/* ── FEATURES ── */
-.features{padding:80px 40px;max-width:1100px;margin:0 auto;position:relative;z-index:1}
-.features .section-header{text-align:center;margin-bottom:56px}
-.features .section-header h2{font-family:var(--disp);font-size:1.8rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase}
-.features .section-header p{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px}
-
-.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.feature{background:var(--ink2);border:1px solid var(--line2);padding:28px 24px;border-radius:4px;transition:all .3s;position:relative}
-.feature:hover{border-color:var(--line2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
-.feature .icon-wrap{width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--ink3);border:1px solid var(--line);border-radius:3px;margin-bottom:16px}
-.feature .icon-wrap svg{width:20px;height:20px;stroke:var(--amber);fill:none;stroke-width:1.5}
-.feature h3{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--paper);text-transform:uppercase;margin-bottom:10px}
-.feature p{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.75}
-.feature .tech-tag{display:inline-block;padding:2px 8px;background:var(--ink3);border:1px solid var(--line);border-radius:2px;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em;margin-top:10px}
-
-/* ── STATS BAR ── */
-.stats-bar{padding:48px 40px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;z-index:1}
-.stats-bar-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:center;gap:48px;flex-wrap:wrap}
-.stat-item{text-align:center}
-.stat-item .stat-num{font-family:var(--disp);font-size:2.4rem;color:var(--paper);letter-spacing:.02em}
-.stat-item .stat-num .accent{color:var(--amber)}
-.stat-item .stat-label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-top:4px}
-
-/* ── HOW IT WORKS ── */
-.how{padding:80px 40px;max-width:900px;margin:0 auto;position:relative;z-index:1}
-.how .section-header{text-align:center;margin-bottom:56px}
-.how .section-header h2{font-family:var(--disp);font-size:1.8rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase}
-
-.steps{display:flex;flex-direction:column;gap:28px}
-.step{display:flex;gap:20px;align-items:flex-start;padding:20px;background:var(--ink2);border:1px solid var(--line2);border-radius:4px;transition:all .3s}
-.step:hover{border-color:var(--amber)}
-.step .num{width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--ink3);border:2px solid var(--amber);color:var(--amber);font-family:var(--disp);font-size:1.2rem;flex-shrink:0;border-radius:3px}
-.step .text h4{font-family:var(--mono);font-size:13px;letter-spacing:.08em;color:var(--paper);text-transform:uppercase;margin-bottom:6px}
-.step .text p{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7}
-.step .text .code-snippet{display:inline-block;background:var(--ink3);border:1px solid var(--line);padding:2px 8px;border-radius:2px;font-family:var(--mono);font-size:10px;color:var(--amber);margin-top:8px}
-
-/* ── GITHUB ACTION SECTION ── */
-.action-section{padding:80px 40px;max-width:900px;margin:0 auto;position:relative;z-index:1}
-.action-section .section-header{text-align:center;margin-bottom:48px}
-.action-section .section-header h2{font-family:var(--disp);font-size:1.8rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase}
-
-.code-block{background:var(--ink2);border:1px solid var(--line2);border-radius:4px;padding:24px;position:relative}
-.code-block .filename{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;margin-bottom:12px;text-transform:uppercase}
-.code-block pre{font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.8;white-space:pre-wrap;word-break:break-all}
-.code-block pre .comment{color:var(--dim)}
-.code-block pre .key{color:var(--amber)}
-.code-block pre .value{color:var(--green)}
-.code-block .copy-btn{position:absolute;top:12px;right:12px;padding:6px 12px;background:var(--ink3);border:1px solid var(--line);color:var(--dim);font-family:var(--mono);font-size:10px;cursor:pointer;border-radius:3px;transition:all .15s}
-.code-block .copy-btn:hover{color:var(--amber);border-color:var(--amber)}
-
-/* ── CTA ── */
-.cta-section{padding:100px 40px;text-align:center;position:relative;z-index:1}
-.cta-section::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(circle,rgba(255,176,32,.06) 0%,transparent 60%);pointer-events:none}
-.cta-section h2{font-family:var(--disp);font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:.04em;color:var(--paper);text-transform:uppercase;margin-bottom:16px}
-.cta-section p{font-family:var(--mono);font-size:13px;color:var(--muted);margin-bottom:32px;letter-spacing:.04em}
-
-/* ── FOOTER ── */
-.footer{padding:32px 40px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;position:relative;z-index:1}
-.footer a{color:var(--muted)}
-.footer .footer-links{display:flex;gap:20px}
-
-/* ── SCROLL REVEAL ── */
-.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease-out,transform .6s ease-out}
-.reveal.visible{opacity:1;transform:translateY(0)}
-
-/* ── RESPONSIVE ── */
-@media(max-width:768px){
-  .nav{padding:12px 20px}
-  .nav .links{display:none}
-  .nav .theme-toggle{display:none}
-  .hamburger{display:flex}
-  .hero{padding:100px 20px 80px}
-  .hero h1{font-size:clamp(2.2rem,8vw,3.5rem)}
-  .demo-grid{grid-template-columns:1fr}
-  .features-grid{grid-template-columns:1fr 1fr}
-  .stats-bar-inner{gap:24px}
-  .stat-item .stat-num{font-size:1.8rem}
-  .features,.how,.live-demo,.action-section,.cta-section{padding:48px 20px}
-  .footer{flex-direction:column;gap:8px;text-align:center}
-  .footer .footer-links{justify-content:center}
-  .step{padding:16px}
-  .step .num{width:36px;height:36px;font-size:1rem}
-  .code-block{padding:16px}
-  .code-block pre{font-size:11px}
-}
-@media(max-width:480px){
-  .features-grid{grid-template-columns:1fr}
-  .stats-bar-inner{flex-direction:column;gap:16px}
-}
+/* responsive */
+@media(max-width:940px){.hero-grid{grid-template-columns:1fr}.cta-band{grid-template-columns:1fr;padding:38px}}
+@media(max-width:680px){.steps{grid-template-columns:1fr;gap:32px}.stats{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,::before,*::after{animation:none!important;transition:none!important}.rv,.strip-tiles i{opacity:1!important;transform:none!important}}
 </style>
 </head>
 <body>
 
-<!-- Grain overlay -->
-<div class="grain"></div>
-
-<!-- Mobile menu overlay -->
-<div class="mobile-menu" id="mobileMenu">
-  <a href="#features">Features</a>
-  <a href="#demo">Live Demo</a>
-  <a href="#how">How it Works</a>
-  <a href="#action">GitHub Action</a>
-  <a href="https://github.com/Pritahi/falsky-core" target="_blank">GitHub</a>
-  <a href="/login" class="cta-btn">Sign In</a>
-</div>
-
-<!-- Nav -->
-<nav class="nav">
-  <a href="/" class="logo">
-    <svg width="34" height="16" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
-    FALS<em>KY</em>
-  </a>
-  <div class="links">
-    <a href="#features">Features</a>
-    <a href="#demo">Live Demo</a>
-    <a href="#how">How it Works</a>
-    <a href="#action">GitHub Action</a>
-    <a href="https://github.com/Pritahi/falsky-core" target="_blank">GitHub</a>
-    <div class="theme-toggle">
-      <button id="darkBtn" class="active" title="Dark mode">&#9790;</button>
-      <button id="lightBtn" title="Light mode">&#9788;</button>
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="/"><i></i>Falsky</a>
+    <div class="nav-links">
+      <a href="#how" class="active">How it works</a>
+      <a href="#stats">Stats</a>
+      <a href="https://github.com/Pritahi/falsky-core" target="_blank">GitHub</a>
     </div>
-    <a href="/login" class="cta-btn">Sign In &#8594;</a>
+    <a href="/login" class="btn btn-sm">Sign in</a>
   </div>
-  <button class="hamburger" id="hamburger" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
 </nav>
 
-<!-- Hero -->
-<section class="hero">
-  <div class="seismo">
-    <svg viewBox="0 0 700 60" fill="none">
-      <!-- Base line -->
-      <line x1="0" y1="30" x2="700" y2="30" stroke="var(--line)" stroke-width=".5"/>
-      <!-- Flaky tremor 1 -->
-      <polyline points="0,30 120,30 140,8 160,48 180,12 200,42 220,30 340,30 360,10 380,45 400,15 420,38 440,30 560,30 580,6 600,52 620,18 640,35 660,30 700,30" stroke="#FF4B2E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".9">
-        <animate attributeName="stroke-dasharray" values="0,1400;1400,0" dur="5s" repeatCount="indefinite"/>
-      </polyline>
-      <!-- Flaky tremor 2 (offset) -->
-      <polyline points="0,30 60,30 80,12 100,44 120,30 200,30 220,6 240,50 260,30 400,30 420,8 440,46 460,30 540,30 560,14 580,42 600,30 700,30" stroke="#FFB020" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity=".4">
-        <animate attributeName="stroke-dasharray" values="0,1400;1400,0" dur="7s" repeatCount="indefinite"/>
-      </polyline>
-    </svg>
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="rv">
+      <div class="eyebrow">Flaky test detection for CI</div>
+      <h1>
+        <span class="flap-line" aria-label="Pass, fail, flaky?">
+          <span class="flap big"><span class="flap-in ok">PASS</span></span>
+          <span class="flap big"><span class="flap-in bad">FAIL</span></span>
+          <span class="flap big" id="heroFlap"><span class="flap-in ok" id="heroIn">PASS</span></span>
+        </span>
+        <span class="tail">We catch the flip.</span>
+        <span class="tail-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      </h1>
+      <p class="hero-sub">Falsky watches every CI run, spots tests flipping between pass and fail, and quarantines them — so real bugs block merges and phantom failures don't.</p>
+      <div class="hero-cta">
+        <a href="/login" class="btn amber">Start detecting — free</a>
+        <a href="#board" class="btn ghost">See live demo ↓</a>
+      </div>
+      <div class="hero-meta">github actions · pytest · jest · jUnit XML</div>
+    </div>
+    <div class="board rv" id="board" style="--d:.12s">
+      <div class="b-head"><span>run #4821 · main · 5 tests</span><span class="b-live"><i></i>LIVE</span></div>
+      <div id="rows"></div>
+      <div class="result">
+        <span class="res-label">BUILD</span>
+        <span class="flap res" id="resFlap"><span class="flap-in dim" id="resIn">——</span></span>
+        <span class="res-note" id="resNote"></span>
+      </div>
+      <div class="b-foot">▲ <b>pay/webhook</b> quarantined → issue #231 · merge unblocked</div>
+    </div>
   </div>
-  <div class="badge"><span class="pulse"></span> BAYESIAN TRUST ENGINE</div>
-  <h1>Your CI has <span class="highlight">tremors</span></h1>
-  <p class="sub">Detect flaky tests before they break your pipeline. Bayesian-powered trust scores give every test a reliability rating from 0 to 100.</p>
-  <p class="mono-sub">Works with pytest, Jest, JUnit, and any framework that outputs JUnit XML. Free for open source.</p>
-  <div class="actions">
-    <a href="/login" class="btn btn-primary">Get Started Free &#8594;</a>
-    <a href="#demo" class="btn btn-ghost">See Live Demo &#8595;</a>
-  </div>
-</section>
+</header>
 
-<!-- Stats Bar -->
-<section class="stats-bar reveal">
-  <div class="stats-bar-inner">
-    <div class="stat-item">
-      <div class="stat-num"><span class="accent">6</span> Flake Types</div>
-      <div class="stat-label">Detected automatically</div>
+<!-- ===== HOW IT WORKS ===== -->
+<div class="wrap">
+  <div class="sec-label rv"><b>01</b> The catch</div>
+  <div class="steps" style="margin-bottom:88px">
+    <div class="step rv">
+      <div class="ic-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><circle cx="24" cy="24" r="2" fill="currentColor" stroke="none"/><line class="sweep-line" x1="24" y1="24" x2="24" y2="8"/></svg></div>
+      <span class="num">STEP 01</span><h3>Watch</h3><p>Every run is recorded — result, retry count and timing for each test. Falsky's GitHub Action reads your JUnit XML output automatically.</p>
     </div>
-    <div class="stat-item">
-      <div class="stat-num"><span class="accent">0</span>&ndash;<span class="accent">100</span> Trust Score</div>
-      <div class="stat-label">Bayesian scoring</div>
+    <div class="step rv" style="--d:.1s">
+      <div class="ic-box"><svg class="flip-ic" viewBox="0 0 48 48"><polyline points="30 8 38 16 30 24"/><path d="M38 16 H18 a8 8 0 0 0 -8 8"/><polyline points="18 40 10 32 18 24"/><path d="M10 32 H30 a8 8 0 0 0 8 -8"/></svg></div>
+      <span class="num">STEP 02</span><h3>Weigh</h3><p>A Bayesian trust score weighs pass-rate, retries and timing variance to separate flaky from genuinely broken. Better than naive pass/total.</p>
     </div>
-    <div class="stat-item">
-      <div class="stat-num">&lt;<span class="accent">5</span> min</div>
-      <div class="stat-label">Setup time</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num"><span class="accent">&#8734;</span> Free</div>
-      <div class="stat-label">For open source</div>
+    <div class="step rv" style="--d:.2s">
+      <div class="ic-box"><svg viewBox="0 0 48 48"><rect x="10" y="22" width="28" height="17" rx="2"/><path class="lid" d="M10 22 L24 12 L38 22"/><line x1="24" y1="28" x2="24" y2="33"/></svg></div>
+      <span class="num">STEP 03</span><h3>Quarantine</h3><p>Flaky tests leave the merge path with an issue attached. Real bugs stay blocking. Your pipeline stays green.</p>
     </div>
   </div>
-</section>
+</div>
 
-<!-- Live Demo -->
-<section class="live-demo reveal" id="demo">
-  <div class="section-header">
-    <h2>Trust Scores in Action</h2>
-    <p>See how Falsky rates each test &mdash; green means reliable, amber means watch out, red means flaky</p>
-  </div>
-  <div class="demo-grid">
-    <!-- Stable test -->
-    <div class="demo-card">
-      <div class="demo-label">STABLE TEST &middot; HIGH TRUST</div>
-      <div class="trust-score-row">
-        <div class="score green">92</div>
-        <div class="label">TRUST SCORE</div>
-      </div>
-      <div class="trust-meter"><div class="fill high" style="width:92%"></div></div>
-      <div class="demo-title">test_user_authentication</div>
-      <div class="run-history">
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar pass" style="height:38px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar pass" style="height:38px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar pass" style="height:38px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar pass" style="height:38px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar pass" style="height:38px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar pass" style="height:34px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar pass" style="height:38px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar pass" style="height:34px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar pass" style="height:38px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar pass" style="height:38px"></div>
-      </div>
-      <div class="meta">
-        <span>&#10003; 20/20 pass</span>
-        <span>&#9201; avg 1.2s</span>
-        <span>No category</span>
-      </div>
-    </div>
-    <!-- Flaky test -->
-    <div class="demo-card">
-      <div class="demo-label">FLAKY TEST &middot; LOW TRUST</div>
-      <div class="trust-score-row">
-        <div class="score red">23</div>
-        <div class="label">TRUST SCORE</div>
-      </div>
-      <div class="trust-meter"><div class="fill low" style="width:23%"></div></div>
-      <div class="demo-title">test_payment_gateway</div>
-      <div class="run-history">
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar fail" style="height:40px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar pass" style="height:34px"></div>
-        <div class="bar fail" style="height:40px"></div>
-        <div class="bar fail" style="height:38px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar fail" style="height:40px"></div>
-        <div class="bar pass" style="height:34px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar fail" style="height:40px"></div>
-        <div class="bar fail" style="height:38px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar fail" style="height:40px"></div>
-        <div class="bar pass" style="height:34px"></div>
-        <div class="bar fail" style="height:38px"></div>
-        <div class="bar pass" style="height:36px"></div>
-        <div class="bar fail" style="height:40px"></div>
-        <div class="bar pass" style="height:34px"></div>
-        <div class="bar fail" style="height:40px"></div>
-      </div>
-      <div class="meta">
-        <span>&#10003; 9/20 pass</span>
-        <span>&#9201; avg 4.8s</span>
-        <span style="color:var(--red)">Timing Flake</span>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- ===== CASCADE STRIP ===== -->
+<div class="wrap block" id="stats">
+  <div class="sec-label rv"><b>02</b> Every run, remembered</div>
+  <div class="strip-tiles rv" id="cascade"></div>
+  <p class="strip-cap">48 builds · each tile is one run — green stable, amber flaky, red real failure</p>
+</div>
 
-<!-- Features -->
-<section class="features reveal" id="features">
-  <div class="section-header">
-    <h2>What Falsky Detects</h2>
-    <p>Six categories of flakiness, each with its own detection algorithm</p>
+<!-- ===== STATS ===== -->
+<div class="wrap block">
+  <div class="sec-label rv"><b>03</b> The numbers</div>
+  <div class="stats">
+    <div class="stat rv"><span class="flap"><span class="flap-in warn" data-n="38" data-suf="%">0%</span></span><p>of red builds are actually flaky</p></div>
+    <div class="stat rv" style="--d:.1s"><span class="flap"><span class="flap-in bad" data-n="41" data-suf="m">0m</span></span><p>engineer time lost per false red</p></div>
+    <div class="stat rv" style="--d:.2s"><span class="flap"><span class="flap-in ok" data-n="0">0</span></span><p>agents or code changes needed</p></div>
   </div>
-  <div class="features-grid">
-    <div class="feature">
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12,7 12,12 16,14"/></svg>
-      </div>
-      <h3>Timing Flakes</h3>
-      <p>Tests that fail due to timeouts, slow responses, or race conditions. Z-score anomaly detection on duration data catches tests with erratic run times that signal hidden instability.</p>
-      <span class="tech-tag">z-score analysis</span>
-    </div>
-    <div class="feature">
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
-      </div>
-      <h3>Order Dependency</h3>
-      <p>Tests that pass or fail depending on execution order. Sequential pattern analysis catches alternating and periodic failures that only appear when tests run in specific sequences.</p>
-      <span class="tech-tag">sequential patterns</span>
-    </div>
-    <div class="feature">
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="3"/><circle cx="17" cy="12" r="3"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
-      </div>
-      <h3>Shared State</h3>
-      <p>Tests that contaminate each other through shared databases, files, or services. Clustered failure patterns reveal the culprit &mdash; when multiple tests fail together, shared state is the cause.</p>
-      <span class="tech-tag">cluster analysis</span>
-    </div>
-    <div class="feature">
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8" cy="8" r="2" fill="var(--amber)" stroke="none"/><circle cx="16" cy="16" r="2" fill="var(--amber)" stroke="none"/><circle cx="16" cy="8" r="2" fill="var(--amber)" stroke="none"/></svg>
-      </div>
-      <h3>Non-Deterministic Data</h3>
-      <p>Tests that fail randomly due to unstable test data, UUIDs, or timestamps. High error diversity is the signal &mdash; when error messages vary across failures, randomness is at play.</p>
-      <span class="tech-tag">error diversity</span>
-    </div>
-    <div class="feature">
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      </div>
-      <h3>Environment Specific</h3>
-      <p>Tests that pass locally but fail in CI (or vice versa). Cross-environment pass rate comparison catches these &mdash; a test that's 95% reliable locally but 40% in CI is environment-specific.</p>
-      <span class="tech-tag">env comparison</span>
-    </div>
-    <div class="feature">
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      </div>
-      <h3>Bayesian Scoring</h3>
-      <p>Every test gets a trust score (0&ndash;100) using Beta-Binomial conjugate priors. Better than naive pass/total calculations, especially with small sample sizes where simple ratios mislead.</p>
-      <span class="tech-tag">beta-binomial</span>
-    </div>
-  </div>
-</section>
+</div>
 
-<!-- How it works -->
-<section class="how reveal" id="how">
-  <div class="section-header">
-    <h2>How It Works</h2>
-    <p>Four steps from zero to full trust visibility</p>
+<!-- ===== CTA BAND ===== -->
+<div class="wrap" style="padding-bottom:96px">
+  <div class="cta-band rv">
+    <div>
+      <div class="mini-line"><span class="flap"><span class="flap-in bad">FAIL</span></span><span class="flap"><span class="flap-in" style="color:#F4F3EE">→</span></span><span class="flap"><span class="flap-in ok">PASS</span></span></div>
+      <h2>Stop the flip-flop.</h2>
+      <p>Five minutes to wire in. Your next red build might not actually be red.</p>
+    </div>
+    <div><a href="/login" class="btn amber">Start detecting — free</a><div class="cta-note">free for open source · no card</div></div>
   </div>
-  <div class="steps">
-    <div class="step">
-      <div class="num">1</div>
-      <div class="text">
-        <h4>Connect your repo</h4>
-        <p>Sign in with GitHub, select your repository. Falsky auto-detects your test framework &mdash; no manual configuration needed. Works with pytest, Jest, JUnit, Mocha, and anything that outputs JUnit XML.</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="num">2</div>
-      <div class="text">
-        <h4>Add the GitHub Action</h4>
-        <p>Copy one YAML block into your workflow. The Action reads your test results and sends them to Falsky's Trust Engine after every CI run. No extra scripts, no sidecar containers. <span class="code-snippet">falsky-action@v1</span></p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="num">3</div>
-      <div class="text">
-        <h4>Get Bayesian trust scores</h4>
-        <p>Each test receives a trust score from 0 (completely unreliable) to 100 (rock solid). Flaky tests are categorized with confidence levels &mdash; timing, order, shared state, environment, or random.</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="num">4</div>
-      <div class="text">
-        <h4>Fix before it breaks</h4>
-        <p>See trends over time, catch degrading tests early, and quarantine unreliable ones before they block your pipeline. Dashboard shows run history, category breakdowns, and actionable fix suggestions.</p>
-      </div>
-    </div>
-  </div>
-</section>
+</div>
 
-<!-- GitHub Action -->
-<section class="action-section reveal" id="action">
-  <div class="section-header">
-    <h2>One YAML Block. Done.</h2>
-    <p>Add this to your workflow and Falsky starts scoring immediately</p>
-  </div>
-  <div class="code-block">
-    <div class="filename">.github/workflows/ci.yml</div>
-    <button class="copy-btn" id="copyBtn">Copy</button>
-    <pre><span class="comment"># After your test step</span>
-<span class="key">- uses:</span> <span class="value">Pritahi/falsky-action@v1</span>
-  <span class="key">with:</span>
-    <span class="key">api_key:</span> <span class="value">${{ secrets.FALSKY_API_KEY }}</span>
-    <span class="key">repo:</span> <span class="value">${{ github.repository }}</span>
-    <span class="key">report_path:</span> <span class="value">test-results.xml</span></pre>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section reveal">
-  <h2>Start detecting flaky tests today</h2>
-  <p>Free forever for open source. No credit card. No setup fee.</p>
-  <a href="/login" class="btn btn-primary">Sign In with GitHub &#8594;</a>
-</section>
-
-<!-- Footer -->
-<footer class="footer">
-  <span>&copy; 2026 Falsky &middot; MIT License</span>
-  <div class="footer-links">
-    <a href="https://github.com/Pritahi/falsky-core">GitHub</a>
-    <a href="/dashboard/guide.html">Docs</a>
-    <a href="https://github.com/Pritahi/falsky-core/issues">Issues</a>
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap foot">
+    <a class="logo" href="/" style="font-size:17px"><i></i>Falsky</a>
+    <div class="foot-links"><a href="https://github.com/Pritahi/falsky-core">GITHUB</a><a href="/dashboard/guide.html">DOCS</a><a href="/dashboard/repos.html">DASHBOARD</a></div>
+    <span>&copy; 2026 · catch the flip</span>
   </div>
 </footer>
 
+<div id="toast"></div>
+
 <script>
-// ── Theme toggle ──
-const html = document.documentElement;
-const darkBtn = document.getElementById('darkBtn');
-const lightBtn = document.getElementById('lightBtn');
-const saved = localStorage.getItem('falsky-theme');
-if (saved === 'light') {
-  html.classList.add('light');
-  darkBtn.classList.remove('active');
-  lightBtn.classList.add('active');
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const $ = s => document.querySelector(s);
+
+/* helpers */
+function setFlap(flapEl, inEl, text, cls, dur = 420){
+  if (RM){ inEl.textContent = text; inEl.className = 'flap-in ' + cls; return Promise.resolve(); }
+  flapEl.classList.remove('flipping'); void flapEl.offsetWidth;
+  flapEl.classList.add('flipping');
+  setTimeout(() => { inEl.textContent = text; inEl.className = 'flap-in ' + cls; }, dur / 2);
+  return sleep(dur);
 }
-darkBtn.addEventListener('click', () => {
-  html.classList.remove('light');
-  darkBtn.classList.add('active');
-  lightBtn.classList.remove('active');
-  localStorage.setItem('falsky-theme', 'dark');
-});
-lightBtn.addEventListener('click', () => {
-  html.classList.add('light');
-  lightBtn.classList.add('active');
-  darkBtn.classList.remove('active');
-  localStorage.setItem('falsky-theme', 'light');
-});
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function countUp(el, end, suf = '', dur = 1100){
+  if (RM){ el.textContent = end.toLocaleString() + suf; return; }
+  const t0 = performance.now();
+  (function step(t){
+    const p = Math.min((t - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(end * e).toLocaleString() + suf;
+    if (p < 1) requestAnimationFrame(step);
+  })(t0);
+}
+let toastT;
+function toast(html){
+  const t = $('#toast'); t.innerHTML = html; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2600);
+}
 
-// ── Hamburger ──
-const hamburger = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobileMenu');
-hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('open');
-  mobileMenu.classList.toggle('show');
-});
-// Close mobile menu on link click
-mobileMenu.querySelectorAll('a').forEach(a => {
-  a.addEventListener('click', () => {
-    hamburger.classList.remove('open');
-    mobileMenu.classList.remove('show');
-  });
-});
+/* reveal */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), {threshold:.12});
+document.querySelectorAll('.rv, .strip-tiles').forEach(el => { if(!el.classList.contains('in')) io.observe(el); });
 
-// ── Scroll reveal ──
-const revealEls = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
+/* hero flap cycler */
+const BOARD = [
+  {name:'auth/login', ms:'42ms', kind:'pass'},
+  {name:'api/orders', ms:'87ms', kind:'pass'},
+  {name:'cart/totals', ms:'63ms', kind:'pass'},
+  {name:'pay/webhook', ms:'512ms', kind:'flaky'},
+  {name:'search/index', ms:'129ms', kind:'pass'},
+];
+
+(async () => {
+  /* hero flap */
+  const hf = $('#heroFlap'), hi = $('#heroIn');
+  const SEQ = [['PASS','ok'],['FAIL','bad'],['FLAKY','warn']];
+  await sleep(1200); let i = 0;
+  while (true){
+    i = (i + 1) % SEQ.length;
+    await setFlap(hf, hi, SEQ[i][0], SEQ[i][1]);
+    await sleep(SEQ[i][0] === 'FLAKY' ? 1800 : 900);
+  }
+})();
+
+/* tail wave */
+const wave = [...document.querySelectorAll('.tail-wave i')];
+(async () => {
+  if (RM) return;
+  while (true){
+    await sleep(2000);
+    for (let i = 0; i < wave.length; i++){
+      wave[i].classList.remove('wv'); void wave[i].offsetWidth;
+      wave[i].classList.add('wv');
+      await sleep(65);
     }
-  });
-}, { threshold: 0.15 });
-revealEls.forEach(el => observer.observe(el));
+  }
+})();
 
-// ── Copy button ──
-const copyBtn = document.getElementById('copyBtn');
-copyBtn.addEventListener('click', () => {
-  const code = copyBtn.parentElement.querySelector('pre').textContent;
-  navigator.clipboard.writeText(code).then(() => {
-    copyBtn.textContent = 'Copied!';
-    setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
-  });
+/* run board animation */
+const rowsEl = $('#rows'); rowsEl.innerHTML = '';
+const board = rowsEl.closest('.board');
+const resFlap = $('#resFlap'), resIn = $('#resIn'), resNote = $('#resNote');
+const rows = BOARD.map(d => {
+  const el = document.createElement('div');
+  el.className = 'row';
+  el.innerHTML = `<span class="flap sflap"><span class="flap-in dim">·</span></span>
+    <span class="r-name">${d.name}</span><span class="r-ms">${d.ms}</span>
+    <span class="r-tag"><span class="retry">RETRY 2/3</span><span class="flaky-chip">⚠ FLAKY</span></span>
+    <i class="r-prog"></i>`;
+  rowsEl.appendChild(el);
+  return {...d, el, flap: el.querySelector('.sflap'), fin: el.querySelector('.sflap .flap-in'),
+    retry: el.querySelector('.retry'), chip: el.querySelector('.flaky-chip'), prog: el.querySelector('.r-prog')};
 });
+const setStatus = (r, s, c) => setFlap(r.flap, r.fin, s, c, 340);
+const setRunning = r => {
+  r.fin.textContent = '•••'; r.fin.className = 'flap-in dim running';
+  r.prog.style.transition = 'none'; r.prog.style.width = '0'; void r.prog.offsetWidth;
+  r.prog.style.transition = 'width .55s linear'; r.prog.style.width = '100%';
+};
+const setResult = (t, c, n) => { setFlap(resFlap, resIn, t, c, 400); resNote.textContent = n; };
 
-// ── Animate trust meters on scroll ──
-const demoCards = document.querySelectorAll('.demo-card');
-const demoObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const fills = entry.target.querySelectorAll('.trust-meter .fill');
-      fills.forEach(fill => {
-        const w = fill.style.width;
-        fill.style.width = '0%';
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            fill.style.width = w;
-          });
-        });
-      });
-      const bars = entry.target.querySelectorAll('.run-history .bar');
-      bars.forEach((bar, i) => {
-        const h = bar.style.height;
-        bar.style.height = '0px';
-        setTimeout(() => {
-          bar.style.height = h;
-        }, 100 + i * 50);
-      });
+(async () => {
+  while (true){
+    board.classList.remove('fade');
+    rows.forEach(r => { r.el.classList.remove('scan','flagged'); r.retry.classList.remove('on'); r.chip.classList.remove('on');
+      r.fin.textContent = '·'; r.fin.className = 'flap-in dim'; r.prog.style.transition = 'none'; r.prog.style.width = '0'; });
+    resIn.textContent = '——'; resIn.className = 'flap-in dim'; resNote.textContent = '';
+    await sleep(650);
+    for (const r of rows){
+      setRunning(r); await sleep(580);
+      if (r.kind === 'pass'){ await setStatus(r, '✓', 'ok'); }
+      else {
+        await setStatus(r, '✗', 'bad'); setResult('FAIL', 'bad', ''); await sleep(420);
+        r.retry.classList.add('on');
+        for (let i = 0; i < 3; i++){ await setStatus(r, i % 2 ? '✗' : '✓', i % 2 ? 'bad' : 'ok'); await sleep(140); }
+        await sleep(300);
+        r.el.classList.add('scan'); await sleep(720);
+        r.el.classList.add('flagged'); r.chip.classList.add('on');
+        await setStatus(r, '⚠', 'warn'); setResult('PASS', 'ok', '1 quarantined');
+        await sleep(500);
+      }
     }
-  });
-}, { threshold: 0.3 });
-demoCards.forEach(card => demoObserver.observe(card));
+    await sleep(2600);
+    board.classList.add('fade');
+    await sleep(550);
+  }
+})();
+
+/* cascade strip */
+const cas = $('#cascade'); cas.innerHTML = ''; cas.classList.remove('in');
+const rnd = mulberry(7);
+for (let i = 0; i < 48; i++){
+  const v = rnd(); const cls = v > .93 ? 't-r' : v > .76 ? 't-a' : 't-g';
+  const t = document.createElement('i');
+  t.className = cls; t.style.setProperty('--d', (i * 28) + 'ms');
+  t.title = `run #${4773 + i} — ${cls === 't-r' ? 'failed' : cls === 't-a' ? 'flaky detected' : 'green'}`;
+  cas.appendChild(t);
+}
+io.observe(cas);
+
+/* count-up numbers */
+document.querySelectorAll('[data-n]').forEach((el, i) =>
+  setTimeout(() => countUp(el, parseFloat(el.dataset.n), el.dataset.suf || ''), 300 + i * 150));
 </script>
 
 </body>
