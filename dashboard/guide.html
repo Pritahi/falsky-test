@@ -3,197 +3,325 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Falsky — Setup Guide</title>
+<title>Falsky — Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#09090b;--bg-card:#18181b;--bg-hover:#27272a;--bg-input:#27272a;
-  --border:#27272a;--text:#fafafa;--text-secondary:#a1a1aa;--text-muted:#71717a;
-  --accent:#8b5cf6;--accent-soft:rgba(139,92,246,0.12);
-  --green:#22c55e;--green-soft:rgba(34,197,94,0.12);
-  --yellow:#eab308;--yellow-soft:rgba(234,179,8,0.12);
-  --orange:#f97316;--orange-soft:rgba(249,115,22,0.12);
-  --red:#ef4444;--red-soft:rgba(239,68,68,0.12);
-  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
-  --mono:'JetBrains Mono','Fira Code',monospace;
-  --radius:12px;--radius-sm:8px;--radius-xs:6px;
-  --sidebar-w:220px;--topbar-h:52px;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.7;min-height:100vh;-webkit-font-smoothing:antialiased}
-
-.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--bg);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100}
-.sidebar-header{display:flex;align-items:center;gap:10px;padding:14px 16px;height:var(--topbar-h);border-bottom:1px solid var(--border);flex-shrink:0}
-.sidebar-logo{font-size:18px;font-weight:700;color:var(--accent)}
-.sidebar-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-xs);color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:500;transition:all .15s}
-.nav-item:hover{background:var(--bg-hover);color:var(--text)}
-.nav-item.active{background:var(--accent-soft);color:var(--accent)}
-.nav-item svg{width:18px;height:18px;flex-shrink:0}
-
-.main{margin-left:var(--sidebar-w);min-height:100vh}
-.topbar{height:var(--topbar-h);background:rgba(9,9,11,0.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:50}
-.topbar-title{font-size:14px;font-weight:600;color:var(--text)}
-
-.content{padding:24px 20px;max-width:820px}
-
-.guide-section{margin-bottom:40px}
-.guide-section>h2{font-size:20px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
-.guide-section>h2 .section-num{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:4px;font-family:var(--mono)}
-.guide-section>p{color:var(--text-secondary);font-size:14px;margin-bottom:16px}
-
-.step{display:flex;gap:14px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
-.step:last-child{border-bottom:none}
-.step-num{flex-shrink:0;width:32px;height:32px;background:var(--accent-soft);border:1px solid rgba(139,92,246,0.2);border-radius:8px;color:var(--accent);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.step-body{flex:1}
-.step-body h3{font-size:15px;font-weight:600;margin-bottom:4px}
-.step-body p{color:var(--text-secondary);font-size:13px;margin-bottom:10px}
-
-.code-block{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:12px}
-.code-block-header{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--border)}
-.code-lang{font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;font-family:var(--mono)}
-.copy-btn{display:flex;align-items:center;gap:4px;padding:3px 8px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--text-muted);font-size:10px;font-family:var(--mono);cursor:pointer;transition:all .15s}
-.copy-btn:hover{color:var(--text);border-color:var(--text-muted)}
-.copy-btn.copied{color:var(--green);border-color:rgba(34,197,94,0.3)}
-.code-block pre{padding:14px;overflow-x:auto;font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--text-secondary)}
-.code-block pre .hl-kw{color:var(--accent);font-weight:600}
-.code-block pre .hl-str{color:var(--green)}
-.code-block pre .hl-key{color:var(--text-muted)}
-.code-block pre .hl-val{color:var(--orange)}
-.code-block pre .hl-comment{color:var(--text-muted);font-style:italic}
-
-code{font-family:var(--mono);font-size:12px;background:var(--bg);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--text-secondary)}
-
-.api-table{width:100%;border-collapse:collapse;font-size:12px}
-.api-table thead th{color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}
-.api-table tbody td{padding:8px 12px;border-bottom:1px solid var(--border-subtle);color:var(--text-secondary);vertical-align:top;font-family:var(--mono);font-size:12px}
-.api-table tbody tr:last-child td{border-bottom:none}
-.api-table tbody tr:hover td{background:var(--bg-hover)}
-
-.method-tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--mono)}
-.method-tag.get{background:var(--green-soft);color:var(--green)}
-.method-tag.post{background:var(--accent-soft);color:var(--accent)}
-.method-tag.delete{background:var(--red-soft);color:var(--red)}
-
-.algo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
-.algo-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;transition:all .15s}
-.algo-card:hover{border-color:var(--text-muted)}
-.algo-card::before{content:attr(data-weight);position:absolute;top:0;right:0;background:var(--bg);color:var(--text-muted);font-family:var(--mono);font-size:9px;letter-spacing:0.06em;padding:3px 8px;border-radius:0 var(--radius) 0 var(--radius-xs)}
-.algo-card h3{font-size:14px;font-weight:600;margin-bottom:4px}
-.algo-card p{font-size:12px;color:var(--text-secondary);line-height:1.6}
-.algo-bar{height:4px;background:var(--bg);border-radius:2px;overflow:hidden;margin-top:8px}
-.algo-bar-fill{height:100%;border-radius:2px;transition:width .8s}
-.algo-card.penalty{grid-column:1/-1;border-left:3px solid var(--red)}
-
-.cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.cat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;gap:10px;transition:all .15s}
-.cat-card:hover{border-color:var(--text-muted)}
-.cat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.cat-icon svg{width:16px;height:16px}
-.cat-card h4{font-size:13px;font-weight:600;margin-bottom:2px}
-.cat-card p{font-size:11px;color:var(--text-secondary);line-height:1.5}
-
-.badge-preview{display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm)}
-.badge-preview-label{font-size:12px;color:var(--text-muted);flex-shrink:0}
-
-@media(max-width:900px){.algo-grid,.cat-grid{grid-template-columns:1fr}.content{padding:16px}}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
+<link rel="stylesheet" href="design-system.css">
 </head>
 <body>
+<div class="grain"></div>
+<div class="app">
 
+<!-- Sidebar -->
 <aside class="sidebar">
-  <div class="sidebar-header"><div class="sidebar-logo">Falsky</div></div>
-  <nav class="sidebar-nav">
-    <a href="./" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Dashboard</a>
-    <a href="./guide.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Guide</a>
-    <a href="/" class="nav-item" style="margin-top:auto;border-top:1px solid var(--border);padding-top:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Home</a>
+  <a href="./" class="logo">
+    <svg width="28" height="13" viewBox="0 0 34 16" fill="none"><polyline points="0,8 8,8 12,1 17,15 21,4 25,8 34,8" stroke="#FF4B2E" stroke-width="2.4"/></svg>
+    FALS<em>KY</em>
+  </a>
+  <nav>
+    <a href="./">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="./repos.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      <span>Repositories</span>
+    </a>
+    <a href="./api-keys.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L9 11"/></svg>
+      <span>Setup & Keys</span>
+    </a>
+    <a href="./guide.html" class="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Guide</span>
+    </a>
+    <a href="./settings.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span>Settings</span>
+    </a>
   </nav>
+  <div class="user-section">
+    <div class="user-info" id="userInfo">
+      <img id="userAvatar" src="" alt="">
+      <div>
+        <div class="name" id="userName">Loading…</div>
+        <div class="email" id="userEmail"></div>
+      </div>
+    </div>
+    <a href="#" onclick="doLogout()" style="display:block;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;text-decoration:none">SIGN OUT →</a>
+  </div>
 </aside>
 
-<div class="main">
-  <div class="topbar"><div class="topbar-title">Setup Guide</div></div>
-  <div class="content">
-
-    <div class="guide-section">
-      <h2><span class="section-num">1</span> Quick Start</h2>
-      <p>Get Falsky running in your CI pipeline in under 2 minutes.</p>
-      <div class="step"><div class="step-num">1</div><div class="step-body"><h3>Get Your API Key</h3><p>Create an account at your Falsky instance to receive an API key.</p></div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-body"><h3>Add the GitHub Action</h3><p>Add this step after your test runner. Tests must output JUnit XML format.</p>
-        <div class="code-block"><div class="code-block-header"><span class="code-lang">YAML</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><span class="hl-comment"># .github/workflows/ci.yml</span>
-<span class="hl-kw">name</span>: <span class="hl-str">CI with Falsky</span>
-<span class="hl-kw">on</span>: <span class="hl-val">[push, pull_request]</span>
-
-<span class="hl-kw">jobs</span>:
-  <span class="hl-key">test</span>:
-    <span class="hl-kw">runs-on</span>: <span class="hl-str">ubuntu-latest</span>
-    <span class="hl-kw">steps</span>:
-      - <span class="hl-kw">uses</span>: <span class="hl-str">actions/checkout@v4</span>
-      - <span class="hl-kw">run</span>: <span class="hl-str">npm test -- --reporter junit --reporter-options output=test-results.xml</span>
-      - <span class="hl-kw">uses</span>: <span class="hl-str">Pritahi/falsky-action@v1</span>
-        <span class="hl-kw">with</span>:
-          <span class="hl-kw">api_key</span>: <span class="hl-val">${{ secrets.FALSKY_API_KEY }}</span>
-          <span class="hl-kw">junit_path</span>: <span class="hl-str">'test-results/*.xml'</span></pre></div>
-      </div></div>
+<!-- Main -->
+<main class="main">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Guide</h1>
+      <p class="page-sub">How Falsky works — setup, algorithm, API reference</p>
     </div>
-
-    <div class="guide-section">
-      <h2><span class="section-num">2</span> REST API</h2>
-      <p>Write operations require the <code>X-Falsky-API-Key</code> header. Read operations are open.</p>
-      <table class="api-table">
-        <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
-        <tbody>
-          <tr><td><span class="method-tag post">POST</span></td><td>/api/junit</td><td>Ingest JUnit XML</td></tr>
-          <tr><td><span class="method-tag post">POST</span></td><td>/api/runs</td><td>Create test run from raw results</td></tr>
-          <tr><td><span class="method-tag get">GET</span></td><td>/api/dashboard?repo_name=X</td><td>Aggregated dashboard data</td></tr>
-          <tr><td><span class="method-tag get">GET</span></td><td>/api/tests?repo_name=X</td><td>List all tests with trust scores</td></tr>
-          <tr><td><span class="method-tag get">GET</span></td><td>/api/tests/{name}?repo_name=X</td><td>Test detail + history</td></tr>
-          <tr><td><span class="method-tag get">GET</span></td><td>/api/quarantined?repo_name=X</td><td>Quarantined tests</td></tr>
-          <tr><td><span class="method-tag get">GET</span></td><td>/api/runs?repo_name=X</td><td>Recent CI runs</td></tr>
-          <tr><td><span class="method-tag get">GET</span></td><td>/api/repos</td><td>All tracked repos</td></tr>
-          <tr><td><span class="method-tag get">GET</span></td><td>/badge/{repo_name}</td><td>SVG trust badge</td></tr>
-          <tr><td><span class="method-tag post">POST</span></td><td>/api/alerts/config?repo_name=X</td><td>Configure webhook alerts</td></tr>
-          <tr><td><span class="method-tag delete">DELETE</span></td><td>/api/tests/{name}?repo_name=X</td><td>Delete test history</td></tr>
-        </tbody>
-      </table>
-      <div class="code-block" style="margin-top:16px"><div class="code-block-header"><span class="code-lang">cURL</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre>curl -X POST https://your-falsky-instance.com/api/junit \
-  -H <span class="hl-str">"Content-Type: application/json"</span> \
-  -H <span class="hl-str">"X-Falsky-API-Key: your-key"</span> \
-  -d <span class="hl-str">'{"xml_content": "...", "repo_name": "my-repo"}'</span></pre></div>
-    </div>
-
-    <div class="guide-section">
-      <h2><span class="section-num">3</span> Trust Score Algorithm</h2>
-      <p>Each test gets a score from 0-100 based on four weighted components plus an optional flaky penalty.</p>
-      <div class="algo-grid">
-        <div class="algo-card" data-weight="60%"><h3>Pass Rate</h3><p>Bayesian pass rate with Beta-Binomial conjugate prior. Primary reliability signal.</p><div class="algo-bar"><div class="algo-bar-fill" style="width:60%;background:var(--green)"></div></div></div>
-        <div class="algo-card" data-weight="20%"><h3>Recent Trend</h3><p>Compares last 5 runs vs previous 5. Improving tests get a bonus.</p><div class="algo-bar"><div class="algo-bar-fill" style="width:20%;background:var(--yellow)"></div></div></div>
-        <div class="algo-card" data-weight="10%"><h3>Duration Stability</h3><p>Z-score analysis on execution times. Consistent = stable.</p><div class="algo-bar"><div class="algo-bar-fill" style="width:10%;background:var(--orange)"></div></div></div>
-        <div class="algo-card" data-weight="10%"><h3>Error Consistency</h3><p>Consistent errors = real bug. Varied errors = flaky.</p><div class="algo-bar"><div class="algo-bar-fill" style="width:10%;background:var(--red)"></div></div></div>
-        <div class="algo-card penalty"><h3 style="color:var(--red)">Flaky Penalty (−5 to −20)</h3><p>Additional penalty when flaky category is detected.</p></div>
-      </div>
-      <h3 style="font-size:14px;font-weight:600;margin:16px 0 10px">Flaky Categories</h3>
-      <div class="cat-grid">
-        <div class="cat-card"><div class="cat-icon" style="background:var(--orange-soft);color:var(--orange)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><h4>Timing</h4><p>High duration variance — race conditions or timeout sensitivity.</p></div></div>
-        <div class="cat-card"><div class="cat-icon" style="background:var(--accent-soft);color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div><div><h4>Order Dependency</h4><p>Outcome changes based on execution order.</p></div></div>
-        <div class="cat-card"><div class="cat-icon" style="background:var(--red-soft);color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div><h4>Shared State</h4><p>Shares mutable state with other tests.</p></div></div>
-        <div class="cat-card"><div class="cat-icon" style="background:var(--yellow-soft);color:var(--yellow)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div><div><h4>Non-deterministic</h4><p>Unpredictable external data or random values.</p></div></div>
-      </div>
-    </div>
-
-    <div class="guide-section">
-      <h2><span class="section-num">4</span> Badge</h2>
-      <p>Add a live trust score badge to your README.</p>
-      <div class="code-block"><div class="code-block-header"><span class="code-lang">Markdown</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre>![Trust Score](https://your-falsky-instance.com/badge/your-repo)</pre></div>
-      <div class="badge-preview"><span class="badge-preview-label">Preview:</span><img src="/badge/demo-repo" alt="Badge" height="24" onerror="this.style.display='none'"></div>
-    </div>
-
   </div>
+
+  <!-- ====== SECTION 1: How It Works ====== -->
+  <div class="card" style="margin-bottom:24px;border-left:3px solid var(--amber)">
+    <div class="card-header">
+      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:var(--amber);font-weight:700">01</span> — HOW FALSKY WORKS</span>
+    </div>
+    <div style="padding:4px 0">
+      <p style="font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px">
+        Falsky is an AI-powered flaky test detector. It uses Bayesian statistics (Beta-Binomial conjugate prior) to calculate a trust score for each test — 0 to 100. The more consistently a test passes, the higher its trust score. When a test's pass rate fluctuates, Falsky detects it as <em style="color:var(--amber)">flaky</em> and categorizes the root cause.
+      </p>
+
+      <!-- Flow diagram -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px">
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
+          <div style="font-family:var(--mono);font-size:18px;color:var(--green)">①</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em">YOUR TESTS<br>RUN IN CI</div>
+        </div>
+        <div style="color:var(--dim);font-family:var(--mono)">→</div>
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
+          <div style="font-family:var(--mono);font-size:18px;color:var(--amber)">②</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em">JUNIT XML<br>GENERATED</div>
+        </div>
+        <div style="color:var(--dim);font-family:var(--mono)">→</div>
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
+          <div style="font-family:var(--mono);font-size:18px;color:#8b5cf6">③</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em">FALSKY ACTION<br>SENDS TO API</div>
+        </div>
+        <div style="color:var(--dim);font-family:var(--mono)">→</div>
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
+          <div style="font-family:var(--mono);font-size:18px;color:var(--red)">④</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em">BAYESIAN<br>TRUST SCORE</div>
+        </div>
+        <div style="color:var(--dim);font-family:var(--mono)">→</div>
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;text-align:center">
+          <div style="font-family:var(--mono);font-size:18px;color:var(--text)">⑤</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em">DASHBOARD +<br>PR COMMENT</div>
+        </div>
+      </div>
+
+      <p style="font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.6">
+        <strong style="color:var(--text)">Who decides tests?</strong> You do. Falsky runs whatever tests you already have in your repo and analyzes their results. It doesn't create or modify tests — it observes them over time and calculates reliability patterns.
+      </p>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 2: Trust Score Algorithm ====== -->
+  <div class="card" style="margin-bottom:24px;border-left:3px solid #8b5cf6">
+    <div class="card-header">
+      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:#8b5cf6;font-weight:700">02</span> — TRUST SCORE ALGORITHM</span>
+    </div>
+    <div style="padding:4px 0">
+      <p style="font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px">
+        Each test gets a score from 0–100 based on four weighted components plus an optional flaky penalty. The core is Bayesian — Beta-Binomial conjugate prior with MAP (Maximum A Posteriori) estimation.
+      </p>
+
+      <!-- Algorithm weights -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--green);background:rgba(0,255,100,.1);padding:2px 6px;border-radius:2px;font-weight:600">55%</span>
+            <span style="font-family:var(--sans);font-size:14px;color:var(--text);font-weight:600">Pass Rate</span>
+          </div>
+          <p style="font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.5">Bayesian pass rate with Beta(2,2) prior. Primary reliability signal — MAP estimate adjusts for small sample sizes.</p>
+          <div style="height:4px;background:var(--ink);border-radius:2px;margin-top:8px"><div style="height:100%;width:55%;background:var(--green);border-radius:2px"></div></div>
+        </div>
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--amber);background:rgba(255,180,0,.15);padding:2px 6px;border-radius:2px;font-weight:600">20%</span>
+            <span style="font-family:var(--sans);font-size:14px;color:var(--text);font-weight:600">Recent Trend</span>
+          </div>
+          <p style="font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.5">Compares last 5 runs vs previous 5. Improving tests get bonus points, degrading tests get penalized.</p>
+          <div style="height:4px;background:var(--ink);border-radius:2px;margin-top:8px"><div style="height:100%;width:20%;background:var(--amber);border-radius:2px"></div></div>
+        </div>
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--red);background:rgba(255,75,46,.1);padding:2px 6px;border-radius:2px;font-weight:600">10%</span>
+            <span style="font-family:var(--sans);font-size:14px;color:var(--text);font-weight:600">Duration Stability</span>
+          </div>
+          <p style="font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.5">Z-score anomaly detection on execution times. Consistent timing = stable. High variance = suspicious.</p>
+          <div style="height:4px;background:var(--ink);border-radius:2px;margin-top:8px"><div style="height:100%;width:10%;background:var(--red);border-radius:2px"></div></div>
+        </div>
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--dim);background:rgba(255,255,255,.05);padding:2px 6px;border-radius:2px;font-weight:600">10%</span>
+            <span style="font-family:var(--sans);font-size:14px;color:var(--text);font-weight:600">Error Consistency</span>
+          </div>
+          <p style="font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.5">Consistent error messages = real bug. Varied/random errors = flaky behavior. Pattern hashing tracks this.</p>
+          <div style="height:4px;background:var(--ink);border-radius:2px;margin-top:8px"><div style="height:100%;width:10%;background:var(--dim);border-radius:2px"></div></div>
+        </div>
+      </div>
+
+      <!-- Flaky Penalty -->
+      <div style="background:var(--ink3);border:1px solid var(--red);border-left:3px solid var(--red);border-radius:var(--radius);padding:14px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-family:var(--mono);font-size:10px;color:var(--red);background:rgba(255,75,46,.1);padding:2px 6px;border-radius:2px;font-weight:600">−5 TO −20</span>
+          <span style="font-family:var(--sans);font-size:14px;color:var(--red);font-weight:600">Flaky Penalty</span>
+        </div>
+        <p style="font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.5">When a flaky category is detected (timing, order dependency, shared state, non-deterministic data, environment-specific), an additional penalty is subtracted from the total score.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 3: Flaky Categories ====== -->
+  <div class="card" style="margin-bottom:24px;border-left:3px solid var(--red)">
+    <div class="card-header">
+      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:var(--red);font-weight:700">03</span> — FLAKY CATEGORIES</span>
+    </div>
+    <div style="padding:4px 0">
+      <p style="font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px">
+        Falsky analyzes test history patterns to classify why a test is flaky. Each category has a distinct penalty and detection method.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <!-- Timing -->
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,180,0,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--amber)">⏱</div>
+          <div>
+            <div style="font-family:var(--sans);font-size:13px;color:var(--text);font-weight:600;margin-bottom:2px">Timing <span style="font-family:var(--mono);font-size:10px;color:var(--red)">−8pts</span></div>
+            <p style="font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.5">High duration variance or timeout sensitivity. Z-score anomaly detection on execution times.</p>
+          </div>
+        </div>
+        <!-- Order Dependency -->
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(139,92,246,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:#8b5cf6">🔗</div>
+          <div>
+            <div style="font-family:var(--sans);font-size:13px;color:var(--text);font-weight:600;margin-bottom:2px">Order Dependency <span style="font-family:var(--mono);font-size:10px;color:var(--red)">−12pts</span></div>
+            <p style="font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.5">Outcome changes based on execution order. Detected via runs test for alternating pass/fail patterns.</p>
+          </div>
+        </div>
+        <!-- Shared State -->
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,75,46,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--red)">🤝</div>
+          <div>
+            <div style="font-family:var(--sans);font-size:13px;color:var(--text);font-weight:600;margin-bottom:2px">Shared State <span style="font-family:var(--mono);font-size:10px;color:var(--red)">−15pts</span></div>
+            <p style="font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.5">Shares mutable state with other tests. Detected via clustered failure patterns and consistent error messages.</p>
+          </div>
+        </div>
+        <!-- Non-deterministic -->
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,180,0,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--amber)">🎲</div>
+          <div>
+            <div style="font-family:var(--sans);font-size:13px;color:var(--text);font-weight:600;margin-bottom:2px">Non-deterministic <span style="font-family:var(--mono);font-size:10px;color:var(--red)">−20pts</span></div>
+            <p style="font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.5">Unpredictable external data or random values. Detected via high error message diversity ratio.</p>
+          </div>
+        </div>
+        <!-- Environment -->
+        <div style="background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:10px;grid-column:1/-1">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(0,255,100,.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--green)">🌐</div>
+          <div>
+            <div style="font-family:var(--sans);font-size:13px;color:var(--text);font-weight:600;margin-bottom:2px">Environment-specific <span style="font-family:var(--mono);font-size:10px;color:var(--red)">−10pts</span></div>
+            <p style="font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.5">Pass rate differs significantly across environments (e.g. passes locally but fails in CI). Detected via environment correlation analysis.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 4: REST API ====== -->
+  <div class="card" style="margin-bottom:24px;border-left:3px solid var(--text)">
+    <div class="card-header">
+      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:var(--text);font-weight:700">04</span> — REST API REFERENCE</span>
+    </div>
+    <div style="padding:4px 0">
+      <p style="font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px">
+        Write operations require the <code style="background:var(--ink);padding:2px 6px;border-radius:2px;color:var(--green);font-family:var(--mono)">X-Poly-API-Key</code> header. Read operations are open.
+      </p>
+
+      <!-- API Table -->
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px">
+          <thead>
+            <tr style="border-bottom:1px solid var(--line)">
+              <th style="padding:8px 12px;text-align:left;color:var(--dim);font-size:10px;letter-spacing:.1em;font-weight:600">METHOD</th>
+              <th style="padding:8px 12px;text-align:left;color:var(--dim);font-size:10px;letter-spacing:.1em;font-weight:600">PATH</th>
+              <th style="padding:8px 12px;text-align:left;color:var(--dim);font-size:10px;letter-spacing:.1em;font-weight:600">DESCRIPTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(139,92,246,.1);color:#8b5cf6;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">POST</span></td><td style="color:var(--muted)">/api/junit</td><td style="color:var(--muted)">Ingest JUnit XML report</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(139,92,246,.1);color:#8b5cf6;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">POST</span></td><td style="color:var(--muted)">/api/runs</td><td style="color:var(--muted)">Create test run from raw results</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/api/dashboard?repo_name=X</td><td style="color:var(--muted)">Aggregated dashboard data</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/api/tests?repo_name=X</td><td style="color:var(--muted)">List all tests with trust scores</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/api/tests/{name}?repo_name=X</td><td style="color:var(--muted)">Test detail + history</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/api/quarantined?repo_name=X</td><td style="color:var(--muted)">Quarantined tests (trust below threshold)</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/api/runs?repo_name=X</td><td style="color:var(--muted)">Recent CI runs</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/api/repos</td><td style="color:var(--muted)">All tracked repositories</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(0,255,100,.1);color:var(--green);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">GET</span></td><td style="color:var(--muted)">/badge/{repo_name}</td><td style="color:var(--muted)">SVG trust score badge</td></tr>
+            <tr style="border-bottom:1px solid var(--line)"><td><span style="background:rgba(139,92,246,.1);color:#8b5cf6;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">POST</span></td><td style="color:var(--muted)">/api/alerts/config?repo_name=X</td><td style="color:var(--muted)">Configure webhook alerts</td></tr>
+            <tr><td><span style="background:rgba(255,75,46,.1);color:var(--red);padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700">DELETE</span></td><td style="color:var(--muted)">/api/tests/{name}?repo_name=X</td><td style="color:var(--muted)">Delete test history</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- cURL example -->
+      <div style="background:var(--ink);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--line)">
+          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase">cURL — send JUnit XML</span>
+          <button onclick="copyCode(this)" class="btn btn-ghost btn-sm" style="white-space:nowrap">📋 Copy</button>
+        </div>
+        <pre style="font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.7;padding:14px;margin:0;overflow-x:auto">curl -X POST https://poly-core-vercel.vercel.app/api/junit \
+  -H "Content-Type: application/xml" \
+  -H "X-Poly-API-Key: YOUR_KEY_HERE" \
+  --data-binary @test-results.xml</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 5: Badge ====== -->
+  <div class="card" style="margin-bottom:24px;border-left:3px solid var(--green)">
+    <div class="card-header">
+      <span class="card-title" style="font-family:var(--mono);letter-spacing:.1em"><span style="color:var(--green);font-weight:700">05</span> — TRUST SCORE BADGE</span>
+    </div>
+    <div style="padding:4px 0">
+      <p style="font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px">
+        Add a live trust score badge to your README. It updates automatically with every CI run.
+      </p>
+      <div style="background:var(--ink);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--line)">
+          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--green);text-transform:uppercase">Markdown</span>
+          <button onclick="copyCode(this)" class="btn btn-ghost btn-sm" style="white-space:nowrap">📋 Copy</button>
+        </div>
+        <pre style="font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.7;padding:14px;margin:0">![Falsky Trust](https://poly-core-vercel.vercel.app/badge/YOUR-ORG/YOUR-REPO)</pre>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--ink3);border:1px solid var(--line);border-radius:var(--radius)">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--dim)">Preview:</span>
+        <img src="/badge/demo-repo" alt="Trust Badge" height="24" onerror="this.style.display='none'">
+      </div>
+    </div>
+  </div>
+
+</main>
 </div>
 
 <script>
-function copyCode(btn){const pre=btn.closest('.code-block').querySelector('pre');navigator.clipboard.writeText(pre.textContent).then(()=>{btn.classList.add('copied');btn.textContent='Copied!';setTimeout(()=>{btn.classList.remove('copied');btn.textContent='Copy';},1500);});}
+const API = '';
+
+// Auth check
+(async () => {
+  try {
+    const res = await fetch(API + '/api/user/me');
+    if (!res.ok) { window.location.href = '/login'; return; }
+    const user = await res.json();
+    document.getElementById('userName').textContent = user.name || user.email;
+    document.getElementById('userEmail').textContent = user.email;
+    if (user.avatar) document.getElementById('userAvatar').src = user.avatar;
+  } catch(e) { window.location.href = '/login'; }
+})();
+
+function copyCode(btn) {
+  const pre = btn.closest('div').nextElementSibling || btn.closest('.code-block')?.querySelector('pre');
+  if (!pre) return;
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => { btn.textContent = '📋 Copy'; }, 1500);
+  });
+}
+
+async function doLogout() {
+  await fetch(API + '/api/user/logout', {method: 'POST'});
+  window.location.href = '/';
+}
 </script>
 </body>
 </html>
