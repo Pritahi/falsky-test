@@ -9,76 +9,240 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 16'><polyline points='0,8 8,8 12,1 17,15 21,4 25,8 34,8' fill='none' stroke='%23FF4B2E' stroke-width='2.4'/></svg>">
 <style>
-:root{--ink:#0C1517;--ink2:#0F1B1E;--ink3:#0A1315;--line:#1E3237;--line2:#2C464B;--paper:#F2E8D5;--red:#FF4B2E;--amber:#FFB020;--green:#3DDC84;--text:#D7E4E2;--muted:#8AA0A2;--dim:#5E767A;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--disp:'Anton',sans-serif}
+/* ── DARK MODE (default) ── */
+:root{
+  --ink:#0C1517;--ink2:#0F1B1E;--ink3:#0A1315;--ink4:#122024;
+  --line:#1E3237;--line2:#2C464B;
+  --paper:#F2E8D5;--red:#FF4B2E;--amber:#FFB020;--green:#3DDC84;--blue:#3B82F6;
+  --text:#D7E4E2;--muted:#8AA0A2;--dim:#5E767A;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--disp:'Anton',sans-serif;
+  --grain-opacity:.04;
+  --hero-glow:rgba(255,75,46,.07);
+  --card-hover-glow:rgba(255,176,32,.06);
+}
+/* ── LIGHT MODE ── */
+:root.light{
+  --ink:#F5F0E8;--ink2:#EDE8DB;--ink3:#E8E2D4;--ink4:#F0EBE0;
+  --line:#D4CCBB;--line2:#C8BFA9;
+  --paper:#1A1210;--red:#D9321E;--amber:#B8860B;--green:#1A7A42;--blue:#2563EB;
+  --text:#2A2520;--muted:#6B6055;--dim:#9E9585;
+  --grain-opacity:.02;
+  --hero-glow:rgba(185,134,11,.06);
+  --card-hover-glow:rgba(185,134,11,.08);
+}
+
 *{margin:0;padding:0;box-sizing:border-box}
 ::selection{background:var(--amber);color:#171310}
+html{scroll-behavior:smooth}
 body{font-family:var(--sans);color:var(--text);background:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* Grain overlay */
+.grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--grain-opacity);mix-blend-mode:overlay;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2"/></filter><rect width="140" height="140" filter="url(%23n)"/></svg>');}
+
 a{color:var(--amber);text-decoration:none}
 
-/* Nav */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;background:rgba(12,21,23,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav .logo{display:flex;align-items:center;gap:8px;font-family:var(--disp);font-size:1.3rem;letter-spacing:.08em;color:var(--paper)}
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;background:rgba(12,21,23,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);transition:background .3s}
+:root.light .nav{background:rgba(245,240,232,.9)}
+.nav .logo{display:flex;align-items:center;gap:8px;font-family:var(--disp);font-size:1.35rem;letter-spacing:.08em;color:var(--paper)}
 .nav .logo em{font-style:normal;color:var(--red)}
-.nav .links{display:flex;gap:24px}
-.nav .links a{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.nav .links{display:flex;gap:28px;align-items:center}
+.nav .links a{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;transition:color .15s}
 .nav .links a:hover{color:var(--paper)}
-.nav .cta{padding:8px 16px;background:var(--amber);color:#171310;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;border-radius:2px;display:inline-flex;align-items:center;gap:6px}
-.nav .cta:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--red)}
+.nav .cta-btn{padding:8px 18px;background:var(--amber);color:#171310;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;border-radius:3px;display:inline-flex;align-items:center;gap:6px;transition:all .15s;border:none;cursor:pointer}
+.nav .cta-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--red)}
 
-/* Hero */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;position:relative}
-.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(255,75,46,.06) 0%,transparent 70%);pointer-events:none}
-.hero h1{font-family:var(--disp);font-size:clamp(2.5rem,6vw,4.5rem);letter-spacing:.04em;color:var(--paper);text-transform:uppercase;line-height:1.1;margin-bottom:16px}
-.hero h1 span{color:var(--red)}
-.hero p{font-family:var(--mono);font-size:14px;letter-spacing:.06em;color:var(--muted);max-width:520px;line-height:1.7;margin-bottom:32px}
-.hero .actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-.hero .btn{padding:14px 28px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;transition:all .15s;border-radius:2px;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-.hero .btn-primary{background:var(--amber);color:#171310;box-shadow:4px 4px 0 var(--red)}
-.hero .btn-primary:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--red)}
-.hero .btn-ghost{background:none;color:var(--muted);border:1px solid var(--line2)}
-.hero .btn-ghost:hover{color:var(--text);border-color:var(--muted)}
+/* Theme toggle in nav */
+.nav .theme-toggle{display:flex;align-items:center;gap:4px;margin-left:12px}
+.nav .theme-toggle button{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--ink3);border:1px solid var(--line);color:var(--dim);cursor:pointer;border-radius:3px;transition:all .15s;font-size:14px}
+.nav .theme-toggle button:hover{color:var(--amber);border-color:var(--amber)}
+.nav .theme-toggle button.active{background:var(--ink4);color:var(--amber);border-color:var(--amber)}
+
+/* Hamburger */
+.hamburger{display:none;width:32px;height:32px;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;background:none;border:none}
+.hamburger span{width:22px;height:2px;background:var(--muted);transition:all .3s;border-radius:1px}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+/* Mobile menu overlay */
+.mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99;background:var(--ink);padding:80px 24px 40px;flex-direction:column;gap:20px;opacity:0;transition:opacity .3s}
+.mobile-menu.show{display:flex;opacity:1}
+.mobile-menu a{font-family:var(--mono);font-size:14px;letter-spacing:.08em;color:var(--muted);padding:12px 0;border-bottom:1px solid var(--line);text-transform:uppercase}
+.mobile-menu a:hover{color:var(--paper)}
+.mobile-menu .cta-btn{margin-top:16px;padding:14px 28px;text-align:center;font-size:13px}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:140px 20px 100px;position:relative;z-index:1}
+.hero::before{content:'';position:absolute;top:20%;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,var(--hero-glow) 0%,transparent 60%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:10%;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(circle,rgba(255,176,32,.04) 0%,transparent 60%);pointer-events:none}
 
 /* Seismo animation */
-.seismo{margin:40px 0;opacity:.5;width:100%;max-width:600px}
-.seismo svg{width:100%;height:50px}
+.seismo{margin:0 0 32px;opacity:.6;width:100%;max-width:700px}
+.seismo svg{width:100%;height:60px}
 
-/* Features */
-.features{padding:80px 40px;max-width:1000px;margin:0 auto}
-.features h2{font-family:var(--disp);font-size:1.6rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase;text-align:center;margin-bottom:48px}
-.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-.feature{background:var(--ink2);border:1px solid var(--line2);padding:24px;border-radius:2px}
-.feature .icon{font-size:24px;margin-bottom:12px}
-.feature h3{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--paper);text-transform:uppercase;margin-bottom:8px}
-.feature p{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7}
+.hero .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--ink2);border:1px solid var(--line2);border-radius:3px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--amber);margin-bottom:20px}
+.hero .badge .pulse{width:8px;height:8px;background:var(--amber);border-radius:50%;animation:pulse-glow 2s ease-in-out infinite}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 0 0 rgba(255,176,32,.4)}50%{box-shadow:0 0 0 6px rgba(255,176,32,0)}}
 
-/* How it works */
-.how{padding:80px 40px;max-width:800px;margin:0 auto}
-.how h2{font-family:var(--disp);font-size:1.6rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase;text-align:center;margin-bottom:48px}
-.steps{display:flex;flex-direction:column;gap:24px}
-.step{display:flex;gap:16px;align-items:flex-start}
-.step .num{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--ink2);border:1px solid var(--amber);color:var(--amber);font-family:var(--mono);font-size:13px;font-weight:600;flex-shrink:0;border-radius:2px}
-.step .text h4{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--paper);text-transform:uppercase;margin-bottom:4px}
-.step .text p{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.6}
+.hero h1{font-family:var(--disp);font-size:clamp(3rem,7vw,5.5rem);letter-spacing:.04em;color:var(--paper);text-transform:uppercase;line-height:1.05;margin-bottom:20px}
+.hero h1 .highlight{color:var(--red);position:relative}
+.hero h1 .highlight::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:3px;background:var(--red);opacity:.3;border-radius:1px}
 
-/* CTA */
-.cta-section{padding:80px 40px;text-align:center}
-.cta-section h2{font-family:var(--disp);font-size:1.6rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase;margin-bottom:16px}
-.cta-section p{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:24px}
+.hero .sub{font-family:var(--sans);font-size:clamp(15px,2vw,18px);color:var(--muted);max-width:600px;line-height:1.65;margin-bottom:12px;font-weight:500}
+.hero .mono-sub{font-family:var(--mono);font-size:13px;color:var(--dim);max-width:500px;line-height:1.7;margin-bottom:36px;letter-spacing:.04em}
 
-/* Footer */
-.footer{padding:32px 40px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em}
+.hero .actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn{padding:14px 28px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;transition:all .15s;border-radius:3px;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--amber);color:#171310;box-shadow:4px 4px 0 var(--red)}
+.btn-primary:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--red)}
+.btn-ghost{background:none;color:var(--muted);border:1px solid var(--line2)}
+.btn-ghost:hover{color:var(--text);border-color:var(--muted)}
+
+/* ── LIVE DEMO SECTION ── */
+.live-demo{padding:80px 40px;max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.live-demo .section-header{text-align:center;margin-bottom:48px}
+.live-demo .section-header h2{font-family:var(--disp);font-size:1.8rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase}
+.live-demo .section-header p{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:.06em}
+
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.demo-card{background:var(--ink2);border:1px solid var(--line2);border-radius:4px;padding:28px;transition:all .3s}
+.demo-card:hover{border-color:var(--amber);box-shadow:0 0 20px var(--card-hover-glow)}
+
+.demo-card .demo-label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-bottom:16px}
+.demo-card .demo-title{font-family:var(--disp);font-size:1.2rem;color:var(--paper);letter-spacing:.03em;margin-bottom:16px}
+
+/* Trust score meter */
+.trust-meter{position:relative;height:8px;background:var(--ink3);border-radius:4px;margin:16px 0 8px;overflow:hidden}
+.trust-meter .fill{height:100%;border-radius:4px;transition:width 1.5s ease-out}
+.trust-meter .fill.high{background:var(--green)}
+.trust-meter .fill.mid{background:var(--amber)}
+.trust-meter .fill.low{background:var(--red)}
+
+.trust-score-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.trust-score-row .score{font-family:var(--disp);font-size:2.2rem;color:var(--paper)}
+.trust-score-row .score.green{color:var(--green)}
+.trust-score-row .score.amber{color:var(--amber)}
+.trust-score-row .score.red{color:var(--red)}
+.trust-score-row .label{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+
+.demo-card .meta{display:flex;gap:16px;margin-top:12px;font-family:var(--mono);font-size:10px;color:var(--dim)}
+.demo-card .meta span{display:flex;align-items:center;gap:4px}
+
+/* Run history mini chart */
+.run-history{display:flex;align-items:flex-end;gap:3px;height:40px;margin-top:16px}
+.run-history .bar{width:6px;border-radius:1px 1px 0 0;transition:height .5s ease-out}
+.run-history .bar.pass{background:var(--green);opacity:.7}
+.run-history .bar.fail{background:var(--red);opacity:.8}
+
+/* ── FEATURES ── */
+.features{padding:80px 40px;max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.features .section-header{text-align:center;margin-bottom:56px}
+.features .section-header h2{font-family:var(--disp);font-size:1.8rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase}
+.features .section-header p{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px}
+
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feature{background:var(--ink2);border:1px solid var(--line2);padding:28px 24px;border-radius:4px;transition:all .3s;position:relative}
+.feature:hover{border-color:var(--line2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.feature .icon-wrap{width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--ink3);border:1px solid var(--line);border-radius:3px;margin-bottom:16px}
+.feature .icon-wrap svg{width:20px;height:20px;stroke:var(--amber);fill:none;stroke-width:1.5}
+.feature h3{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--paper);text-transform:uppercase;margin-bottom:10px}
+.feature p{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.75}
+.feature .tech-tag{display:inline-block;padding:2px 8px;background:var(--ink3);border:1px solid var(--line);border-radius:2px;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em;margin-top:10px}
+
+/* ── STATS BAR ── */
+.stats-bar{padding:48px 40px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;z-index:1}
+.stats-bar-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:center;gap:48px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-item .stat-num{font-family:var(--disp);font-size:2.4rem;color:var(--paper);letter-spacing:.02em}
+.stat-item .stat-num .accent{color:var(--amber)}
+.stat-item .stat-label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin-top:4px}
+
+/* ── HOW IT WORKS ── */
+.how{padding:80px 40px;max-width:900px;margin:0 auto;position:relative;z-index:1}
+.how .section-header{text-align:center;margin-bottom:56px}
+.how .section-header h2{font-family:var(--disp);font-size:1.8rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase}
+
+.steps{display:flex;flex-direction:column;gap:28px}
+.step{display:flex;gap:20px;align-items:flex-start;padding:20px;background:var(--ink2);border:1px solid var(--line2);border-radius:4px;transition:all .3s}
+.step:hover{border-color:var(--amber)}
+.step .num{width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--ink3);border:2px solid var(--amber);color:var(--amber);font-family:var(--disp);font-size:1.2rem;flex-shrink:0;border-radius:3px}
+.step .text h4{font-family:var(--mono);font-size:13px;letter-spacing:.08em;color:var(--paper);text-transform:uppercase;margin-bottom:6px}
+.step .text p{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7}
+.step .text .code-snippet{display:inline-block;background:var(--ink3);border:1px solid var(--line);padding:2px 8px;border-radius:2px;font-family:var(--mono);font-size:10px;color:var(--amber);margin-top:8px}
+
+/* ── GITHUB ACTION SECTION ── */
+.action-section{padding:80px 40px;max-width:900px;margin:0 auto;position:relative;z-index:1}
+.action-section .section-header{text-align:center;margin-bottom:48px}
+.action-section .section-header h2{font-family:var(--disp);font-size:1.8rem;letter-spacing:.04em;color:var(--paper);text-transform:uppercase}
+
+.code-block{background:var(--ink2);border:1px solid var(--line2);border-radius:4px;padding:24px;position:relative}
+.code-block .filename{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;margin-bottom:12px;text-transform:uppercase}
+.code-block pre{font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.8;white-space:pre-wrap;word-break:break-all}
+.code-block pre .comment{color:var(--dim)}
+.code-block pre .key{color:var(--amber)}
+.code-block pre .value{color:var(--green)}
+.code-block .copy-btn{position:absolute;top:12px;right:12px;padding:6px 12px;background:var(--ink3);border:1px solid var(--line);color:var(--dim);font-family:var(--mono);font-size:10px;cursor:pointer;border-radius:3px;transition:all .15s}
+.code-block .copy-btn:hover{color:var(--amber);border-color:var(--amber)}
+
+/* ── CTA ── */
+.cta-section{padding:100px 40px;text-align:center;position:relative;z-index:1}
+.cta-section::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(circle,rgba(255,176,32,.06) 0%,transparent 60%);pointer-events:none}
+.cta-section h2{font-family:var(--disp);font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:.04em;color:var(--paper);text-transform:uppercase;margin-bottom:16px}
+.cta-section p{font-family:var(--mono);font-size:13px;color:var(--muted);margin-bottom:32px;letter-spacing:.04em}
+.cta-section .cta-pills{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.cta-section .cta-pills span{padding:6px 14px;background:var(--ink2);border:1px solid var(--line2);border-radius:3px;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.08em}
+
+/* ── FOOTER ── */
+.footer{padding:32px 40px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;position:relative;z-index:1}
 .footer a{color:var(--muted)}
+.footer .footer-links{display:flex;gap:20px}
 
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease-out,transform .6s ease-out}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
 @media(max-width:768px){
   .nav{padding:12px 20px}
   .nav .links{display:none}
-  .hero{padding:100px 20px 60px}
-  .features,.how,.cta-section{padding:40px 20px}
-  .footer{flex-direction:column;gap:8px}
+  .nav .theme-toggle{display:none}
+  .hamburger{display:flex}
+  .hero{padding:100px 20px 80px}
+  .hero h1{font-size:clamp(2.2rem,8vw,3.5rem)}
+  .demo-grid{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .stats-bar-inner{gap:24px}
+  .stat-item .stat-num{font-size:1.8rem}
+  .features,.how,.live-demo,.action-section,.cta-section{padding:48px 20px}
+  .footer{flex-direction:column;gap:8px;text-align:center}
+  .footer .footer-links{justify-content:center}
+  .step{padding:16px}
+  .step .num{width:36px;height:36px;font-size:1rem}
+  .code-block{padding:16px}
+  .code-block pre{font-size:11px}
+}
+@media(max-width:480px){
+  .features-grid{grid-template-columns:1fr}
+  .stats-bar-inner{flex-direction:column;gap:16px}
 }
 </style>
 </head>
 <body>
+
+<!-- Grain overlay -->
+<div class="grain"></div>
+
+<!-- Mobile menu overlay -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#features">Features</a>
+  <a href="#demo">Live Demo</a>
+  <a href="#how">How it Works</a>
+  <a href="#action">GitHub Action</a>
+  <a href="https://github.com/Pritahi/falsky-core" target="_blank">GitHub</a>
+  <a href="/dashboard/auth.html" class="cta-btn">Sign In</a>
+</div>
 
 <!-- Nav -->
 <nav class="nav">
@@ -88,113 +252,378 @@ a{color:var(--amber);text-decoration:none}
   </a>
   <div class="links">
     <a href="#features">Features</a>
-    <a href="#how">How it works</a>
+    <a href="#demo">Live Demo</a>
+    <a href="#how">How it Works</a>
+    <a href="#action">GitHub Action</a>
     <a href="https://github.com/Pritahi/falsky-core" target="_blank">GitHub</a>
+    <div class="theme-toggle">
+      <button id="darkBtn" class="active" title="Dark mode">&#9790;</button>
+      <button id="lightBtn" title="Light mode">&#9788;</button>
+    </div>
+    <a href="/dashboard/auth.html" class="cta-btn">Sign In &#8594;</a>
   </div>
-  <a href="/login" class="cta">Sign In</a>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- Hero -->
 <section class="hero">
   <div class="seismo">
-    <svg viewBox="0 0 600 50" fill="none">
-      <polyline points="0,25 60,25 90,25 110,8 130,42 150,15 170,35 190,25 240,25 280,25 300,10 320,40 340,18 360,32 380,25 440,25 480,25 500,12 520,38 540,25 600,25" stroke="#FF4B2E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <animate attributeName="stroke-dasharray" values="0,1200;1200,0" dur="4s" repeatCount="indefinite"/>
+    <svg viewBox="0 0 700 60" fill="none">
+      <!-- Base line -->
+      <line x1="0" y1="30" x2="700" y2="30" stroke="var(--line)" stroke-width=".5"/>
+      <!-- Flaky tremor 1 -->
+      <polyline points="0,30 120,30 140,8 160,48 180,12 200,42 220,30 340,30 360,10 380,45 400,15 420,38 440,30 560,30 580,6 600,52 620,18 640,35 660,30 700,30" stroke="#FF4B2E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".9">
+        <animate attributeName="stroke-dasharray" values="0,1400;1400,0" dur="5s" repeatCount="indefinite"/>
+      </polyline>
+      <!-- Flaky tremor 2 (offset) -->
+      <polyline points="0,30 60,30 80,12 100,44 120,30 200,30 220,6 240,50 260,30 400,30 420,8 440,46 460,30 540,30 560,14 580,42 600,30 700,30" stroke="#FFB020" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity=".4">
+        <animate attributeName="stroke-dasharray" values="0,1400;1400,0" dur="7s" repeatCount="indefinite"/>
       </polyline>
     </svg>
   </div>
-  <h1>Your CI has <span>tremors</span></h1>
-  <p>Detect flaky tests before they break your pipeline. Bayesian-powered trust scores for every test in your suite.</p>
+  <div class="badge"><span class="pulse"></span> BAYESIAN TRUST ENGINE</div>
+  <h1>Your CI has <span class="highlight">tremors</span></h1>
+  <p class="sub">Detect flaky tests before they break your pipeline. Bayesian-powered trust scores give every test a reliability rating from 0 to 100.</p>
+  <p class="mono-sub">Works with pytest, Jest, JUnit, and any framework that outputs JUnit XML. Free for open source.</p>
   <div class="actions">
-    <a href="/login" class="btn btn-primary">Get Started Free</a>
-    <a href="#features" class="btn btn-ghost">Learn More ↓</a>
+    <a href="/dashboard/auth.html" class="btn btn-primary">Get Started Free &#8594;</a>
+    <a href="#demo" class="btn btn-ghost">See Live Demo &#8595;</a>
+  </div>
+</section>
+
+<!-- Stats Bar -->
+<section class="stats-bar reveal">
+  <div class="stats-bar-inner">
+    <div class="stat-item">
+      <div class="stat-num"><span class="accent">6</span> Flake Types</div>
+      <div class="stat-label">Detected automatically</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num"><span class="accent">0</span>&ndash;<span class="accent">100</span> Trust Score</div>
+      <div class="stat-label">Bayesian scoring</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">&lt;<span class="accent">5</span> min</div>
+      <div class="stat-label">Setup time</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num"><span class="accent">&#8734;</span> Free</div>
+      <div class="stat-label">For open source</div>
+    </div>
+  </div>
+</section>
+
+<!-- Live Demo -->
+<section class="live-demo reveal" id="demo">
+  <div class="section-header">
+    <h2>Trust Scores in Action</h2>
+    <p>See how Falsky rates each test &mdash; green means reliable, amber means watch out, red means flaky</p>
+  </div>
+  <div class="demo-grid">
+    <!-- Stable test -->
+    <div class="demo-card">
+      <div class="demo-label">STABLE TEST &middot; HIGH TRUST</div>
+      <div class="trust-score-row">
+        <div class="score green">92</div>
+        <div class="label">TRUST SCORE</div>
+      </div>
+      <div class="trust-meter"><div class="fill high" style="width:92%"></div></div>
+      <div class="demo-title">test_user_authentication</div>
+      <div class="run-history">
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar pass" style="height:38px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar pass" style="height:38px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar pass" style="height:38px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar pass" style="height:38px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar pass" style="height:38px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar pass" style="height:34px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar pass" style="height:38px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar pass" style="height:34px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar pass" style="height:38px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar pass" style="height:38px"></div>
+      </div>
+      <div class="meta">
+        <span>&#10003; 20/20 pass</span>
+        <span>&#9201; avg 1.2s</span>
+        <span>No category</span>
+      </div>
+    </div>
+    <!-- Flaky test -->
+    <div class="demo-card">
+      <div class="demo-label">FLAKY TEST &middot; LOW TRUST</div>
+      <div class="trust-score-row">
+        <div class="score red">23</div>
+        <div class="label">TRUST SCORE</div>
+      </div>
+      <div class="trust-meter"><div class="fill low" style="width:23%"></div></div>
+      <div class="demo-title">test_payment_gateway</div>
+      <div class="run-history">
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar fail" style="height:40px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar pass" style="height:34px"></div>
+        <div class="bar fail" style="height:40px"></div>
+        <div class="bar fail" style="height:38px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar fail" style="height:40px"></div>
+        <div class="bar pass" style="height:34px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar fail" style="height:40px"></div>
+        <div class="bar fail" style="height:38px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar fail" style="height:40px"></div>
+        <div class="bar pass" style="height:34px"></div>
+        <div class="bar fail" style="height:38px"></div>
+        <div class="bar pass" style="height:36px"></div>
+        <div class="bar fail" style="height:40px"></div>
+        <div class="bar pass" style="height:34px"></div>
+        <div class="bar fail" style="height:40px"></div>
+      </div>
+      <div class="meta">
+        <span>&#10003; 9/20 pass</span>
+        <span>&#9201; avg 4.8s</span>
+        <span style="color:var(--red)">Timing Flake</span>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- Features -->
-<section class="features" id="features">
-  <h2>What Falsky Detects</h2>
+<section class="features reveal" id="features">
+  <div class="section-header">
+    <h2>What Falsky Detects</h2>
+    <p>Six categories of flakiness, each with its own detection algorithm</p>
+  </div>
   <div class="features-grid">
     <div class="feature">
-      <div class="icon">⏱️</div>
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12,7 12,12 16,14"/></svg>
+      </div>
       <h3>Timing Flakes</h3>
-      <p>Tests that fail due to timeouts, slow responses, or race conditions. Detected via z-score anomaly detection on duration data.</p>
+      <p>Tests that fail due to timeouts, slow responses, or race conditions. Z-score anomaly detection on duration data catches tests with erratic run times that signal hidden instability.</p>
+      <span class="tech-tag">z-score analysis</span>
     </div>
     <div class="feature">
-      <div class="icon">🔗</div>
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
+      </div>
       <h3>Order Dependency</h3>
-      <p>Tests that pass or fail depending on execution order. Sequential pattern analysis catches alternating and periodic failures.</p>
+      <p>Tests that pass or fail depending on execution order. Sequential pattern analysis catches alternating and periodic failures that only appear when tests run in specific sequences.</p>
+      <span class="tech-tag">sequential patterns</span>
     </div>
     <div class="feature">
-      <div class="icon">🤝</div>
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="3"/><circle cx="17" cy="12" r="3"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+      </div>
       <h3>Shared State</h3>
-      <p>Tests that contaminate each other through shared databases, files, or services. Clustered failure patterns reveal the culprit.</p>
+      <p>Tests that contaminate each other through shared databases, files, or services. Clustered failure patterns reveal the culprit &mdash; when multiple tests fail together, shared state is the cause.</p>
+      <span class="tech-tag">cluster analysis</span>
     </div>
     <div class="feature">
-      <div class="icon">🎲</div>
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8" cy="8" r="2" fill="var(--amber)" stroke="none"/><circle cx="16" cy="16" r="2" fill="var(--amber)" stroke="none"/><circle cx="16" cy="8" r="2" fill="var(--amber)" stroke="none"/></svg>
+      </div>
       <h3>Non-Deterministic Data</h3>
-      <p>Tests that fail randomly due to unstable test data, UUIDs, or timestamps. High error diversity is the signal.</p>
+      <p>Tests that fail randomly due to unstable test data, UUIDs, or timestamps. High error diversity is the signal &mdash; when error messages vary across failures, randomness is at play.</p>
+      <span class="tech-tag">error diversity</span>
     </div>
     <div class="feature">
-      <div class="icon">🌐</div>
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
       <h3>Environment Specific</h3>
-      <p>Tests that pass locally but fail in CI (or vice versa). Cross-environment pass rate comparison catches these.</p>
+      <p>Tests that pass locally but fail in CI (or vice versa). Cross-environment pass rate comparison catches these &mdash; a test that's 95% reliable locally but 40% in CI is environment-specific.</p>
+      <span class="tech-tag">env comparison</span>
     </div>
     <div class="feature">
-      <div class="icon">📊</div>
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
       <h3>Bayesian Scoring</h3>
-      <p>Every test gets a trust score (0-100) using Beta-Binomial conjugate priors. Better than naive pass/total, especially with small samples.</p>
+      <p>Every test gets a trust score (0&ndash;100) using Beta-Binomial conjugate priors. Better than naive pass/total calculations, especially with small sample sizes where simple ratios mislead.</p>
+      <span class="tech-tag">beta-binomial</span>
     </div>
   </div>
 </section>
 
 <!-- How it works -->
-<section class="how" id="how">
-  <h2>How It Works</h2>
+<section class="how reveal" id="how">
+  <div class="section-header">
+    <h2>How It Works</h2>
+    <p>Four steps from zero to full trust visibility</p>
+  </div>
   <div class="steps">
     <div class="step">
       <div class="num">1</div>
       <div class="text">
         <h4>Connect your repo</h4>
-        <p>Sign in, connect your GitHub repository. Falsky automatically detects your test framework.</p>
+        <p>Sign in with GitHub, select your repository. Falsky auto-detects your test framework &mdash; no manual configuration needed. Works with pytest, Jest, JUnit, Mocha, and anything that outputs JUnit XML.</p>
       </div>
     </div>
     <div class="step">
       <div class="num">2</div>
       <div class="text">
-        <h4>Run your tests</h4>
-        <p>Install the GitHub Action in your workflow. It reads JUnit XML output and sends it to Falsky's Trust Engine.</p>
+        <h4>Add the GitHub Action</h4>
+        <p>Copy one YAML block into your workflow. The Action reads your test results and sends them to Falsky's Trust Engine after every CI run. No extra scripts, no sidecar containers. <span class="code-snippet">falsky-action@v1</span></p>
       </div>
     </div>
     <div class="step">
       <div class="num">3</div>
       <div class="text">
-        <h4>Get trust scores</h4>
-        <p>Every test gets a Bayesian trust score. Flaky tests are categorized and flagged with confidence levels.</p>
+        <h4>Get Bayesian trust scores</h4>
+        <p>Each test receives a trust score from 0 (completely unreliable) to 100 (rock solid). Flaky tests are categorized with confidence levels &mdash; timing, order, shared state, environment, or random.</p>
       </div>
     </div>
     <div class="step">
       <div class="num">4</div>
       <div class="text">
         <h4>Fix before it breaks</h4>
-        <p>See trends, catch degrading tests early, and quarantine unreliable tests before they block your pipeline.</p>
+        <p>See trends over time, catch degrading tests early, and quarantine unreliable ones before they block your pipeline. Dashboard shows run history, category breakdowns, and actionable fix suggestions.</p>
       </div>
     </div>
   </div>
 </section>
 
+<!-- GitHub Action -->
+<section class="action-section reveal" id="action">
+  <div class="section-header">
+    <h2>One YAML Block. Done.</h2>
+    <p>Add this to your workflow and Falsky starts scoring immediately</p>
+  </div>
+  <div class="code-block">
+    <div class="filename">.github/workflows/ci.yml</div>
+    <button class="copy-btn" id="copyBtn">Copy</button>
+    <pre><span class="comment"># After your test step</span>
+<span class="key">- uses:</span> <span class="value">Pritahi/falsky-action@v1</span>
+  <span class="key">with:</span>
+    <span class="key">api_key:</span> <span class="value">${{ secrets.FALSKY_API_KEY }}</span>
+    <span class="key">repo:</span> <span class="value">${{ github.repository }}</span>
+    <span class="key">report_path:</span> <span class="value">test-results.xml</span></pre>
+  </div>
+</section>
+
 <!-- CTA -->
-<section class="cta-section">
-  <h2>Start detecting flaky tests</h2>
-  <p>Free forever for open source. No credit card required.</p>
-  <a href="/login" class="btn btn-primary" style="margin-top:8px">Sign In</a>
+<section class="cta-section reveal">
+  <h2>Start detecting flaky tests today</h2>
+  <p>Free forever for open source. No credit card. No setup fee.</p>
+  <a href="/dashboard/auth.html" class="btn btn-primary">Sign In with GitHub &#8594;</a>
+  <div class="cta-pills">
+    <span>MIT License</span>
+    <span>Self-hostable</span>
+    <span>JUnit XML input</span>
+    <span>Bayesian scoring</span>
+  </div>
 </section>
 
 <!-- Footer -->
 <footer class="footer">
-  <span>© 2026 Falsky · MIT License</span>
-  <span><a href="https://github.com/Pritahi/falsky-core">GitHub</a> · <a href="/docs">API Docs</a></span>
+  <span>&copy; 2026 Falsky &middot; MIT License</span>
+  <div class="footer-links">
+    <a href="https://github.com/Pritahi/falsky-core">GitHub</a>
+    <a href="/dashboard/guide.html">Docs</a>
+    <a href="https://github.com/Pritahi/falsky-core/issues">Issues</a>
+  </div>
 </footer>
+
+<script>
+// ── Theme toggle ──
+const html = document.documentElement;
+const darkBtn = document.getElementById('darkBtn');
+const lightBtn = document.getElementById('lightBtn');
+const saved = localStorage.getItem('falsky-theme');
+if (saved === 'light') {
+  html.classList.add('light');
+  darkBtn.classList.remove('active');
+  lightBtn.classList.add('active');
+}
+darkBtn.addEventListener('click', () => {
+  html.classList.remove('light');
+  darkBtn.classList.add('active');
+  lightBtn.classList.remove('active');
+  localStorage.setItem('falsky-theme', 'dark');
+});
+lightBtn.addEventListener('click', () => {
+  html.classList.add('light');
+  lightBtn.classList.add('active');
+  darkBtn.classList.remove('active');
+  localStorage.setItem('falsky-theme', 'light');
+});
+
+// ── Hamburger ──
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('show');
+});
+// Close mobile menu on link click
+mobileMenu.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('show');
+  });
+});
+
+// ── Scroll reveal ──
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+revealEls.forEach(el => observer.observe(el));
+
+// ── Copy button ──
+const copyBtn = document.getElementById('copyBtn');
+copyBtn.addEventListener('click', () => {
+  const code = copyBtn.parentElement.querySelector('pre').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+  });
+});
+
+// ── Animate trust meters on scroll ──
+const demoCards = document.querySelectorAll('.demo-card');
+const demoObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const fills = entry.target.querySelectorAll('.trust-meter .fill');
+      fills.forEach(fill => {
+        const w = fill.style.width;
+        fill.style.width = '0%';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            fill.style.width = w;
+          });
+        });
+      });
+      const bars = entry.target.querySelectorAll('.run-history .bar');
+      bars.forEach((bar, i) => {
+        const h = bar.style.height;
+        bar.style.height = '0px';
+        setTimeout(() => {
+          bar.style.height = h;
+        }, 100 + i * 50);
+      });
+    }
+  });
+}, { threshold: 0.3 });
+demoCards.forEach(card => demoObserver.observe(card));
+</script>
 
 </body>
 </html>
